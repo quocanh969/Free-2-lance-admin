@@ -1,24 +1,23 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import './Assets/css/sb-admin-2.min.css';
+
+import {history} from './Ultis/history/history';
+
+import { BrowserRouter, Switch, Redirect, Router, Route } from 'react-router-dom';
+import Home from './Components/Home';
+import { SRoute } from './Ultis/CustomRoutes/CustomRoute';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Router history={history}>
+        <Switch>
+          <SRoute path='/' exact component={Home}></SRoute>
+          <Redirect to='/not-found'></Redirect>
+        </Switch>
+      </Router>
     </div>
   );
 }

@@ -1,5 +1,17 @@
-.bg-1328af {
-  background-color: #1328af !important;
+#icon:hover {
+  text-decoration: none;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.font-weight-bold {
+  font-weight: bold;
+}
+
+.bg-black {
+  background-color: #161212 !important;
 }
 
 .font-size-25 {

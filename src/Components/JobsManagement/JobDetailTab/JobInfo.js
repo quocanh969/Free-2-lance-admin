@@ -59,7 +59,7 @@ class JobInfoComponent extends Component {
     }
 
     handleChangeStatus(newStatus) {
-        if(this.state.account_status === newStatus)
+        if(this.state.id_status === newStatus)
         {
             return;
         }
@@ -67,7 +67,7 @@ class JobInfoComponent extends Component {
         {
             // gọi api
             // alert
-            this.setState({account_status: newStatus});
+            this.setState({id_status: newStatus});
         }
     }
 
@@ -128,7 +128,7 @@ class JobInfoComponent extends Component {
                         </div>
                         <div className="btn-group-sm" role="group">
                             <div onClick={() => { this.handleChangeStatus(0) }} className={"btn " + (this.state.id_status === 0 ? 'btn-danger' : 'btn-outline-danger')}>Bị gỡ</div>
-                            <div className={"btn " + (this.state.id_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Đang tuyển</div>
+                            <div onClick={() => { this.handleChangeStatus(1) }}className={"btn " + (this.state.id_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Đang tuyển</div>
                             <div className={"btn " + (this.state.id_status === 2 ? 'btn-success' : 'btn-outline-success')}>Đang thực hiện</div>
                             <div className={"btn " + (this.state.id_status === 3 ? 'btn-primary' : 'btn-outline-primary')}>Hoàn thành</div>
                         </div>

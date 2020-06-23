@@ -34,7 +34,7 @@
     cursor: pointer;
 }
 .proile-rating{
-    font-size: 12px;
+    font-size: 15px;
     color: #818182;
     margin-top: 5%;
 }
@@ -75,4 +75,16 @@
 .image-field img{
     object-fit: cover;    
     width: 150px;
+}
+
+.icon-header {
+    background-color: white;
+    border-top: 1px solid #dddfeb;
+}
+
+.tab-active { 
+    background-color: white;
+    border-top: 1px solid #dddfeb;
+    border-left: 1px solid #dddfeb;
+    border-right: 1px solid #dddfeb;
 }

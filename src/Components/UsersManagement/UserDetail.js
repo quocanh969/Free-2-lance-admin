@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { getImageSrc, prettierDate } from '../../Ultis/Helper/HelperFunction';
-
-import avatarPlaceholder from '../../Assets/images/avatar_placeholder.png';
-import imagePlaceholder from '../../Assets/images/image-placeholder.jpg';
 
 import './detail.css';
+import UserInfo from './UserDetailTab/UserInfo';
+import UserJobList from './UserDetailTab/UserJobList';
+import UserTaskList from './UserDetailTab/UserTaskList';
 
 class UserDetailComponent extends Component {
     constructor(props) {
@@ -14,39 +13,20 @@ class UserDetailComponent extends Component {
 
         this.state = {
             tab: 1,
-            id_user: 1,
-            fullname: 'John Cena',
-            dob: new Date('19/05/2019'),
-            email: 'tranquocanh858@gmail.com',
-            dial: '021312412',
-            address: '124 đường số 1A',
-            identity: '01234567891011',
-            portrait: null,
-            frontIdPaper: null,
-            backIdPaper: null,
-            createDate: new Date('19/05/2019'),
-            isBusinessUser: true,
-            gender: true,
-            avatarImg: null,
-            account_status: 1,
-            rating: 4.5,
-            company_name: 'Công ty xăng dầu TPHCM',
-            position: 'CEO',
-            company_address: '124 đường số 1A',
-            company_email: 'xangdau@gmail.com',
-            number_of_employees: 200,
         }
     }
 
-    handleChangeStatus(newStatus) {
-        if(this.state.account_status === newStatus)
+    switchTab() {
+        switch(this.state.tab)
         {
-            return;
-        }
-        else
-        {
-            // gọi api
-            this.setState({account_status: newStatus});
+            case 1:
+                return <UserInfo></UserInfo>
+            case 2:
+                return <UserJobList></UserJobList>
+            case 3:
+                return <UserTaskList></UserTaskList>
+            default:
+                return ''
         }
     }
 
@@ -54,210 +34,28 @@ class UserDetailComponent extends Component {
         return (
             <div className="container-fluid">
                 {/* Page Heading */}
-                <h1 className="h3 mb-2 text-gray-800">Thông tin chi tiết người dùng</h1>
+                <h1 className="h3 mb-5 text-gray-800">Thông tin chi tiết người dùng</h1>
                 {/* Userlist DataTales Example */}
                 <div className="card shadow mb-4">
-                    <div className="card-header py-3">
-                        <h6 className="m-0 font-weight-bold text-primary"><i className="icon-feather-user" /> Thông tin người dùng</h6>
+                    <div className='card-header px-0'>
+                        <span className="p-3 h6 m-0 font-weight-bold text-primary icon-header">
+                            <i className="icon-feather-user"/>
+                        </span>
+                        <span onClick={()=>{if(this.state.tab !== 1){this.setState({tab: 1})}}}
+                            className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 1 ? 'tab-active' : '')}>
+                            Thông tin người dùng                
+                        </span>
+                        <span onClick={()=>{if(this.state.tab !== 2){this.setState({tab: 2})}}}
+                            className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 2 ? 'tab-active' : '')}>
+                            Danh sách công việc đăng tuyển              
+                        </span>
+                        <span onClick={()=>{if(this.state.tab !== 3){this.setState({tab: 3})}}}
+                            className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 3 ? 'tab-active' : '')}>
+                            Danh sách công việc ứng tuyển      
+                        </span>
                     </div>
                     <div className="card-body">
-
-                        {/* Headline */}
-                        <div className="row">
-                            <div className="col-4">
-                                <div className="profile-img mb-5">
-                                    <img src={getImageSrc(null, avatarPlaceholder)} alt="avatar-user" />
-                                </div>
-                            </div>
-                            <div className="col-md-8">
-
-                                <div className="profile-head">                                    
-                                    <div className='d-flex justify-content-between'>
-                                        <div>
-                                            <h5>
-                                                {this.state.fullname.toUpperCase()}
-                                            </h5>
-                                            <h6>(Ngày tạo tài khoản: {prettierDate(this.state.createDate)})</h6>
-                                        </div>                                        
-                                        <div className="btn-group-sm" role="group">
-                                            <div onClick={() => { this.handleChangeStatus(-1) }} className={"btn " + (this.state.account_status === -1 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
-                                            <div onClick={() => { this.handleChangeStatus(1) }} className={"btn " + (this.state.account_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Chờ xác thực</div>
-                                            <div onClick={() => { this.handleChangeStatus(2) }} className={"btn " + (this.state.account_status === 2 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
-                                        </div>
-                                    </div>
-                                    <p className="proile-rating">Đánh giá : <span>{this.state.rating}/10 <i className="fa fa-star text-warning"></i></span></p>
-                                    <ul className="nav nav-tabs" id="myTab" role="tablist">
-                                        <li className="nav-item">
-                                            <div className={'nav-link cursor-pointer ' + (this.state.tab === 1 ? 'active' : '')} id="home-tab" data-toggle="tab"
-                                                role="tab" aria-controls="home" aria-selected="true"
-                                                onClick={() => { this.setState({ tab: 1 }) }}
-                                            >Thông tin cá nhân</div>
-                                        </li>
-                                        {(
-                                            this.state.isBusinessUser
-                                                ?
-                                                <li className="nav-item">
-                                                    <div className={'nav-link cursor-pointer ' + (this.state.tab === 3 ? 'active' : '')} id="home-tab" data-toggle="tab"
-                                                        role="tab" aria-controls="home" aria-selected="true"
-                                                        onClick={() => { this.setState({ tab: 3 }) }}
-                                                    >Thông tin công ty</div>
-                                                </li>
-                                                :
-                                                ''
-                                        )}
-                                        <li className="nav-item">
-                                            <div className={'nav-link cursor-pointer ' + (this.state.tab === 2 ? 'active' : '')} id="home-tab" data-toggle="tab"
-                                                role="tab" aria-controls="home" aria-selected="true"
-                                                onClick={() => { this.setState({ tab: 2 }) }}
-                                            >Thông tin xác thực</div>
-                                        </li>
-
-                                    </ul>
-                                </div>
-
-                                <div>
-                                    <div className="tab-content profile-tab" id="myTabContent">
-
-                                        <div className={'tab-pane fade ' + (this.state.tab === 1 ? 'show active' : '')} id="home" role="tabpanel" aria-labelledby="home-tab">
-                                            <div className="row">
-                                                <div className="col-3">
-                                                    <label>Tên người dùng</label>
-                                                </div>
-                                                <div className="col-3">
-                                                    <p>{this.state.fullname}</p>
-                                                </div>
-                                                <div className="col-3">
-                                                    <label>Id người dùng</label>
-                                                </div>
-                                                <div className="col-3">
-                                                    <p>{this.state.id_user}</p>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-3">
-                                                    <label>Email</label>
-                                                </div>
-                                                <div className="col-9">
-                                                    <p>{this.state.email}</p>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-3">
-                                                    <label>Số điện thoại</label>
-                                                </div>
-                                                <div className="col-3">
-                                                    <p>{this.state.dial}</p>
-                                                </div>
-                                                <div className="col-3">
-                                                    <label>Số CMND</label>
-                                                </div>
-                                                <div className="col-3">
-                                                    <p>{this.state.identity}</p>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-3">
-                                                    <label>Ngày sinh</label>
-                                                </div>
-                                                <div className="col-9">
-                                                    <p>{prettierDate(this.state.dob)}</p>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-3">
-                                                    <label>Địa chỉ</label>
-                                                </div>
-                                                <div className="col-9 text-truncate">
-                                                    <p>{this.state.address}</p>
-                                                </div>
-                                            </div>
-                                            <div className="row">
-                                                <div className="col-3">
-                                                    <label>Giới tính</label>
-                                                </div>
-                                                <div className="col-9">
-                                                    <p>{this.state.gender ? 'Nam' : 'Nữ'}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {(
-                                            this.state.isBusinessUser
-                                                ?
-                                                <div className={'tab-pane fade ' + (this.state.tab === 3 ? 'show active' : '')} id="home" role="tabpanel" aria-labelledby="home-tab">
-                                                    <div className='row'>
-                                                        <div className="col-3">
-                                                            <label>Vai trò</label>
-                                                        </div>
-                                                        <div className="col-9">
-                                                            <p>{this.state.position}</p>
-                                                        </div>
-                                                    </div>  
-                                                    <div className="row">
-                                                        <div className="col-3">
-                                                            <label>Công ty</label>
-                                                        </div>
-                                                        <div className="col-9">
-                                                            <p>{this.state.company_name}</p>
-                                                        </div>
-                                                    </div>                                                    
-                                                    <div className='row'>
-                                                        <div className="col-3">
-                                                            <label>Email công ty</label>
-                                                        </div>
-                                                        <div className="col-9">
-                                                            <p>{this.state.company_email}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row">
-                                                        <div className="col-3">
-                                                            <label>Địa chỉ công ty</label>
-                                                        </div>
-                                                        <div className="col-9">
-                                                            <p>{this.state.company_address}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="row">
-                                                        <div className="col-3">
-                                                            <label>Số lượng nhân viên</label>
-                                                        </div>
-                                                        <div className="col-9">
-                                                            <p>{this.state.number_of_employees}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                :
-                                                ''
-                                        )}
-
-                                        <div className={'tab-pane fade ' + (this.state.tab === 2 ? 'show active' : '')} id="home" role="tabpanel" aria-labelledby="home-tab">
-                                            <div className="row">
-                                                <div className='col-4 text-center px-1'>
-                                                    <p>Ảnh chân dung</p>
-                                                    <div className='image-field'>
-                                                        <img src={getImageSrc(this.state.portrait, avatarPlaceholder)}></img>
-                                                    </div>
-                                                </div>
-                                                <div className='col-4 text-center'>
-                                                    <p>Ảnh trước CMND</p>
-                                                    <div className='image-field'>
-                                                        <img src={getImageSrc(this.state.portrait, imagePlaceholder)}></img>
-                                                    </div>
-                                                </div>
-                                                <div className='col-4 text-center'>
-                                                    <p>Ảnh sau CMND</p>
-                                                    <div className='image-field'>
-                                                        <img src={getImageSrc(this.state.portrait, imagePlaceholder)}></img>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                        {this.switchTab()}
                     </div>
                 </div>
             </div>

@@ -38,13 +38,11 @@ class PersonalUsersComponent extends Component {
         let val = Number.parseInt(document.getElementById('select-status-' + id_user).value);
 
         if (current_value === val) return;
-        if ((current_value === 0 || current_value === -1) && (val === 0 || val === 1 || val === -1)) {
+
+        if (val === -1 || (current_value === -1 && val === 1)) {
             let text = '';
             if (val === -1) {
                 text = 'cấm';
-            }
-            else if (val === 0) {
-                text = 'chuyển về trạng thái chờ kích hoạt'
             }
             else {
                 text = 'kích hoạt';
@@ -104,7 +102,6 @@ class PersonalUsersComponent extends Component {
             <td>
                 <select id={'select-status-' + 1} defaultValue={-1} onChange={() => { this.handleChangeStatus(1, -1) }}>
                     <option value={-1}>Bị cấm</option>
-                    <option value={0}>Chưa kích hoạt</option>
                     <option value={1}>Chờ xác thực</option>
                     <option value={2}>Đã xác thực</option>
                 </select>
@@ -186,7 +183,6 @@ class PersonalUsersComponent extends Component {
                             <div className="col-9 btn-group-sm" role="group">
                                 <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
                                 <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
-                                <div onClick={() => { this.setState({ queryType: 3 }) }} className={"btn " + (this.state.queryType === 3 ? 'btn-warning' : 'btn-outline-warning')}>Chưa kích hoạt</div>
                                 <div onClick={() => { this.setState({ queryType: 4 }) }} className={"btn " + (this.state.queryType === 4 ? 'btn-secondary' : 'btn-outline-secondary')}>Chờ xác thực</div>
                                 <div onClick={() => { this.setState({ queryType: 5 }) }} className={"btn " + (this.state.queryType === 5 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
                             </div>

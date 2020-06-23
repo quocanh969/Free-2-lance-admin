@@ -14,9 +14,10 @@ import BusinessUsers from './Components/UsersManagement/BusinessUsers';
 import PendingJobs from './Components/JobsManagement/PendingJobs';
 import Reports from './Components/ReviewsManagement/Reports';
 import Home from './Components/Home';
+import Tags from './Components/OtherManagement/Tags';
+import UserDetail from './Components/UsersManagement/UserDetail';
 
 function App() {
-  console.log()
   return (
     <div>
       <BrowserRouter>      
@@ -24,9 +25,11 @@ function App() {
           <SRoute path='/' exact component={Home}></SRoute>
           <SRoute path='/personal-user-management' exact component={PersonalUsers}></SRoute>
           <SRoute path='/business-user-management' exact component={BusinessUsers}></SRoute>
+          <SRoute path='/user-detail' exact component={UserDetail}></SRoute>
+          <SRoute path='/tags-management' exact component={Tags}></SRoute>
           <SRoute path='/pending-job-management' exact component={PendingJobs}></SRoute>
           <SRoute path='/report-management' exact component={Reports}></SRoute>
-          <Redirect to='/not-found'></Redirect>
+          {/* <Redirect to='/not-found'></Redirect> */}
         </Switch>
       </BrowserRouter>
     </div>

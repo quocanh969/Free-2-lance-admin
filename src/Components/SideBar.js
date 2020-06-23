@@ -55,7 +55,17 @@ class SideBarComponent extends Component {
                     <NavLink className="nav-link font-weight-bold pb-2 pt-3" to="/pending-job-management">
                         <i className="icon-line-awesome-hourglass-2"/><span>&nbsp;Công việc chờ duyệt</span>
                     </NavLink>
-                </li>                
+                </li>    
+
+                <hr className="sidebar-divider" />                
+                <div className="sidebar-heading">
+                    Quản lý khác
+                </div>
+                <li className="nav-item">
+                    <NavLink className="nav-link font-weight-bold pb-2 pt-3" to="/tags-management">
+                        <i className="icon-line-awesome-tags"/><span>&nbsp;Tags</span>
+                    </NavLink>
+                </li>            
                 
                 {/* Sidebar Toggler (Sidebar) */}
                 {/* <div className="text-center d-none d-md-inline">

@@ -24,47 +24,6 @@ class UserJobListComponent extends Component {
         // }
     }
 
-    handleChangeStatus(id_job, current_value) {
-        let val = Number.parseInt(document.getElementById('select-status-' + id_job).value);
-
-        if (current_value === val) return;
-
-        if (val === 0) {
-            Swal.fire({
-                text: "Bạn có chắc là muốn gỡ công việc này xuống !",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ok, tôi đồng ý',
-                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
-                reverseButtons: true,
-            }).then((result) => {
-                if (result.value) {
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
-                    })
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire({
-                        text: 'Thay đổi không được thực hiện',
-                        icon: 'error',
-                    })
-                    document.getElementById('select-status-' + id_job).value = current_value;
-                }
-                else {
-                    document.getElementById('select-status-' + id_job).value = current_value;
-                }
-            })
-        }
-        else {
-            Swal.fire({
-                text: 'Bạn không thể thay đổi trạng thái này của công việc',
-                icon: 'warning',
-            });
-            document.getElementById('select-status-' + id_job).value = current_value;
-        }
-
-    }
-
     handleSearchUser() {
         let searchStr = document.getElementById('job-search-input').value;
         if (searchStr === '') {
@@ -75,7 +34,38 @@ class UserJobListComponent extends Component {
         }
     }
 
-    renderUserList() {
+    renderJobStatus(status) {
+        switch(status)
+        {
+            case 0:
+                {
+                    return(
+                        <span className='text-danger'>Bị gỡ</span>
+                    )
+                }
+            case 1:
+            {
+                return(
+                    <span className='text-warning'>Đang tuyển</span>
+                )
+            }
+            case 2:
+            {
+                return(
+                    <span className='text-primary'>Đang thực hiện</span>
+                )
+            }
+            case 3:
+            {
+                return(
+                    <span className='text-success'>Hoàn thành</span>
+                )
+            }
+            default: return '';
+        }
+    }
+
+    renderJobList() {
         // let { tutorData, status, message, loading } = this.props.UsersReducer;
         let content = [];
         // for (let e of tutorData) {
@@ -91,12 +81,9 @@ class UserJobListComponent extends Component {
             <td>{prettierDate(new Date())}</td>
             <td>{prettierDate(new Date())}</td>
             <td>
-                <select id={'select-status-' + 1} defaultValue={1} onChange={() => { this.handleChangeStatus(1, 1) }}>
-                    <option value={0}>Bị gở</option>
-                    <option value={1}>Đang tuyển</option>
-                    <option value={2}>Đang thực hiện</option>
-                    <option value={3}>Hoàn thành</option>
-                </select>
+                <div className='text-center'>
+                    {this.renderJobStatus(0)}
+                </div>
             </td>
             <td className='text-center'>
                 <NavLink to='/job-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
@@ -187,7 +174,7 @@ class UserJobListComponent extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.renderUserList()}
+                                {this.renderJobList()}
                             </tbody>
                         </table>
 

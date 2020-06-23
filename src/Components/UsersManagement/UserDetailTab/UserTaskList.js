@@ -76,7 +76,38 @@ class UserTaskListComponent extends Component {
         }
     }
 
-    renderUserList() {
+    renderTaskStatus(status) {
+        switch(status)
+        {
+            case 0:
+                {
+                    return(
+                        <span className='text-danger'>Bị gỡ</span>
+                    )
+                }
+            case 1:
+            {
+                return(
+                    <span className='text-warning'>Đang tuyển</span>
+                )
+            }
+            case 2:
+            {
+                return(
+                    <span className='text-primary'>Đang thực hiện</span>
+                )
+            }
+            case 3:
+            {
+                return(
+                    <span className='text-success'>Hoàn thành</span>
+                )
+            }
+            default: return '';
+        }
+    }
+
+    renderTaskList() {
         // let { tutorData, status, message, loading } = this.props.UsersReducer;
         let content = [];
         // for (let e of tutorData) {
@@ -92,12 +123,9 @@ class UserTaskListComponent extends Component {
             <td>{prettierDate(new Date())}</td>
             <td>{prettierDate(new Date())}</td>
             <td>
-                <select id={'select-status-' + 1} defaultValue={1} onChange={() => { this.handleChangeStatus(1, 1) }}>
-                    <option value={0}>Bị gở</option>
-                    <option value={1}>Đang tuyển</option>
-                    <option value={2}>Đang thực hiện</option>
-                    <option value={3}>Hoàn thành</option>
-                </select>
+                <div className='text-center'>
+                    {this.renderTaskStatus(0)}
+                </div>
             </td>
             <td className='text-center'>
                 <NavLink to='/job-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
@@ -188,7 +216,7 @@ class UserTaskListComponent extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.renderUserList()}
+                                {this.renderTaskList()}
                             </tbody>
                         </table>
 

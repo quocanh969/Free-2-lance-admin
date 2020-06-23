@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import './detail.css';
+import '../../Assets/css/detail.css';
 import UserInfo from './UserDetailTab/UserInfo';
 import UserJobList from './UserDetailTab/UserJobList';
 import UserTaskList from './UserDetailTab/UserTaskList';
 
 class UserDetailComponent extends Component {
+
     constructor(props) {
         super(props);
 

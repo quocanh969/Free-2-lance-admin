@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom';
+import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Swal from 'sweetalert2';
@@ -105,7 +105,7 @@ class PersonalUsersComponent extends Component {
                 </select>
             </td>
             <td className='text-center'>
-                <i className='icon-feather-eye cursor-pointer'></i>
+                <NavLink to='/user-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
             </td>
         </tr>);
         // }

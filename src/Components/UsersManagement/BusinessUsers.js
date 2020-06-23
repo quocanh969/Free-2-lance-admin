@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Swal from 'sweetalert2';
@@ -109,7 +109,7 @@ class BusinessUsersComponent extends Component {
                 </select>
             </td>
             <td className='text-center'>
-                <i className='icon-feather-eye cursor-pointer'></i>
+                <NavLink to='user-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
             </td>
 
             {/* <td className="cursor-pointer" onClick={() => this.turnStatusClick(e.id,e.status,e.role, e.email)}>

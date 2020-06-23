@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom';
+import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { prettierNumber, prettierDate } from '../../Ultis/Helper/HelperFunction';
 
@@ -100,7 +100,7 @@ class PendingJobsComponent extends Component {
                 </select>
             </td>
             <td className='text-center'>
-                <i className='icon-feather-eye cursor-pointer'></i>
+                <NavLink to='/job-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
             </td>
         </tr>);
         // }
@@ -229,6 +229,7 @@ class PendingJobsComponent extends Component {
             </div>
         )
     }
+    
 }
 
 // Container

@@ -53,7 +53,7 @@ class SideBarComponent extends Component {
                 </div>
                 <li className="nav-item">
                     <NavLink className="nav-link font-weight-bold pb-2 pt-3" to="/pending-job-management">
-                        <i className="icon-line-awesome-hourglass-2"/><span>&nbsp;Công việc chờ duyệt</span>
+                        <i className="icon-line-awesome-hourglass-2"/><span>&nbsp;Công việc</span>
                     </NavLink>
                 </li>    
 

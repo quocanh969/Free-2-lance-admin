@@ -47,8 +47,6 @@ class PersonalUsersComponent extends Component {
             else {
                 text = 'kích hoạt';
             }
-
-            console.log(val);
             Swal.fire({
                 text: "Bạn có chắc là muốn " + text + " tài khoản người dùng",
                 icon: 'warning',
@@ -109,18 +107,6 @@ class PersonalUsersComponent extends Component {
             <td className='text-center'>
                 <i className='icon-feather-eye cursor-pointer'></i>
             </td>
-
-            {/* <td className="cursor-pointer" onClick={() => this.turnStatusClick(e.id,e.status,e.role, e.email)}>
-                    {e.status === 1 || e.status === true
-                    ?
-                    <i className="fa fa-user text-success"></i>
-                    :
-                    <i className="fa fa-user-slash text-danger"></i>
-                    } 
-                </td>
-                <td className="cursor-pointer" onClick={() => this.detailClick(e.id, e.role)}>
-                    <i className="fa fa-angle-right"></i>
-                </td> */}
         </tr>);
         // }
         //}
@@ -188,7 +174,7 @@ class PersonalUsersComponent extends Component {
                             </div>
                             <div className="col-3 text-right">
                                 <div className="input-group mb-3">
-                                    <input type="text" id="user-search-input" className="form-control" placeholder="Search ..." />
+                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên/email .." />
                                     <div className="input-group-append">
                                         <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchUser() }}>
                                             <i className="fa fa-search"></i>

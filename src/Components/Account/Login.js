@@ -6,42 +6,45 @@ import '../../Assets/css/login.css';
 
 class LoginComponent extends Component {
 
-    getTimeColor(time) {        
-        let datetime = time.getHours()
+    getTimeColor() {
+        let today = new Date();       
+        let datetime = today.getHours()
         if(datetime >= 22 || datetime <= 4)
         {
-            return 'bg-night';
+            return {bgClass:'bg-night', greeting: 'Khuya rồi đấy, tranh thủ nghỉ sớm'};
         }
         else if(datetime >= 5 && datetime <= 7)
         {
-            return 'bg-early-morning';
+            return {bgClass:'bg-early-morning',  greeting: 'Sáng sớm tinh mơ, đã tỉnh ngủ chưa'};
         }
         else if(datetime >= 8 && datetime <= 11)
         {
-            return 'bg-morning';
+            return {bgClass:'bg-morning', greeting: 'Buổi sáng năng động, chúc ngày mới tốt lành'};
         }
         else if(datetime >= 12 && datetime <= 15)
         {
-            return 'bg-noon';
+            return {bgClass:'bg-noon', greeting: 'Trời trưa nóng bức, cố lên'};
         }
         else if(datetime >= 16 && datetime <= 19)
         {
-            return 'bg-afternoon';
+            return {bgClass:'bg-afternoon', greeting: 'Chiều muộn yên ả, thư thả làm việc'};
         }
         else
         {
-            return 'bg-evening';
+            return {bgClass:'bg-evening', greeting: 'Làm viêc buổi đêm, tĩnh tâm'};
         }
     }
 
-    render() {     
+    render() {    
+        let {bgClass, greeting} = this.getTimeColor(); 
         return (
-            <div id='background-login' className={"container-fluid " + this.getTimeColor(new Date())}>
+            <div id='background-login' className={"container-fluid " + bgClass}>
                 {/* Outer Row */}
+                <div className='text-white text-center pt-3' style={{fontSize: '50px'}}>{greeting}</div>
                 <div className="row justify-content-center">
                     <div className="col-6">
                         <div className="card o-hidden border-0 shadow-lg my-5">
-                            <div className="card-body p-0">
+                            <div className="card-body p-0">                                
                                 {/* Nested Row within Card Body */}
                                 <div className="row">
                                     <div className="col">
@@ -76,9 +79,6 @@ class LoginComponent extends Component {
                                                 </button>
                                             </form>
                                             <hr />
-                                            <div className="text-center">
-                                                <NavLink className="small" to="/register">Tạo tài khoản !</NavLink>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

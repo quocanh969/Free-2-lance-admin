@@ -18,6 +18,7 @@ import Tags from './Components/OtherManagement/Tags';
 import UserDetail from './Components/UsersManagement/UserDetail';
 import JobDetail from './Components/JobsManagement/JobDetail';
 import Login from './Components/Account/Login';
+import Locations from './Components/OtherManagement/Locations';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <SRoute path='/pending-job-management' exact component={PendingJobs}></SRoute>
           <SRoute path='/job-detail' exact component={JobDetail}></SRoute>
           <SRoute path='/report-management' exact component={Reports}></SRoute>
+          <SRoute path='/area-management' exact component={Locations}></SRoute>
           {/* <Redirect to='/not-found'></Redirect> */}
         </Switch>
       </BrowserRouter>

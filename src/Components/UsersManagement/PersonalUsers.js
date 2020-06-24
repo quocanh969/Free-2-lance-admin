@@ -166,13 +166,13 @@ class PersonalUsersComponent extends Component {
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className="col-9 btn-group-sm" role="group">
+                            <div className="col-8 btn-group-sm" role="group">
                                 <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
                                 <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
                                 <div onClick={() => { this.setState({ queryType: 4 }) }} className={"btn " + (this.state.queryType === 4 ? 'btn-secondary' : 'btn-outline-secondary')}>Chờ xác thực</div>
                                 <div onClick={() => { this.setState({ queryType: 5 }) }} className={"btn " + (this.state.queryType === 5 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
                             </div>
-                            <div className="col-3 text-right">
+                            <div className="col-4 text-right">
                                 <div className="input-group mb-3">
                                     <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên/email .." />
                                     <div className="input-group-append">

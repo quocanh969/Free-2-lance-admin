@@ -65,7 +65,12 @@ class SideBarComponent extends Component {
                     <NavLink className="nav-link font-weight-bold pb-2 pt-3" to="/tags-management">
                         <i className="icon-line-awesome-tags"/><span>&nbsp;Tags</span>
                     </NavLink>
-                </li>            
+                </li>
+                <li className="nav-item">
+                    <NavLink className="nav-link font-weight-bold py-2" to="/tags-management">
+                        <i className="icon-feather-map"/><span>&nbsp;Khu vực</span>
+                    </NavLink>
+                </li>           
                 
                 {/* Sidebar Toggler (Sidebar) */}
                 {/* <div className="text-center d-none d-md-inline">

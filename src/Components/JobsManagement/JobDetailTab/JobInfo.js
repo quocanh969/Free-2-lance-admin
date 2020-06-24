@@ -6,6 +6,8 @@ import { withRouter } from 'react-router-dom';
 import imagePlaceholder from '../../../Assets/images/image-placeholder.jpg';
 import JobApplicants from './JobApplicants';
 
+import Swal from 'sweetalert2';
+
 class JobInfoComponent extends Component {
 
     constructor(props) {
@@ -35,7 +37,7 @@ class JobInfoComponent extends Component {
             fullname: 'John Cena',
             email: 'tranquocanh858@gmail.com',
 
-            images: ['','',''],
+            images: ['','','','','',''],
 
             tags: [
                 {
@@ -66,8 +68,38 @@ class JobInfoComponent extends Component {
         else
         {
             // gọi api
-            // alert
-            this.setState({id_status: newStatus});
+            let text = '';
+            if(newStatus === 0)
+            {
+                text = 'gỡ';
+            }
+            else
+            {
+                text = 'khôi phục';
+            }
+            Swal.fire({
+                text: "Bạn có chắc là muốn " + text + " công việc này",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ok, tôi đồng ý',
+                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.value) {
+                    Swal.fire({
+                        text: 'Thay đổi thành công',
+                        icon: 'success',
+                    });
+                    this.setState({id_status: newStatus});
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire({
+                        text: 'Thay đổi không được thực hiện',
+                        icon: 'error',
+                    })
+                }
+                else {
+                }
+            })
         }
     }
 

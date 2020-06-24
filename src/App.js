@@ -17,12 +17,15 @@ import Home from './Components/Home';
 import Tags from './Components/OtherManagement/Tags';
 import UserDetail from './Components/UsersManagement/UserDetail';
 import JobDetail from './Components/JobsManagement/JobDetail';
+import Login from './Components/Account/Login';
 
 function App() {
   return (
     <div>
       <BrowserRouter>      
-        <Switch>
+        <Switch>          
+          <SRoute path='/' exact component={Home}></SRoute>
+          <Route path='/sign-in' exact component={Login}></Route>
           <SRoute path='/' exact component={Home}></SRoute>
           <SRoute path='/personal-user-management' exact component={PersonalUsers}></SRoute>
           <SRoute path='/business-user-management' exact component={BusinessUsers}></SRoute>

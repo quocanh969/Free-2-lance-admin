@@ -1,0 +1,27 @@
+#background-login {
+    height: 100vh;
+}
+
+.bg-night {
+    background-color: #130f40;
+}
+
+.bg-early-morning {
+    background-color: lightskyblue;
+}
+
+.bg-morning {
+    background-color: #f6e58d;
+}
+
+.bg-noon {
+    background-color: #f9ca24;
+}
+
+.bg-afternoon {
+    background-color: #c23616;
+}
+
+.bg-evening {
+    background-color: #273c75;
+}

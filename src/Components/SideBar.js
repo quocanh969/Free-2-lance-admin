@@ -52,10 +52,15 @@ class SideBarComponent extends Component {
                     Quản lý công việc
                 </div>
                 <li className="nav-item">
-                    <NavLink className="nav-link font-weight-bold pb-2 pt-3" to="/pending-job-management">
-                        <i className="icon-line-awesome-hourglass-2"/><span>&nbsp;Công việc</span>
+                    <NavLink className="nav-link font-weight-bold pb-2 pt-3" to="/job-management">
+                        <i className="icon-material-outline-business-center"/><span>&nbsp;Công việc</span>
                     </NavLink>
                 </li>    
+                <li className="nav-item">
+                    <NavLink className="nav-link font-weight-bold py-2" to="/topic-management">
+                        <i className="icon-material-outline-layers"/><span>&nbsp;Chủ đề</span>
+                    </NavLink>
+                </li>
 
                 <hr className="sidebar-divider" />                
                 <div className="sidebar-heading">
@@ -67,7 +72,7 @@ class SideBarComponent extends Component {
                     </NavLink>
                 </li>
                 <li className="nav-item">
-                    <NavLink className="nav-link font-weight-bold py-2" to="/tags-management">
+                    <NavLink className="nav-link font-weight-bold py-2" to="/area-management">
                         <i className="icon-feather-map"/><span>&nbsp;Khu vực</span>
                     </NavLink>
                 </li>           

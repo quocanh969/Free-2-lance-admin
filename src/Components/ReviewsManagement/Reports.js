@@ -227,10 +227,12 @@ class ReportsComponent extends Component {
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className="col-8 btn-group-sm" role="group">
-                                <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                                <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Chưa giải quyết</div>
-                                <div onClick={() => { this.setState({ queryType: 3 }) }} className={"btn " + (this.state.queryType === 3 ? 'btn-secondary' : 'btn-outline-success')}>Đã giải quyết</div>
+                            <div className='col-8'>
+                                <div className="btn-group btn-group-sm" role="group">
+                                    <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
+                                    <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Chưa giải quyết</div>
+                                    <div onClick={() => { this.setState({ queryType: 3 }) }} className={"btn " + (this.state.queryType === 3 ? 'btn-secondary' : 'btn-outline-success')}>Đã giải quyết</div>
+                                </div>
                             </div>
                             <div className="col-4 text-right">
                                 <div className="input-group mb-3">

@@ -158,11 +158,13 @@ class JobInfoComponent extends Component {
                                 )
                             )}                            
                         </div>
-                        <div className="btn-group-sm" role="group">
-                            <div onClick={() => { this.handleChangeStatus(0) }} className={"btn " + (this.state.id_status === 0 ? 'btn-danger' : 'btn-outline-danger')}>Bị gỡ</div>
-                            <div onClick={() => { this.handleChangeStatus(1) }}className={"btn " + (this.state.id_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Đang tuyển</div>
-                            <div className={"btn " + (this.state.id_status === 2 ? 'btn-success' : 'btn-outline-success')}>Đang thực hiện</div>
-                            <div className={"btn " + (this.state.id_status === 3 ? 'btn-primary' : 'btn-outline-primary')}>Hoàn thành</div>
+                        <div>
+                            <div className="btn-group btn-group-sm" role="group">
+                                <div onClick={() => { this.handleChangeStatus(0) }} className={"btn " + (this.state.id_status === 0 ? 'btn-danger' : 'btn-outline-danger')}>Bị gỡ</div>
+                                <div onClick={() => { this.handleChangeStatus(1) }}className={"btn " + (this.state.id_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Đang tuyển</div>
+                                <div className={"btn " + (this.state.id_status === 2 ? 'btn-warning' : 'btn-outline-warning')}>Đang thực hiện</div>
+                                <div className={"btn " + (this.state.id_status === 3 ? 'btn-success' : 'btn-outline-success')}>Hoàn thành</div>
+                            </div>
                         </div>
                     </div>
 

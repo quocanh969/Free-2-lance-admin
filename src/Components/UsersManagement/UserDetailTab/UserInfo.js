@@ -102,10 +102,12 @@ render() {
                             </h5>
                             <h6>(Ngày tạo tài khoản: {prettierDate(this.state.createDate)})</h6>
                         </div>
-                        <div className="btn-group-sm" role="group">
-                            <div onClick={() => { this.handleChangeStatus(-1) }} className={"btn " + (this.state.account_status === -1 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
-                            <div onClick={() => { this.handleChangeStatus(1) }} className={"btn " + (this.state.account_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Chờ xác thực</div>
-                            <div onClick={() => { this.handleChangeStatus(2) }} className={"btn " + (this.state.account_status === 2 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
+                        <div>
+                            <div className="btn-group btn-group-sm" role="group">
+                                <div onClick={() => { this.handleChangeStatus(-1) }} className={"btn " + (this.state.account_status === -1 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
+                                <div onClick={() => { this.handleChangeStatus(1) }} className={"btn " + (this.state.account_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Chờ xác thực</div>
+                                <div onClick={() => { this.handleChangeStatus(2) }} className={"btn " + (this.state.account_status === 2 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
+                            </div>
                         </div>
                     </div>
                     <div className='row'>

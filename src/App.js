@@ -19,6 +19,7 @@ import UserDetail from './Components/UsersManagement/UserDetail';
 import JobDetail from './Components/JobsManagement/JobDetail';
 import Login from './Components/Account/Login';
 import Locations from './Components/OtherManagement/Locations';
+import Topics from './Components/JobsManagement/Topic';
 
 function App() {
   return (
@@ -32,7 +33,8 @@ function App() {
           <SRoute path='/business-user-management' exact component={BusinessUsers}></SRoute>
           <SRoute path='/user-detail' exact component={UserDetail}></SRoute>
           <SRoute path='/tags-management' exact component={Tags}></SRoute>
-          <SRoute path='/pending-job-management' exact component={PendingJobs}></SRoute>
+          <SRoute path='/job-management' exact component={PendingJobs}></SRoute>
+          <SRoute path='/topic-management' exact component={Topics}></SRoute>
           <SRoute path='/job-detail' exact component={JobDetail}></SRoute>
           <SRoute path='/report-management' exact component={Reports}></SRoute>
           <SRoute path='/area-management' exact component={Locations}></SRoute>

@@ -140,11 +140,13 @@ class UserJobListComponent extends Component {
                 <div>
                     {/* Headline */}
                     <div className="row my-1">
-                        <div className="col-9 btn-group-sm" role="group">
-                            <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                            <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Đang tuyển</div>
-                            <div onClick={() => { this.setState({ queryType: 4 }) }} className={"btn " + (this.state.queryType === 4 ? 'btn-secondary' : 'btn-outline-secondary')}>Đang thực hiện</div>
-                            <div onClick={() => { this.setState({ queryType: 5 }) }} className={"btn " + (this.state.queryType === 5 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
+                        <div className='col-9'>
+                            <div className="btn-group btn-group-sm" role="group">
+                                <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
+                                <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Đang tuyển</div>
+                                <div onClick={() => { this.setState({ queryType: 4 }) }} className={"btn " + (this.state.queryType === 4 ? 'btn-secondary' : 'btn-outline-secondary')}>Đang thực hiện</div>
+                                <div onClick={() => { this.setState({ queryType: 5 }) }} className={"btn " + (this.state.queryType === 5 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
+                            </div>
                         </div>
                         <div className="col-3 text-right">
                             <div className="input-group mb-3">

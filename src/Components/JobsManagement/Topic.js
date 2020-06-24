@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-class TagsComponent extends Component {
+class TopicsComponent extends Component {
 
     constructor(props) {
         super(props);
@@ -22,7 +22,7 @@ class TagsComponent extends Component {
         // }
     }
 
-    handleSearchTag() {
+    handleSearchTopic() {
         let searchStr = document.getElementById('user-search-input').value;
         if (searchStr === '') {
             return;
@@ -42,7 +42,7 @@ class TagsComponent extends Component {
 
         content.push(<tr key={0}>
             <td>1</td>
-            <td>Thời vụ</td>
+            <td>Kinh doanh buôn bán</td>
             <td>20</td>
             <td>
                 <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i>
@@ -97,14 +97,14 @@ class TagsComponent extends Component {
         return (
             <div className="container-fluid">
                 {/* Page Heading */}
-                <h1 className="h3 mb-2 text-gray-800">Quản lý nhãn của công việc</h1>
+                <h1 className="h3 mb-2 text-gray-800">Quản lý chủ đề của công việc</h1>
                 <p className="mb-4">
-                    Danh sách nhãn
+                    Danh sách chủ đề hiện có
                 </p>
                 {/* Userlist DataTales Example */}
                 <div className="card shadow mb-4">
                     <div className="card-header py-3">
-                        <h6 className="m-0 font-weight-bold text-primary"><i className="icon-line-awesome-tag" />&nbsp;&nbsp;Nhãn công việc</h6>
+                        <h6 className="m-0 font-weight-bold text-primary"><i className="icon-material-outline-outlined-flag" />&nbsp;&nbsp;Chủ đề công việc</h6>
                     </div>
                     <div className="card-body">
                         {/* Headline */}
@@ -117,15 +117,15 @@ class TagsComponent extends Component {
                             </div>                            
                             <div className="col-4 text-right">
                                 <div className="input-group mb-3">
-                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên dán nhãn .." />
+                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên chủ đề .." />
                                     <div className="input-group-append">
-                                        <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchTag() }}>
+                                        <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchTopic() }}>
                                             <i className="fa fa-search"></i>
                                         </div>
                                     </div>
                                 </div>                                
                             </div>
-                            <div className='col-2'><div className='w-100 btn btn-danger px-0'><i className='icon-feather-plus'></i>&nbsp;Thêm nhãn mới</div></div>
+                            <div className='col-2'><div className='w-100 btn btn-danger px-0'><i className='icon-feather-plus'></i>&nbsp;Thêm chủ đề mới</div></div>
                         </div>
 
                         {/* Table */}
@@ -134,7 +134,7 @@ class TagsComponent extends Component {
                                 <thead className="thead-dark">
                                     <tr>
                                         <th>Id</th>
-                                        <th>Nhãn</th>
+                                        <th>Chủ đề</th>
                                         <th>Số công việc</th>
                                         <th>Chỉnh sửa</th>
                                         <th>Xóa</th>
@@ -192,5 +192,5 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-const Tags = withRouter(connect(mapStateToProps, mapDispatchToProps)(TagsComponent));
-export default Tags;
+const Topics = withRouter(connect(mapStateToProps, mapDispatchToProps)(TopicsComponent));
+export default Topics;

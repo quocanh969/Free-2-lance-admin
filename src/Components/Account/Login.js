@@ -3,11 +3,15 @@ import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 
 import '../../Assets/css/login.css';
+import { sendLogIn } from '../../Actions/User.acction';
+import { history } from '../../Ultis/history/history';
 
 class LoginComponent extends Component {
 
     constructor(props) {
         super(props);
+
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     getTimeColor() {
@@ -41,17 +45,24 @@ class LoginComponent extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        
+        let {onSendLogin} = this.props;
+
+        let username = document.getElementById('username').value;
+        let password = document.getElementById('password').value;
+
+        onSendLogin(username, password);
         
     }
 
     render() {    
         let bgClass = this.getTimeColor();
+        let {sending, code, message } = this.props.SignInReducer;
+
         return (
-            <div id='background-login' className={"container-fluid " + bgClass}>
+            <div id='background-login' className={"container-fluid pt-5 " + bgClass}>
                 {/* Outer Row */}
                 <div className="row justify-content-center">
-                    <div className="col-6">
+                    <div className="col-6 mt-2">
                         <div className="card o-hidden border-0 shadow-lg my-5">
                             <div className="card-body p-0">                                
                                 {/* Nested Row within Card Body */}
@@ -64,7 +75,7 @@ class LoginComponent extends Component {
 
                                             <form className="user" onSubmit={this.handleSubmit}>
                                                 <div className="form-group">
-                                                    <input type="email"
+                                                    <input type="text"
                                                         required
                                                         className="form-control form-control-user"
                                                         id="username"
@@ -81,9 +92,28 @@ class LoginComponent extends Component {
                                                         placeholder="Password"
                                                     />
                                                 </div>
-                                                <button className="btn btn-primary btn-user btn-block mt-5 font-weight-bold font-20" type="submit">
-                                                    Đăng nhập
-                                                </button>
+                                                {(
+                                                    !sending && code !== 0
+                                                    ?
+                                                    <div className={"alert rounded rounded-pill mt-2 " + (code === 1 ? 'alert-success' : 'alert-danger')}>
+                                                        {message}
+                                                    </div>
+                                                    :
+                                                    ''
+                                                )}
+                                                {(
+                                                    sending
+                                                    ?
+                                                    <div className='text-center mt-5'>
+                                                        <div className="spinner-border text-primary" role="status">
+                                                            <span className="sr-only">Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                    :
+                                                    <button className="btn btn-primary btn-user btn-block mt-5 font-weight-bold font-20" type="submit">
+                                                        Đăng nhập
+                                                    </button>
+                                                )}                                                
                                             </form>
                                             <hr />
                                         </div>
@@ -105,7 +135,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        
+        onSendLogin: (username, password) => {
+            dispatch(sendLogIn(username, password));
+        },
     }
 }
 

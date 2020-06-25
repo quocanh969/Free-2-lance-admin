@@ -1,7 +1,7 @@
 import Axios from "axios";
 import { MyStore } from "../..";
 import Swal from 'sweetalert2';
-import { history } from "../../ultis/history/history";
+import { history } from "../history/history";
 
 let axios = Axios.create({
   baseURL: "http://localhost:8000/",

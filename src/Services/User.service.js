@@ -1,9 +1,11 @@
-import axios from "../Ultis/Axios/Axios.default"
+import axios from "../Ultis/Axios/Axios.default";
 
-export const signIn = (username, password) => {
-    axios.post('login',
+function signIn(username, password) {
+    return axios.post('login',
     {
         username,
         password,
     })
 }
+
+export {signIn}

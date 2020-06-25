@@ -6,41 +6,50 @@ import '../../Assets/css/login.css';
 
 class LoginComponent extends Component {
 
+    constructor(props) {
+        super(props);
+    }
+
     getTimeColor() {
         let today = new Date();       
         let datetime = today.getHours()
         if(datetime >= 22 || datetime <= 4)
         {
-            return {bgClass:'bg-night', greeting: 'Khuya rồi đấy, tranh thủ nghỉ sớm'};
+            return 'bg-night';
         }
         else if(datetime >= 5 && datetime <= 7)
         {
-            return {bgClass:'bg-early-morning',  greeting: 'Sáng sớm tinh mơ, đã tỉnh ngủ chưa'};
+            return 'bg-early-morning';
         }
         else if(datetime >= 8 && datetime <= 11)
         {
-            return {bgClass:'bg-morning', greeting: 'Buổi sáng năng động, chúc ngày mới tốt lành'};
+            return 'bg-morning';
         }
         else if(datetime >= 12 && datetime <= 15)
         {
-            return {bgClass:'bg-noon', greeting: 'Trời trưa nóng bức, cố lên'};
+            return 'bg-noon';
         }
         else if(datetime >= 16 && datetime <= 19)
         {
-            return {bgClass:'bg-afternoon', greeting: 'Chiều muộn yên ả, thư thả làm việc'};
+            return 'bg-afternoon';
         }
         else
         {
-            return {bgClass:'bg-evening', greeting: 'Làm viêc buổi đêm, tĩnh tâm'};
+            return 'bg-evening';
         }
     }
 
+    handleSubmit(e) {
+        e.preventDefault();
+        
+        
+    }
+
     render() {    
-        let {bgClass, greeting} = this.getTimeColor(); 
+        let bgClass = this.getTimeColor();
         return (
             <div id='background-login' className={"container-fluid " + bgClass}>
                 {/* Outer Row */}
-                <div className='text-white text-center pt-3' style={{fontSize: '50px'}}>{greeting}</div>
                 <div className="row justify-content-center">
                     <div className="col-6">
                         <div className="card o-hidden border-0 shadow-lg my-5">
@@ -60,8 +69,7 @@ class LoginComponent extends Component {
                                                         className="form-control form-control-user"
                                                         id="username"
                                                         name="username"
-                                                        placeholder="Email"
-                                                        onChange={this.handleChange}
+                                                        placeholder="Username"
                                                     />
                                                 </div>
                                                 <div className="form-group">
@@ -71,7 +79,6 @@ class LoginComponent extends Component {
                                                         name="password"
                                                         id="password"
                                                         placeholder="Password"
-                                                        onChange={this.handleChange}
                                                     />
                                                 </div>
                                                 <button className="btn btn-primary btn-user btn-block mt-5 font-weight-bold font-20" type="submit">
@@ -98,9 +105,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        
     }
 }
 
-const Login = withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginComponent));
+const Login = withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(LoginComponent)
+);;
+
 export default Login;

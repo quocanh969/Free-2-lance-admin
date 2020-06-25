@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, NavLink } from 'react-router-dom';
+import { history } from '../Ultis/history/history';
 
 class HomeComponent extends Component {
   render() {
@@ -10,7 +11,9 @@ class HomeComponent extends Component {
         {/* Page Heading */}
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
-          <a href="#" className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i className="fas fa-download fa-sm text-white-50" /> Generate Report</a>
+          <NavLink to='/login' className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+            <i className="fas fa-download fa-sm text-white-50" /> Generate Report
+          </NavLink>
         </div>
         {/* Content Row */}
         <div className="row">
@@ -272,16 +275,17 @@ class HomeComponent extends Component {
   }
 }
 
-// Container
 const mapStateToProps = (state) => {
   return state;
-}
+};
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
 
-  }
-}
+  };
+};
 
-const Home = withRouter(connect(mapStateToProps, mapDispatchToProps)(HomeComponent));
+const Home = withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(HomeComponent)
+);
 export default Home;

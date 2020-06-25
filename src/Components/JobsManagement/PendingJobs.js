@@ -233,17 +233,22 @@ class PendingJobsComponent extends Component {
     }
     
 }
-
-// Container
+  
 const mapStateToProps = (state) => {
     return state;
-  }
+  };
   
-  const mapDispatchToProps = dispatch => {
+  const mapDispatchToProps = (dispatch) => {
     return {
+      onReset: () => {
+        dispatch({
+          type: 'USER_LOG',
+        });
+      },
+    };
+  };
   
-    }
-  }
-  
-  const PendingJobs = withRouter(connect(mapStateToProps, mapDispatchToProps)(PendingJobsComponent));
+  const PendingJobs = withRouter(
+    connect(mapStateToProps, mapDispatchToProps)(PendingJobsComponent)
+  );
   export default PendingJobs;

@@ -160,7 +160,7 @@ class ReportsComponent extends Component {
                 <div className='text-truncate' style={{ width: '150px' }}>124 Đường số 12345678215ssx12ca32151v515e415e4eq</div>                
             </td>
             <td>
-                <select id={'select-status-' + 1} defaultValue={2} onChange={() => { this.handleChangeStatus(1, 2) }}>                    
+                <select id={'select-status-' + 1} defaultValue={1} onChange={() => { this.handleChangeStatus(1, 1) }}>                    
                     <option value={1}>Chờ giải quyết</option>
                     <option value={2}>Đã giải quyết</option>
                 </select>

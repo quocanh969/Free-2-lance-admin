@@ -4,10 +4,11 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import { Provider } from 'react-redux';
+
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import reducer from './Reducers/reducer';
+import reducer from './reducers/reducer';
+import { Provider } from 'react-redux';
 
 
 export const MyStore = createStore(
@@ -17,7 +18,7 @@ export const MyStore = createStore(
   )
 )
 
-ReactDOM.render(    
+ReactDOM.render(
   <Provider store={MyStore}>
       <App />
   </Provider>

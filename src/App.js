@@ -1,13 +1,10 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import './Assets/css/style.css';
 import './Assets/css/icons.css';
 
-import {history} from './Ultis/history/history';
-
 import { BrowserRouter, Switch, Redirect, Router, Route } from 'react-router-dom';
-import { SRoute } from './Ultis/CustomRoutes/CustomRoute';
+import {SRoute} from './Ultis/CustomRoutes/CustomRoute';
 
 import PersonalUsers from './Components/UsersManagement/PersonalUsers';
 import BusinessUsers from './Components/UsersManagement/BusinessUsers';
@@ -20,15 +17,13 @@ import JobDetail from './Components/JobsManagement/JobDetail';
 import Login from './Components/Account/Login';
 import Locations from './Components/OtherManagement/Locations';
 import Topics from './Components/JobsManagement/Topic';
+import { history } from './Ultis/history/history';
 
 function App() {
   return (
-    <div>
-      <BrowserRouter>      
-        <Switch>          
-          <SRoute path='/' exact component={Home}></SRoute>
-          <Route path='/sign-in' exact component={Login}></Route>
-          <SRoute path='/' exact component={Home}></SRoute>
+      <Router history={history}>   
+        <Switch>                  
+          <SRoute path='/' exact component={Home}></SRoute>          
           <SRoute path='/personal-user-management' exact component={PersonalUsers}></SRoute>
           <SRoute path='/business-user-management' exact component={BusinessUsers}></SRoute>
           <SRoute path='/user-detail' exact component={UserDetail}></SRoute>
@@ -38,10 +33,10 @@ function App() {
           <SRoute path='/job-detail' exact component={JobDetail}></SRoute>
           <SRoute path='/report-management' exact component={Reports}></SRoute>
           <SRoute path='/area-management' exact component={Locations}></SRoute>
+          <Route path='/login' exact component={Login}></Route>
           {/* <Redirect to='/not-found'></Redirect> */}
         </Switch>
-      </BrowserRouter>
-    </div>
+      </Router>
   );
 }
 

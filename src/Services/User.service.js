@@ -5,7 +5,11 @@ function signIn(username, password) {
     {
         username,
         password,
-    })
+    });
 }
 
-export {signIn}
+function getUserInfo() {
+    return axios.get('users/');
+}
+
+export {signIn, getUserInfo}

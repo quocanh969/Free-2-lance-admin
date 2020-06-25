@@ -93,9 +93,9 @@ class LoginComponent extends Component {
                                                     />
                                                 </div>
                                                 {(
-                                                    !sending && code !== 0
+                                                    !sending && code === -1
                                                     ?
-                                                    <div className={"alert rounded rounded-pill mt-2 " + (code === 1 ? 'alert-success' : 'alert-danger')}>
+                                                    <div className="alert alert-danger rounded rounded-pill mt-2">
                                                         {message}
                                                     </div>
                                                     :

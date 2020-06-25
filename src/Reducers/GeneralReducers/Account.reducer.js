@@ -1,6 +1,5 @@
 const initState = {
     user: null,
-    token: '',
 }
 
 const AccountReducer = (state = initState, action) => {
@@ -10,7 +9,6 @@ const AccountReducer = (state = initState, action) => {
             return {
                 ...state,
                 user: action.user,
-                token: action.token,
             }
         case 'USER_LOG_OUT':
             return initState;

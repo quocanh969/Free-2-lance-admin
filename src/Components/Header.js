@@ -6,11 +6,23 @@ import { withRouter } from 'react-router-dom';
 import avatarPlaceholder from '../Assets/images/avatar_placeholder.png';
 import { getImageSrc } from '../Ultis/Helper/HelperFunction';
 import Swal from 'sweetalert2';
+import { history } from '../Ultis/history/history';
+
+import { sendUpdateInfo } from '../Actions/User.acction';
 
 class HeaderComponent extends Component {
 
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount() {
+        let{user} = this.props.AccountReducer;
+        let {onSendUpdateInfo} = this.props;
+
+        if(user === null) {
+            onSendUpdateInfo();
+        }
     }
 
     handleSignOut() {
@@ -23,7 +35,10 @@ class HeaderComponent extends Component {
             position: 'top'
         }).then((result) => {
             if (result.value) {
-                // Đăng xuất
+                let {onSignOut} = this.props;
+                localStorage.clear();
+                onSignOut();
+                history.push('/login')
             } else {
                 // do nothing
             }
@@ -31,6 +46,7 @@ class HeaderComponent extends Component {
     }
 
     render() {
+        let {user} = this.props.AccountReducer;
         return (
             <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                 
@@ -139,8 +155,8 @@ class HeaderComponent extends Component {
                     {/* Nav Item - User Information */}
                     <li className="nav-item dropdown no-arrow">
                         <a className="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span className="mr-2 d-none d-lg-inline text-gray-600 small">John Cena</span>
-                                <img className="img-profile rounded-circle" src={getImageSrc(null, avatarPlaceholder)} />
+                            <span className="mr-2 d-none d-lg-inline text-gray-600 small">Xin chào, {user !== null ? user.fullname : ''}</span>
+                            <img className="img-profile rounded-circle" src={getImageSrc(null, avatarPlaceholder)} />
                         </a>
                         {/* Dropdown - User Information */}
                         <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">                            
@@ -164,7 +180,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        onSendUpdateInfo: () => {
+            dispatch(sendUpdateInfo());
+        },
+        onSignOut: () => {
+            dispatch({
+                type: 'USER_LOG_OUT',
+            })
+        },
     }
 }
 

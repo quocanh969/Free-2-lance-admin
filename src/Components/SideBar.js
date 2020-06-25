@@ -10,14 +10,6 @@ class SideBarComponent extends Component {
         super(props);
     }
 
-    componentWillMount() {
-        // let token = JSON.parse(localStorage.getItem('token'));
-
-        // if(!token) {
-        //     history.push('/login');
-        // }
-    }
-
     render() {
         return (
             <ul className="navbar-nav bg-black sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -100,7 +92,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        
     }
 }
 

@@ -26,6 +26,17 @@ export const prettierDateAgo = (date) => {
     else return Math.ceil(diffDays / 365.25) - 1 + " năm trước";
 };
 
+export const getBase64 = (file, cb) => {
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+      cb(reader.result);
+    };
+    reader.onerror = function (error) {
+      console.log("Error: ", error);
+    };
+}
+
 export const getImageSrc = (data, imagePlaceholder) => {
     let img = imagePlaceholder;
     if (data !== null) {

@@ -128,10 +128,10 @@ class BusinessUsersComponent extends Component {
             content.push(
             <tr key={index}>
                 <td>{e.id_user}</td>
-                <td>{e.fullname}</td>
+                <td><div className='text-truncate' style={{ width: '100px' }}>{e.fullname}</div></td>
                 <td><div className='text-truncate' style={{ width: '70px' }}>{e.email}</div></td>
-                <td><div className='text-truncate' style={{ width: '150px' }}>Công ty trà sữa</div></td>
-                <td>Giám đốc</td>
+                <td><div className='text-truncate' style={{ width: '100px' }}>{e.company_name}</div></td>
+                <td>{e.position}</td>
                 <td>{e.dial}</td>
                 <td>{e.identity}</td>            
                 <td>
@@ -142,7 +142,7 @@ class BusinessUsersComponent extends Component {
                     </select>
                 </td>
                 <td className='text-center'>
-                    <NavLink to='user-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
+                    <NavLink to={'user-detail/id='+e.id_user}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
                 </td>
             </tr>);
             
@@ -233,10 +233,10 @@ class BusinessUsersComponent extends Component {
                                         <th>Email</th>
                                         <th>Công ty</th>
                                         <th>Vai trò</th>
-                                        <th>Số điện thoại</th>
-                                        <th>Số CMND</th>                                        
+                                        <th>Sđt</th>
+                                        <th>CMND</th>                                        
                                         <th>Trạng thái</th>
-                                        <th>Chi tiết</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>

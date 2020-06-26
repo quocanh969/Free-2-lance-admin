@@ -29,7 +29,7 @@ function App() {
           <SRoute path='/personal-user-management' exact component={PersonalUsers}></SRoute>
           <SRoute path='/business-user-management' exact component={BusinessUsers}></SRoute>
           <SRoute path='/employee-user-management' exact component={EmployeeUsers}></SRoute>
-          <SRoute path='/user-detail' exact component={UserDetail}></SRoute>
+          <SRoute path='/user-detail/id=:id_user' exact component={UserDetail}></SRoute>
           <SRoute path='/tags-management' exact component={Tags}></SRoute>
           <SRoute path='/job-management' exact component={PendingJobs}></SRoute>
           <SRoute path='/topic-management' exact component={Topics}></SRoute>

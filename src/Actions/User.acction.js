@@ -1,4 +1,4 @@
-import {signIn, getUserInfo, getUserList, setUserStatus} from '../Services/User.service';
+import {signIn, getUserInfo, getUserList, getUserDetail, getJobsByEmployerId, getJobsByApplicantId, setUserStatus} from '../Services/User.service';
 import { history } from '../Ultis/history/history';
 
 export const sendLogIn = (username, password) => {
@@ -101,6 +101,85 @@ export const getBusinessList = (take, page, queryName, account_status) => {
             list,
             total,
             page,
+        };
+    }
+}
+
+export const loadUserDetail = (id_user) => {
+    return (dispatch) => {
+        getUserDetail(id_user).then((res) => {
+            if(res.data.code === '200') {
+                dispatch(udpateUserDetail(res.data.data));
+            }
+        }).catch(err=> {
+            alert("Server gặp sự cố");
+        })
+    }
+
+    function udpateUserDetail(user) {
+        return {
+            type: "USER_DETAIL_UDPATE",
+            user,
+        };
+    }
+}
+
+export const loadJobsByEmployer = (page, take, queryName, status, id_user) => {
+    return (dispatch) => {
+        getJobsByEmployerId(page, take, queryName, status, id_user).then((res) => {
+            if(res.data.code === '200')
+            {
+                dispatch(updateJobList(res.data.data.jobsList, res.data.data.total, res.data.data.page));
+            }
+        }).catch(err=> {
+            alert("Server gặp sự cố");
+        })
+    }
+
+    function updateJobList(list,total,page) {
+        return {
+            type: "USER_DETAIL_JOB_LIST_UDPATE",
+            list,
+            total,
+            page,
+        };
+    }
+}
+
+export const loadJobsByApplicant = (page, take, queryName, status, id_user) => {
+    return (dispatch) => {
+        getJobsByApplicantId(page, take, queryName, status, id_user).then((res) => {
+            dispatch(updateTaskList(res.data.data.jobsList, res.data.data.total, res.data.data.page));
+        }).catch(err=> {
+        })
+    }
+    
+    function updateTaskList(list,total,page) {
+        return {
+            type: "USER_DETAIL_TASK_LIST_UDPATE",
+            list,
+            total,
+            page,
+        };
+    }
+}
+
+
+export const udpateUserStatus = (id_user, newStatus) => {
+    return (dispatch) => {
+        setUserStatus(id_user, newStatus).then((res) => {
+            if(res.data.code === '106') {
+                dispatch(udpateUserStatus(newStatus));
+            }            
+        }).catch(err=> {
+            alert('Server gặp vấn đề');
+        })
+    }
+    
+    function udpateUserStatus(newStatus) {
+        return {
+            type: "USER_DETAIL_STATUS_UDPATE",
+            newStatus,
         };
     }
 }

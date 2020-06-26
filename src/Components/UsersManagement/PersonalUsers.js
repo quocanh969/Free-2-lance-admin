@@ -91,7 +91,6 @@ class PersonalUsersComponent extends Component {
     renderUserList() {
         let { personal } = this.props.UserListReducer;
         let content = [];
-
         personal.forEach((e, index) => {
             content.push(<tr key={0}>
                 <td>{e.id_user}</td>

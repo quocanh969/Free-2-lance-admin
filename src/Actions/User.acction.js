@@ -65,8 +65,7 @@ export const sendUpdateInfo = (username, password) => {
 
 export const getPersonalList = (take, page, queryName, account_status) => {
     return (dispatch) => {
-        getUserList(take, page, queryName, account_status).then((res) => {
-            console.log(res);
+        getUserList(take, page, queryName, account_status, 0).then((res) => {
             if(res.data.code === '200') {
                 dispatch(udpatePersonalList(res.data.data.usersList, res.data.data.total, res.data.data.page));
             }            
@@ -78,6 +77,27 @@ export const getPersonalList = (take, page, queryName, account_status) => {
     function udpatePersonalList(list, total, page) {
         return {
             type: "PERSONAL_LIST_UDPATE",
+            list,
+            total,
+            page,
+        };
+    }
+}
+
+export const getBusinessList = (take, page, queryName, account_status) => {
+    return (dispatch) => {
+        getUserList(take, page, queryName, account_status, 1).then((res) => {
+            if(res.data.code === '200') {
+                dispatch(udpateBusinessList(res.data.data.usersList, res.data.data.total, res.data.data.page));
+            }            
+        }).catch(err=> {
+            alert("Server gặp sự cố");
+        })
+    }
+
+    function udpateBusinessList(list, total, page) {
+        return {
+            type: "BUSINESS_LIST_UDPATE",
             list,
             total,
             page,

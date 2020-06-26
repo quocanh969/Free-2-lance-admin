@@ -3,6 +3,8 @@ import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Swal from 'sweetalert2';
+import { getBusinessList } from '../../Actions/User.acction';
+import { setUserStatus } from '../../Services/User.service';
 
 class BusinessUsersComponent extends Component {
 
@@ -10,12 +12,20 @@ class BusinessUsersComponent extends Component {
         super(props);
 
         this.state = {
-            queryType: 1, // 1 - tất cả, 2 - bị cấm, 3 - chưa kích hoạt, 4 - chờ xác thực, 5 - đã xác thực
+            queryName: '',
+            queryType: 3, //3 - tất cả, -1 - bị cấm, 1 - chờ xác thực, 2 - đã xác thực
         }
+
+        this.handleFilter = this.handleFilter.bind(this);
     }
 
-    loadJobListFunc(page) {
+    componentWillMount() {
+        this.loadJobListFunc(1, '', 3); // lấy tất cả
+    }
 
+    loadJobListFunc(page, queryName, account_status) {
+        let {onGetBusinessList} = this.props;
+        onGetBusinessList(page, queryName, account_status);
     }
 
     handlePagination(pageNum) {
@@ -24,13 +34,23 @@ class BusinessUsersComponent extends Component {
         // }
     }
 
+    
+    handleFilter(newType) {
+        this.setState({queryType: newType},() => {
+            this.loadJobListFunc(1, this.state.queryName, this.state.queryType);
+        })
+    }
+
+
     handleSearchUser() {
         let searchStr = document.getElementById('user-search-input').value;
-        if (searchStr === '') {
+        if (searchStr === this.state.queryName) {
             return;
         }
         else {
-            // gọi api
+            this.setState({queryName: searchStr},() => {
+                this.loadJobListFunc(1, this.state.queryName, this.state.queryType);
+            })
         }
     }
 
@@ -59,9 +79,24 @@ class BusinessUsersComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
+                    setUserStatus(id_user, val).then(res=>{
+                        if(res.data.code === '106') {                            
+                            this.loadJobListFunc(this.props.UserListReducer.businessCurrentPage, this.state.queryName, this.queryType);
+                            Swal.fire({
+                                text: 'Thay đổi thành công',
+                                icon: 'success',
+                            })
+                        }
+                        else
+                        {
+                            Swal.fire({
+                                text: 'Thay đổi không được thực hiện',
+                                icon: 'error',
+                            })
+                            document.getElementById('select-status-' + id_user).value = current_value;
+                        }
+                    }).catch(err=> {
+                        alert('Server gặp sự cố')
                     })
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire({
@@ -86,46 +121,32 @@ class BusinessUsersComponent extends Component {
     }
 
     renderUserList() {
-        // let { tutorData, status, message, loading } = this.props.UsersReducer;
+        let {business} = this.props.UserListReducer;
         let content = [];
-        // for (let e of tutorData) {
-        //     let imgSrc = e.avatarLink;
-        //     if (imgSrc === "" || imgSrc === null) {
-        //     }
 
-        content.push(<tr key={0}>
-            <td>1</td>
-            <td>John Cena</td>
-            <td><div className='text-truncate' style={{ width: '70px' }}>tranquocanh858@gmail.com</div></td>
-            <td><div className='text-truncate' style={{ width: '150px' }}>Công ty trà sữa</div></td>
-            <td>Giám đốc</td>
-            <td>0123456789</td>
-            <td>0123456789101</td>            
-            <td>
-                <select id={'select-status-' + 1} defaultValue={-1} onChange={() => { this.handleChangeStatus(1, -1) }}>
-                    <option value={-1}>Bị cấm</option>
-                    <option value={1}>Chờ xác thực</option>
-                    <option value={2}>Đã xác thực</option>
-                </select>
-            </td>
-            <td className='text-center'>
-                <NavLink to='user-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
-            </td>
-
-            {/* <td className="cursor-pointer" onClick={() => this.turnStatusClick(e.id,e.status,e.role, e.email)}>
-                    {e.status === 1 || e.status === true
-                    ?
-                    <i className="fa fa-user text-success"></i>
-                    :
-                    <i className="fa fa-user-slash text-danger"></i>
-                    } 
+        business.forEach((e, index)=>{
+            content.push(
+            <tr key={index}>
+                <td>{e.id_user}</td>
+                <td>{e.fullname}</td>
+                <td><div className='text-truncate' style={{ width: '70px' }}>{e.email}</div></td>
+                <td><div className='text-truncate' style={{ width: '150px' }}>Công ty trà sữa</div></td>
+                <td>Giám đốc</td>
+                <td>{e.dial}</td>
+                <td>{e.identity}</td>            
+                <td>
+                    <select id={'select-status-' + e.id_user} value={e.account_status} onChange={() => { this.handleChangeStatus(e.id_user, e.account_status) }}>
+                        <option value={-1}>Bị cấm</option>
+                        <option value={1}>Chờ xác thực</option>
+                        <option value={2}>Đã xác thực</option>
+                    </select>
                 </td>
-                <td className="cursor-pointer" onClick={() => this.detailClick(e.id, e.role)}>
-                    <i className="fa fa-angle-right"></i>
-                </td> */}
-        </tr>);
-        // }
-        //}
+                <td className='text-center'>
+                    <NavLink to='user-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
+                </td>
+            </tr>);
+            
+        })        
 
         return content;
     }
@@ -164,8 +185,8 @@ class BusinessUsersComponent extends Component {
     }
 
     render() {
-        let { totalApplyingJobs, currentApplyingPage } = { totalApplyingJobs: 8, currentApplyingPage: 1 };
-        let totalPage = Math.ceil(totalApplyingJobs / 4);
+        let { totalBusiness, businessCurrentPage } = this.props.UserListReducer;
+        let totalPage = Math.ceil(totalBusiness / 4);
 
         return (
             <div className="container-fluid">
@@ -184,10 +205,10 @@ class BusinessUsersComponent extends Component {
                         <div className="row my-1">
                             <div className='col-8'>
                                 <div className="btn-group btn-group-sm" role="group">
-                                    <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                                    <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
-                                    <div onClick={() => { this.setState({ queryType: 4 }) }} className={"btn " + (this.state.queryType === 4 ? 'btn-secondary' : 'btn-outline-secondary')}>Chờ xác thực</div>
-                                    <div onClick={() => { this.setState({ queryType: 5 }) }} className={"btn " + (this.state.queryType === 5 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
+                                    <div onClick={() => { if(this.state.queryType !== 3 ) this.handleFilter(3) }} className={"btn " + (this.state.queryType === 3 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
+                                    <div onClick={() => { if(this.state.queryType !== -1 ) this.handleFilter(-1) }} className={"btn " + (this.state.queryType === -1 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
+                                    <div onClick={() => { if(this.state.queryType !== 1 ) this.handleFilter(1) }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}>Chờ xác thực</div>
+                                    <div onClick={() => { if(this.state.queryType !== 2 ) this.handleFilter(2) }} className={"btn " + (this.state.queryType === 2 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
                                 </div>
                             </div>
                             <div className="col-4 text-right">
@@ -227,20 +248,20 @@ class BusinessUsersComponent extends Component {
 
                         {/* Pagination */}
                         {(
-                            totalApplyingJobs === 0
+                            totalBusiness === 0
                                 ?
                                 ''
                                 :
                                 <nav aria-label="...">
                                     <ul className="pagination">
-                                        <li className={"pagination-item " + ((currentApplyingPage === 1 || totalPage - currentApplyingPage < 3) && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage - 1); }}>
+                                        <li className={"pagination-item " + ((businessCurrentPage === 1 || totalPage - businessCurrentPage < 3) && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(businessCurrentPage - 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-left" />
                                             </div>
                                         </li>
-                                        {this.renderPagination(currentApplyingPage, totalPage)}
-                                        <li className={"pagination-item " + (totalPage - currentApplyingPage < 3 && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage + 1); }}>
+                                        {this.renderPagination(businessCurrentPage, totalPage)}
+                                        <li className={"pagination-item " + (totalPage - businessCurrentPage < 3 && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(businessCurrentPage + 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-right" />
                                             </div>
                                         </li>
@@ -262,7 +283,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-
+        onGetBusinessList: (page, queryName, account_status) => {
+            dispatch(getBusinessList(4, page, queryName, account_status));
+        },
     }
 }
 

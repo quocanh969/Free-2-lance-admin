@@ -12,8 +12,8 @@ function getUserInfo() {
     return axios.get('users/');
 }
 
-function getUserList(take, page, queryName, account_status) {
-    return axios.post('users/getClientUsersList/0',{
+function getUserList(take, page, queryName, account_status, type) {
+    return axios.post('users/getClientUsersList/' + type,{
             take,
             page,
             queryName,

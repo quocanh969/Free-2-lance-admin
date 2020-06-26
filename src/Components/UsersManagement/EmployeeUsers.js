@@ -3,9 +3,8 @@ import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Swal from 'sweetalert2';
-import { getPersonalList } from '../../Actions/User.acction';
 
-class PersonalUsersComponent extends Component {
+class EmployeeUsersComponent extends Component {
 
     constructor(props) {
         super(props);
@@ -20,8 +19,7 @@ class PersonalUsersComponent extends Component {
     }
 
     loadJobListFunc(page, queryName, account_status) {
-        let {onGetPersonalList} = this.props;
-        onGetPersonalList(page, queryName, account_status);
+        
     }
 
     handlePagination(pageNum) {
@@ -30,7 +28,7 @@ class PersonalUsersComponent extends Component {
         // }
     }
 
-    handleSearchUser() {
+    handleSearchEmployee() {
         let searchStr = document.getElementById('user-search-input').value;
         if (searchStr === '') {
             return;
@@ -92,26 +90,20 @@ class PersonalUsersComponent extends Component {
         let { personal } = this.props.UserListReducer;
         let content = [];
 
-        personal.forEach((e, index) => {
+        // personal.forEach((e, index) => {
             content.push(<tr key={0}>
-                <td>{e.id_user}</td>
-                <td>{e.fullname}</td>
-                <td>{e.email}</td>
-                <td>{e.dial}</td>
-                <td>0123456789101</td>
-                <td><div className='text-truncate' style={{ width: '150px' }}>{e.address}</div></td>
+                <td>{1}</td>
+                <td>adsf</td>
+                <td>asdf</td>
+                <td>asdfasdf</td>
                 <td>
-                    <select id={'select-status-' + 1} defaultValue={e.account_status} onChange={() => { this.handleChangeStatus(e.id_user, e.account_status) }}>
-                        <option value={-1}>Bị cấm</option>
-                        <option value={1}>Chờ xác thực</option>
-                        <option value={2}>Đã xác thực</option>
-                    </select>
+                    {(1 ? <span className='text-danger'>Quản lý</span> : <span className='text-success'>Nhân viên</span>)}
                 </td>
                 <td className='text-center'>
-                    <NavLink to={'/user-detail/id='+e.id_user}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
+                    <div><i className='icon-feather-trash-2 cursor-pointer'></i></div>
                 </td>
             </tr>); 
-        })
+        // })
             
         return content;
     }
@@ -156,36 +148,30 @@ class PersonalUsersComponent extends Component {
         return (
             <div className="container-fluid">
                 {/* Page Heading */}
-                <h1 className="h3 mb-2 text-gray-800">Quản lý thông tin người dùng</h1>
+                <h1 className="h3 mb-2 text-gray-800">Quản lý thông tin nhân viên</h1>
                 <p className="mb-4">
-                    Danh sách các người dùng cá nhân
+                    Danh sách các nhân viên
                 </p>
                 {/* Userlist DataTales Example */}
                 <div className="card shadow mb-4">
                     <div className="card-header py-3">
-                        <h6 className="m-0 font-weight-bold text-primary"><i className="icon-feather-users" /> Danh sách người dùng</h6>
+                        <h6 className="m-0 font-weight-bold text-primary"><i className="icon-line-awesome-list-ul" /> Nhân viên</h6>
                     </div>
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className='col-8'>
-                                <div className="btn-group btn-group-sm" role="group">
-                                    <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                                    <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
-                                    <div onClick={() => { this.setState({ queryType: 4 }) }} className={"btn " + (this.state.queryType === 4 ? 'btn-secondary' : 'btn-outline-secondary')}>Chờ xác thực</div>
-                                    <div onClick={() => { this.setState({ queryType: 5 }) }} className={"btn " + (this.state.queryType === 5 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
-                                </div>
-                            </div>
+                            <div className='col-6'></div>                            
                             <div className="col-4 text-right">
                                 <div className="input-group mb-3">
-                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên/email .." />
+                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên nhân viên .." />
                                     <div className="input-group-append">
-                                        <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchUser() }}>
+                                        <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchEmployee() }}>
                                             <i className="fa fa-search"></i>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                                
                             </div>
+                            <div className='col-2'><div className='w-100 btn btn-danger px-0'><i className='icon-feather-plus'></i>&nbsp;Thêm nhân viên</div></div>
                         </div>
                         
                         {/* Table */}
@@ -194,13 +180,11 @@ class PersonalUsersComponent extends Component {
                                 <thead className="thead-dark">
                                     <tr>
                                         <th>Id</th>
-                                        <th>Tên</th>
-                                        <th>Email</th>
+                                        <th>Nhân viên</th>
                                         <th>Số điện thoại</th>
-                                        <th>Số CMND</th>
-                                        <th>Địa chỉ</th>
-                                        <th>Trạng thái</th>
-                                        <th>Chi tiết</th>
+                                        <th>Username</th>
+                                        <th>Vai trò</th>                                        
+                                        <th>Gỡ tài khoản</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -247,11 +231,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onGetPersonalList: (page, queryName, account_status) => {
-            dispatch(getPersonalList(4, page, queryName, account_status));
-        },
+        
     }
 }
 
-const PersonalUsers = withRouter(connect(mapStateToProps, mapDispatchToProps)(PersonalUsersComponent));
-export default PersonalUsers;
+const EmployeeUsers = withRouter(connect(mapStateToProps, mapDispatchToProps)(EmployeeUsersComponent));
+export default EmployeeUsers;

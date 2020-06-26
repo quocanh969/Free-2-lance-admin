@@ -5,9 +5,20 @@ import { withRouter, NavLink, Redirect, Route } from 'react-router-dom';
 
 import Logo from '../Assets/images/logo2.png';
 
+import { sendUpdateInfo } from '../Actions/User.acction';
+
 class SideBarComponent extends Component {
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount() {
+        let{user} = this.props.AccountReducer;
+        let {onSendUpdateInfo} = this.props;
+
+        if(user === null) {
+            onSendUpdateInfo();
+        }
     }
 
     render() {
@@ -21,7 +32,7 @@ class SideBarComponent extends Component {
                 <hr className="sidebar-divider my-0" />
                 {/* Nav Item - Dashboard */}
                 <li className="nav-item">
-                    <NavLink className="nav-link font-weight-bold py-3" to="/">
+                    <NavLink className="nav-link font-weight-bold pb-2 pt-3" to="/">
                         <i className="icon-material-outline-dashboard" /><span>&nbsp;Thông tin chung</span>
                     </NavLink>
                 </li>
@@ -74,6 +85,11 @@ class SideBarComponent extends Component {
                     <NavLink className="nav-link font-weight-bold pb-2 pt-3" to="/tags-management">
                         <i className="icon-line-awesome-tags" /><span>&nbsp;Tags</span>
                     </NavLink>
+                </li>                
+                <li className="nav-item">
+                    <NavLink className="nav-link font-weight-bold py-2" to="/employee-user-management">
+                        <i className="icon-feather-users" /><span>&nbsp;Quản lý nhân viên</span>
+                    </NavLink>
                 </li>
 
                 {/* Sidebar Toggler (Sidebar) */}
@@ -92,7 +108,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        
+        onSendUpdateInfo: () => {
+            dispatch(sendUpdateInfo());
+        },
     }
 }
 

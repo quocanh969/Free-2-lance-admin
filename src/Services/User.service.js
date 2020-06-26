@@ -12,4 +12,14 @@ function getUserInfo() {
     return axios.get('users/');
 }
 
-export {signIn, getUserInfo}
+function getUserList(take, page, queryName, account_status) {
+    return axios.get('users/getClientUsersList/0',{
+        query: {
+            take,
+            page,
+            queryName,
+            account_status,
+        }
+    })
+}
+export {signIn, getUserInfo, getUserList}

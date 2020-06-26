@@ -4,8 +4,14 @@ import SideBar from '../../Components/SideBar';
 import Header from '../../Components/Header';
 import { MyStore } from '../..';
 import Login from '../../Components/Account/Login';
+import { getUserInfo } from '../../Services/User.service';
+import { history } from '../history/history';
 
 export class SRoute extends Component {
+    constructor(props) {
+        super(props);
+    }
+
     render() {
         let token = JSON.parse(localStorage.getItem('token'));
         if (!token) {

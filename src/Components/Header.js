@@ -8,21 +8,11 @@ import { getImageSrc } from '../Ultis/Helper/HelperFunction';
 import Swal from 'sweetalert2';
 import { history } from '../Ultis/history/history';
 
-import { sendUpdateInfo } from '../Actions/User.acction';
 
 class HeaderComponent extends Component {
 
     constructor(props) {
         super(props);
-    }
-
-    componentWillMount() {
-        let{user} = this.props.AccountReducer;
-        let {onSendUpdateInfo} = this.props;
-
-        if(user === null) {
-            onSendUpdateInfo();
-        }
     }
 
     handleSignOut() {
@@ -47,6 +37,7 @@ class HeaderComponent extends Component {
 
     render() {
         let {user} = this.props.AccountReducer;
+        console.log(user);
         return (
             <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
                 
@@ -155,7 +146,7 @@ class HeaderComponent extends Component {
                     {/* Nav Item - User Information */}
                     <li className="nav-item dropdown no-arrow">
                         <a className="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span className="mr-2 d-none d-lg-inline text-gray-600 small">Xin chào, {user !== null ? user.fullname : ''}</span>
+                            <span className="mr-2 d-none d-lg-inline text-gray-600 small">Xin chào, {user === null ? '' : user.fullname}</span>
                             <img className="img-profile rounded-circle" src={getImageSrc(null, avatarPlaceholder)} />
                         </a>
                         {/* Dropdown - User Information */}
@@ -180,9 +171,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSendUpdateInfo: () => {
-            dispatch(sendUpdateInfo());
-        },
         onSignOut: () => {
             dispatch({
                 type: 'USER_LOG_OUT',

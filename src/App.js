@@ -18,6 +18,7 @@ import Login from './Components/Account/Login';
 import Locations from './Components/OtherManagement/Locations';
 import Topics from './Components/JobsManagement/Topic';
 import { history } from './Ultis/history/history';
+import EmployeeUsers from './Components/UsersManagement/EmployeeUsers';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <SRoute path='/' exact component={Home}></SRoute>          
           <SRoute path='/personal-user-management' exact component={PersonalUsers}></SRoute>
           <SRoute path='/business-user-management' exact component={BusinessUsers}></SRoute>
+          <SRoute path='/employee-user-management' exact component={EmployeeUsers}></SRoute>
           <SRoute path='/user-detail' exact component={UserDetail}></SRoute>
           <SRoute path='/tags-management' exact component={Tags}></SRoute>
           <SRoute path='/job-management' exact component={PendingJobs}></SRoute>

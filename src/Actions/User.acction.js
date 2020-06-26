@@ -1,4 +1,4 @@
-import {signIn, getUserInfo} from '../Services/User.service';
+import {signIn, getUserInfo, getUserList} from '../Services/User.service';
 import { history } from '../Ultis/history/history';
 
 export const sendLogIn = (username, password) => {
@@ -43,32 +43,42 @@ export const sendLogIn = (username, password) => {
 
 export const sendUpdateInfo = (username, password) => {
     return (dispatch) => {
-        dispatch(request());
         getUserInfo().then((res) => {
-            dispatch(udpateUser(res.data.data));
+            console.log(res);
+            if(res.data.length > 0) {
+                dispatch(udpateUser(res.data[0]));
+            }
         }).catch(err=> {
             alert("Server gặp sự cố");
             localStorage.clear();
-            dispatch(udpateUser(null, ''));
+            // dispatch(udpateUser(null, ''));
+            history.push('/login');
         })
     }
 
-    function request() {
-        return {
-          type: "LOGIN_REQUEST",
-        };
-    }
-    function finished(code, message) {
-        return {
-            type: "LOGIN_FINISHED",
-            code,
-            message,
-        };
-    }
     function udpateUser(user) {
         return {
             type: "USER_UPDATE",
             user,
+        };
+    }
+}
+
+export const getPersonalList = (take, page, queryName, account_status) => {
+    return (dispatch) => {
+        getUserList(take, page, queryName, account_status).then((res) => {
+            if(res.data.code === '200') {
+                dispatch(udpatePersonalList(res.data.data));
+            }            
+        }).catch(err=> {
+            alert("Server gặp sự cố");
+        })
+    }
+
+    function udpatePersonalList(list) {
+        return {
+            type: "PERSONAL_LIST_UDPATE",
+            list,
         };
     }
 }

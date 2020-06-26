@@ -13,13 +13,19 @@ function getUserInfo() {
 }
 
 function getUserList(take, page, queryName, account_status) {
-    return axios.get('users/getClientUsersList/0',{
-        query: {
+    return axios.post('users/getClientUsersList/0',{
             take,
             page,
             queryName,
             account_status,
-        }
+        })
+}
+
+function setUserStatus(id_user, account_status) {
+    return axios.put('users/setClientUserStatus',{
+        id_user,
+        account_status,
     })
 }
-export {signIn, getUserInfo, getUserList}
+
+export {signIn, getUserInfo, getUserList, setUserStatus}

@@ -14,6 +14,8 @@ const UserListReducer = (state = initState, action) => {
             return {
                 ...state,
                 personal: action.list,
+                personalCurrentPage: action.page,
+                totalPersnal: action.total,
             };        
         default: return state;
     }

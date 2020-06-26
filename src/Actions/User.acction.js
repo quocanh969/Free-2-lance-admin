@@ -1,4 +1,4 @@
-import {signIn, getUserInfo, getUserList} from '../Services/User.service';
+import {signIn, getUserInfo, getUserList, setUserStatus} from '../Services/User.service';
 import { history } from '../Ultis/history/history';
 
 export const sendLogIn = (username, password) => {
@@ -44,7 +44,6 @@ export const sendLogIn = (username, password) => {
 export const sendUpdateInfo = (username, password) => {
     return (dispatch) => {
         getUserInfo().then((res) => {
-            console.log(res);
             if(res.data.length > 0) {
                 dispatch(udpateUser(res.data[0]));
             }
@@ -67,18 +66,21 @@ export const sendUpdateInfo = (username, password) => {
 export const getPersonalList = (take, page, queryName, account_status) => {
     return (dispatch) => {
         getUserList(take, page, queryName, account_status).then((res) => {
+            console.log(res);
             if(res.data.code === '200') {
-                dispatch(udpatePersonalList(res.data.data));
+                dispatch(udpatePersonalList(res.data.data.usersList, res.data.data.total, res.data.data.page));
             }            
         }).catch(err=> {
             alert("Server gặp sự cố");
         })
     }
 
-    function udpatePersonalList(list) {
+    function udpatePersonalList(list, total, page) {
         return {
             type: "PERSONAL_LIST_UDPATE",
             list,
+            total,
+            page,
         };
     }
 }

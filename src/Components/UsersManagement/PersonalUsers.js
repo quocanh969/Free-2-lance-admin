@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import Swal from 'sweetalert2';
 import { getPersonalList } from '../../Actions/User.acction';
+import { setUserStatus } from '../../Services/User.service';
 
 class PersonalUsersComponent extends Component {
 
@@ -11,8 +12,11 @@ class PersonalUsersComponent extends Component {
         super(props);
 
         this.state = {
-            queryType: 1, // 1 - tất cả, 2 - bị cấm, 3 - chưa kích hoạt, 4 - chờ xác thực, 5 - đã xác thực
+            queryName: '',
+            queryType: 3, //3 - tất cả, -1 - bị cấm, 1 - chờ xác thực, 2 - đã xác thực
         }
+
+        this.handleFilter = this.handleFilter.bind(this);
     }
 
     componentWillMount() {
@@ -25,18 +29,26 @@ class PersonalUsersComponent extends Component {
     }
 
     handlePagination(pageNum) {
-        // if (pageNum !== this.props.EmployerReducer.currentApplyingPage) {
-        //     this.loadJobListFunc(pageNum);
-        // }
+        if (pageNum !== this.props.UserListReducer.personalCurrentPage) {
+            this.loadJobListFunc(pageNum, this.state.queryName, this.state.queryType);
+        }
+    }
+
+    handleFilter(newType) {
+        this.setState({queryType: newType},() => {
+            this.loadJobListFunc(1, this.state.queryName, this.state.queryType);
+        })
     }
 
     handleSearchUser() {
         let searchStr = document.getElementById('user-search-input').value;
-        if (searchStr === '') {
+        if (searchStr === this.state.queryName) {
             return;
         }
         else {
-            // gọi api
+            this.setState({queryName: searchStr},() => {
+                this.loadJobListFunc(1, this.state.queryName, this.state.queryType);
+            })
         }
     }
 
@@ -62,10 +74,27 @@ class PersonalUsersComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
+
+                    setUserStatus(id_user, val).then(res=>{
+                        if(res.data.code === '106') {                            
+                            this.loadJobListFunc(this.props.UserListReducer.personalCurrentPage, this.state.queryName, this.queryType);
+                            Swal.fire({
+                                text: 'Thay đổi thành công',
+                                icon: 'success',
+                            })
+                        }
+                        else
+                        {
+                            Swal.fire({
+                                text: 'Thay đổi không được thực hiện',
+                                icon: 'error',
+                            })
+                            document.getElementById('select-status-' + id_user).value = current_value;
+                        }
+                    }).catch(err=> {
+                        alert('Server gặp sự cố')
                     })
+                    
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire({
                         text: 'Thay đổi không được thực hiện',
@@ -93,15 +122,17 @@ class PersonalUsersComponent extends Component {
         let content = [];
 
         personal.forEach((e, index) => {
-            content.push(<tr key={0}>
+            console.log(e);
+            content.push(
+            <tr key={index}>
                 <td>{e.id_user}</td>
                 <td>{e.fullname}</td>
-                <td>{e.email}</td>
+                <td><div className='text-truncate' style={{ width: '100px' }}>{e.email}</div></td>
                 <td>{e.dial}</td>
-                <td>0123456789101</td>
+                <td>{e.identity}</td>
                 <td><div className='text-truncate' style={{ width: '150px' }}>{e.address}</div></td>
                 <td>
-                    <select id={'select-status-' + 1} defaultValue={e.account_status} onChange={() => { this.handleChangeStatus(e.id_user, e.account_status) }}>
+                    <select id={'select-status-' + e.id_user} value={e.account_status} onChange={() => { this.handleChangeStatus(e.id_user, e.account_status) }}>
                         <option value={-1}>Bị cấm</option>
                         <option value={1}>Chờ xác thực</option>
                         <option value={2}>Đã xác thực</option>
@@ -121,7 +152,7 @@ class PersonalUsersComponent extends Component {
         let start = 1,
             end = 4;
         if (totalPage - 4 < page) {
-            if (totalPage - 4 < 0) {
+            if (totalPage - 4 <= 0) {
                 start = 1;
             } else {
                 start = totalPage - 4;
@@ -150,8 +181,8 @@ class PersonalUsersComponent extends Component {
     }
 
     render() {
-        let { totalApplyingJobs, currentApplyingPage } = {totalApplyingJobs: 8, currentApplyingPage: 1};
-        let totalPage = Math.ceil(totalApplyingJobs / 4);
+        let { totalPersnal, personalCurrentPage } = this.props.UserListReducer;
+        let totalPage = Math.ceil(totalPersnal / 4);
 
         return (
             <div className="container-fluid">
@@ -170,10 +201,10 @@ class PersonalUsersComponent extends Component {
                         <div className="row my-1">
                             <div className='col-8'>
                                 <div className="btn-group btn-group-sm" role="group">
-                                    <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                                    <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
-                                    <div onClick={() => { this.setState({ queryType: 4 }) }} className={"btn " + (this.state.queryType === 4 ? 'btn-secondary' : 'btn-outline-secondary')}>Chờ xác thực</div>
-                                    <div onClick={() => { this.setState({ queryType: 5 }) }} className={"btn " + (this.state.queryType === 5 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
+                                    <div onClick={() => { if(this.state.queryType !== 3 ) this.handleFilter(3) }} className={"btn " + (this.state.queryType === 3 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
+                                    <div onClick={() => { if(this.state.queryType !== -1 ) this.handleFilter(-1) }} className={"btn " + (this.state.queryType === -1 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
+                                    <div onClick={() => { if(this.state.queryType !== 1 ) this.handleFilter(1) }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}>Chờ xác thực</div>
+                                    <div onClick={() => { if(this.state.queryType !== 2 ) this.handleFilter(2) }} className={"btn " + (this.state.queryType === 2 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
                                 </div>
                             </div>
                             <div className="col-4 text-right">
@@ -212,20 +243,20 @@ class PersonalUsersComponent extends Component {
 
                         {/* Pagination */}
                         {(
-                            totalApplyingJobs === 0
+                            totalPersnal === 0
                                 ?
                                 ''
                                 :
                                 <nav aria-label="...">
                                     <ul className="pagination">
-                                        <li className={"pagination-item " + ((currentApplyingPage === 1 || totalPage - currentApplyingPage < 3) && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage - 1); }}>
+                                        <li className={"pagination-item " + ((personalCurrentPage === 1 || totalPage - personalCurrentPage < 3) && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(personalCurrentPage - 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-left" />
                                             </div>
                                         </li>
-                                        {this.renderPagination(currentApplyingPage, totalPage)}
-                                        <li className={"pagination-item " + (totalPage - currentApplyingPage < 3 && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage + 1); }}>
+                                        {this.renderPagination(personalCurrentPage, totalPage)}
+                                        <li className={"pagination-item " + (totalPage - personalCurrentPage < 3 && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(personalCurrentPage + 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-right" />
                                             </div>
                                         </li>

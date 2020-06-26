@@ -1,9 +1,9 @@
 import { history } from '../Ultis/history/history';
 import { getTopicsList } from '../Services/Topic.service';
 
-export const getTopics = (page, take, queryName, status) => {
+export const getTopics = (page, take, queryName, status, isAsc) => {
     return (dispatch) => {
-        getTopicsList(page, take, queryName, status).then((res) => {
+        getTopicsList(page, take, queryName, status, isAsc).then((res) => {
             if (res.data.code === '200') {
                 let topicsList = res.data.data.topicsList;
                 let total = res.data.data.total;

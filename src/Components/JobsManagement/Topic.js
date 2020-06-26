@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { getTopics } from '../../Actions/Topic.action';
+import { setTopicStatus } from '../../Services/Topic.service';
+
+var Swal = require('sweetalert2');
 
 class TopicsComponent extends Component {
 
@@ -9,17 +12,26 @@ class TopicsComponent extends Component {
         super(props);
 
         this.state = {
-            queryType: 1, // 1 - số lượng công việc giảm dần, 2 - số lượng công việc tăng dần
+            queryType: 1, // 1 - số lượng công việc tăng dần, 2 - số lượng công việc giảm dần
+            queryName: '',
         }
+        this.handleSort = this.handleSort.bind(this);
+
     }
 
     componentWillMount() {
-        this.loadListFunc(1, '', 2)
+        this.loadListFunc(1, this.state.queryName, 2)
     }
 
     loadListFunc(page, queryName, status) {
         let { onGetTopicsList } = this.props;
-        onGetTopicsList(page, 10, queryName, status);
+        onGetTopicsList(page, 10, this.state.queryName, status, this.state.queryType);
+    }
+
+    handleSort(isAsc) {
+        this.setState({ queryType: isAsc }, () => {
+            this.loadListFunc(1, this.state.queryName, 2);
+        })
     }
 
     handlePagination(pageNum) {
@@ -30,12 +42,77 @@ class TopicsComponent extends Component {
 
     handleSearchTopic() {
         let searchStr = document.getElementById('user-search-input').value;
-        if (searchStr === '') {
+        if (searchStr === this.state.queryName) {
             return;
         }
         else {
-            this.loadListFunc(1, searchStr, 2)
+            this.setState({ queryName: searchStr }, () => {
+                this.loadListFunc(1, this.state.queryName, 2);
+            })
         }
+    }
+
+    handleChangeStatus(id_jobtopic, current_value) {
+        let val = Number.parseInt(document.getElementById('select-status-' + id_jobtopic).value);
+
+        if (current_value === val) return;
+
+        if (val === 0 || (current_value === 1 && val === 0)) {
+            let text = '';
+            if (val === 0) {
+                text = 'Xóa';
+            }
+            else {
+                text = 'Khôi phục';
+            }
+            Swal.fire({
+                text: "Bạn có chắc là muốn " + text + " chủ đề này",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ok, tôi đồng ý',
+                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.value) {
+                    setTopicStatus(id_jobtopic, val).then(res => {
+                        if (res.data.code === '202') {
+                            this.loadListFunc(this.props.TopicListReducer.currentPage, '', 2);
+                            Swal.fire({
+                                text: 'Thay đổi thành công',
+                                icon: 'success',
+                            })
+                        }
+                        else {
+                            Swal.fire({
+                                text: 'Thay đổi không được thực hiện',
+                                icon: 'error',
+                            })
+                            document.getElementById('select-status-' + id_jobtopic).value = current_value;
+                        }
+                    }).catch(err => {
+                        alert('Server gặp sự cố')
+                    })
+
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire({
+                        text: 'Thay đổi không được thực hiện',
+                        icon: 'error',
+                    })
+                    document.getElementById('select-status-' + id_jobtopic).value = current_value;
+                }
+                else {
+                    document.getElementById('select-status-' + id_jobtopic).value = current_value;
+                }
+            })
+        }
+        else {
+            Swal.fire({
+                text: 'Bạn không thể thay đổi trạng thái của người dùng này',
+                icon: 'warning',
+            });
+            document.getElementById('select-status-' + id_jobtopic).value = current_value;
+        }
+
     }
 
     renderTopicsList() {
@@ -50,7 +127,11 @@ class TopicsComponent extends Component {
                     <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i>
                 </td>
                 <td>
-                    <i className='icon-feather-trash-2 cursor-pointer text-primary' onClick={() => { console.log('remove') }}></i>
+                    {/* <i className='icon-feather-trash-2 cursor-pointer text-primary' onClick={() => { console.log('remove') }}></i> */}
+                    <select id={'select-status-' + e.id_jobtopic} value={e.status} onChange={() => { this.handleChangeStatus(e.id_jobtopic, e.status) }}>
+                        <option value={0}>Đã xóa</option>
+                        <option value={1}>Đang dùng</option>
+                    </select>
                 </td>
             </tr>);
         }
@@ -113,8 +194,8 @@ class TopicsComponent extends Component {
                         <div className="row my-1">
                             <div className='col-6'>
                                 <div className="btn-group" role="group">
-                                    <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}><i className='icon-feather-arrow-up'></i>&nbsp;Số lượng công việc tăng dần</div>
-                                    <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}>Số lượng công việc giảm dần&nbsp;<i className='icon-feather-arrow-down'></i></div>
+                                    <div onClick={() => { if (this.state.queryType != 1) this.handleSort(1) }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}><i className='icon-feather-arrow-up'></i>&nbsp;Số lượng công việc tăng dần</div>
+                                    <div onClick={() => { if (this.state.queryType != 2) this.handleSort(2) }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}>Số lượng công việc giảm dần&nbsp;<i className='icon-feather-arrow-down'></i></div>
                                 </div>
                             </div>
                             <div className="col-4 text-right">
@@ -139,7 +220,7 @@ class TopicsComponent extends Component {
                                         <th>Chủ đề</th>
                                         <th>Số công việc</th>
                                         <th>Chỉnh sửa</th>
-                                        <th>Xóa</th>
+                                        <th>Trạng thái</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -173,7 +254,7 @@ class TopicsComponent extends Component {
                         )}
                     </div>
                 </div>
-            </div>
+            </div >
         )
     }
 }
@@ -185,8 +266,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onGetTopicsList: (page, take, queryName, status) => {
-            dispatch(getTopics(page, take, queryName, status));
+        onGetTopicsList: (page, take, queryName, status, isAsc) => {
+            dispatch(getTopics(page, take, queryName, status, isAsc));
         },
     }
 }

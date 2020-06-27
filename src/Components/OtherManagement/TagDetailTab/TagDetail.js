@@ -5,13 +5,12 @@ import { getImageSrc, getBase64 } from '../../../Ultis/Helper/HelperFunction';
 
 import imagePlaceholder from '../../../Assets/images/image-placeholder.jpg';
 
-import { getDetails, sendUpdateInfo } from '../../../Actions/Topic.action';
-
 import '../../../Assets/css/detail.css';
 
 import Swal from 'sweetalert2'
+import { getDetails, sendUpdateInfo } from '../../../Actions/Tag.action';
 
-class TopicDetailComponent extends Component {
+class TagDetailComponent extends Component {
 
     constructor(props) {
         super(props);
@@ -20,13 +19,13 @@ class TopicDetailComponent extends Component {
     }
 
     componentWillMount() {
-        let { id_jobtopic } = this.props.match.params;
-        let { onLoadTopicDetails } = this.props;
-        onLoadTopicDetails(id_jobtopic);
+        let { id_tag } = this.props.match.params;
+        let { onLoadTagDetails } = this.props;
+        onLoadTagDetails(id_tag);
     }
 
     componentDidUpdate() {
-        console.log(this.props.TopicDetailReducer.topicInfo.status);
+        console.log(this.props.TagDetailReducer.tagInfo.status);
     }
 
     handleImageChange(e) {
@@ -38,37 +37,32 @@ class TopicDetailComponent extends Component {
     }
 
     handleUpdate() {
-        let { topicInfo } = this.props.TopicDetailReducer;
+        let { tagInfo } = this.props.TagDetailReducer;
         let { onSendUpdateTopic } = this.props;
         let updates = [];
         let name = document.getElementById('topic-name-input').value;
         let inputElement = document.getElementById('topic-name-input');
         if (name === '' || name === null) {
-            inputElement.value = topicInfo.name;
+            inputElement.value = tagInfo.name;
         }
-        if (name !== topicInfo.name) {
+        if (name !== tagInfo.name) {
             updates.push({ field: 'name', value: name });
         }
-        let img = document.getElementById('image-topic-img').src;
-        img = img.split(',')[1];
-        if (img !== topicInfo.img) {
-            updates.push({ field: 'img', value: img });
-        }
-        onSendUpdateTopic(topicInfo.id_jobtopic, updates);
+        onSendUpdateTopic(tagInfo.id_tag, updates);
     }
 
     handleStatusChange() {
-        let { topicInfo } = this.props.TopicDetailReducer;
+        let { tagInfo } = this.props.TagDetailReducer;
         let { onSendUpdateTopic } = this.props;
         let status;
-        if (topicInfo.status === 1) {
+        if (tagInfo.status === 1) {
             status = 0
         } else {
             status = 1;
         }
         let updates = [{ field: 'status', value: status }];
         Swal.fire({
-            text: (status === 1 ? "Khôi phục chủ đề này?" : "Xóa chủ đề này"),
+            text: (status === 1 ? "Khôi phục nhãn này?" : "Xóa nhãn này"),
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Ok, tôi đồng ý',
@@ -76,19 +70,19 @@ class TopicDetailComponent extends Component {
             reverseButtons: true,
         }).then(result => {
             if (result.value) {
-                onSendUpdateTopic(topicInfo.id_jobtopic, updates)
+                onSendUpdateTopic(tagInfo.id_tag, updates)
             }
         })
 
-        // onSendUpdateTopic(topicInfo.id_jobtopic, updates);
+        // onSendUpdateTopic(tagInfo.id_tag, updates);
     }
 
     render() {
         return (
             <div className="container-fluid">
                 {/* Page Heading */}
-                <h1 className="h3 mb-2 text-gray-800">Chi tiết cụ thể của chủ đề</h1>
-                <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { window.location.replace('/topic-management') }}>
+                <h1 className="h3 mb-2 text-gray-800">Chi tiết cụ thể của nhãn</h1>
+                <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { window.location.replace('/tags-management') }}>
                     <i className={"icon-feather-arrow-left-circle"} />
                             &nbsp;&nbsp;{"Quay lại"}
                 </span>
@@ -98,10 +92,10 @@ class TopicDetailComponent extends Component {
                 <div className="card shadow mb-4">
                     <div className="card-header py-3">
                         <div className='d-flex justify-content-between'>
-                            <h6 className="m-0 pt-1 font-weight-bold text-primary"><i className="icon-material-outline-bookmarks" />&nbsp;&nbsp;Chủ đề công việc</h6>
-                            <span onClick={this.handleStatusChange} className={"m-0 font-weight-bold btn " + (this.props.TopicDetailReducer.topicInfo.status == 1 ? "btn-danger" : "btn-success")}>
-                                <i className={(this.props.TopicDetailReducer.topicInfo.status == 1 ? "icon-feather-trash-2" : "icon-feather-check")} />
-                            &nbsp;&nbsp;{this.props.TopicDetailReducer.topicInfo.status == 1 ? "Xóa chủ đề" : "Khôi phục chủ đề"}
+                            <h6 className="m-0 pt-1 font-weight-bold text-primary"><i className="icon-material-outline-bookmarks" />&nbsp;&nbsp;Nhãn công việc</h6>
+                            <span onClick={this.handleStatusChange} className={"m-0 font-weight-bold btn " + (this.props.TagDetailReducer.tagInfo.status == 1 ? "btn-danger" : "btn-success")}>
+                                <i className={(this.props.TagDetailReducer.tagInfo.status == 1 ? "icon-feather-trash-2" : "icon-feather-check")} />
+                            &nbsp;&nbsp;{this.props.TagDetailReducer.tagInfo.status == 1 ? "Xóa nhãn" : "Khôi phục nhãn"}
                             </span>
                         </div>
                     </div>
@@ -110,47 +104,47 @@ class TopicDetailComponent extends Component {
                             <div className='col-6'>
                                 <div className="row mt-2">
                                     <div className="col-3">
-                                        <label>Mã chủ đề</label>
+                                        <label>Mã nhãn dán</label>
                                     </div>
                                     <div className="col-9">
-                                        <p>{this.props.TopicDetailReducer.topicInfo.id_jobtopic}</p>
+                                        <p>{this.props.TagDetailReducer.tagInfo.id_tag}</p>
                                     </div>
                                 </div>
                                 <div className="row mt-2">
                                     <div className="col-3">
-                                        <label>Chủ đề</label>
+                                        <label>nhãn</label>
                                     </div>
                                     <div className="col-9 input-group">
-                                        <input id='topic-name-input' className="form-control" defaultValue={this.props.TopicDetailReducer.topicInfo.name} ></input>
+                                        <input id='topic-name-input' className="form-control" defaultValue={this.props.TagDetailReducer.tagInfo.name} ></input>
                                     </div>
                                 </div>
-                                <div className="row mt-2">
+                                {/* <div className="row mt-2">
                                     <div className="col-3">
                                         <label>Số công việc</label>
                                     </div>
                                     <div className="col-9">
-                                        <p>{this.props.TopicDetailReducer.topicInfo.count}</p>
+                                        <p>{this.props.TagDetailReducer.tagInfo.count}</p>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
 
-                            <div className='col-6'>
+                            {/* <div className='col-6'>
                                 <div className='d-flex justify-content-between'>
-                                    <label className='pt-1'>Hình ảnh chủ đề</label>
+                                    <label className='pt-1'>Hình ảnh nhãn</label>
                                     <span className='btn bg-secondary text-white rounded' onClick={() => { document.getElementById('image-topic-input').click() }}><i className='icon-feather-camera'></i>&nbsp;&nbsp;Thay ảnh</span>
                                 </div>
                                 <div className='mt-2'>
                                     <div className='image-field text-center'>
-                                        <img id='image-topic-img' src={getImageSrc(this.props.TopicDetailReducer.topicInfo.img, imagePlaceholder)}></img>
+                                        <img id='image-topic-img' src={getImageSrc(this.props.TagDetailReducer.tagInfo.img, imagePlaceholder)}></img>
                                     </div>
                                     <input id='image-topic-input' onChange={(e) => { this.handleImageChange(e) }} type='file' accept='image/*' style={{ display: 'none' }}></input>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
                         <hr></hr>
                         <div className='text-center mt-3'>
-                            <button className='btn btn-primary' onClick={this.handleUpdate}>Cập nhật thông tin chủ đề</button>
+                            <button className='btn btn-primary' onClick={this.handleUpdate}>Cập nhật thông nhãn</button>
                         </div>
                     </div>
 
@@ -167,7 +161,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLoadTopicDetails: (id) => {
+        onLoadTagDetails: (id) => {
             dispatch(getDetails(id));
         },
         onSendUpdateTopic: (id, updates) => {
@@ -176,5 +170,5 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-const TopicDetail = withRouter(connect(mapStateToProps, mapDispatchToProps)(TopicDetailComponent));
-export default TopicDetail;
+const TagDetail = withRouter(connect(mapStateToProps, mapDispatchToProps)(TagDetailComponent));
+export default TagDetail;

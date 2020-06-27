@@ -103,8 +103,6 @@ class TopicsComponent extends Component {
                 document.getElementById('select-status-' + id_jobtopic).value = current_value;
             }
         })
-
-
     }
 
     renderTopicsList() {

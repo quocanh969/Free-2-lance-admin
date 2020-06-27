@@ -22,6 +22,8 @@ import TopicDetail from './Components/JobsManagement/TopicDetailTab/TopicDetail'
 import EmployeeUsers from './Components/UsersManagement/EmployeeUsers';
 import UpdateInfo from './Components/Account/UpdateInfo';
 import AddTopic from './Components/JobsManagement/TopicDetailTab/AddTopic';
+import TagDetail from './Components/OtherManagement/TagDetailTab/TagDetail';
+import AddTag from './Components/OtherManagement/TagDetailTab/AddTag';
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
         <SRoute path='/user-detail/id=:id_user' exact component={UserDetail}></SRoute>
 
         <SRoute path='/tags-management' exact component={Tags}></SRoute>
+        <SRoute path='/tag-detail/id=:id_tag' exact component={TagDetail}></SRoute>
+        <SRoute path='/add-tag' exact component={AddTag}></SRoute>
 
         <SRoute path='/job-management' exact component={PendingJobs}></SRoute>
         <SRoute path='/job-detail/id=:id_job' exact component={JobDetail}></SRoute>

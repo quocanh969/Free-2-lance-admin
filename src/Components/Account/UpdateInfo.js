@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { changeUserInfo, changeUserPassword } from '../../Services/User.service';
+import { sendUpdateInfo } from '../../Actions/User.acction';
+import Swal from 'sweetalert2';
+import { history } from '../../Ultis/history/history';
 
 class UpdateInfoComponent extends Component {
 
@@ -8,86 +12,90 @@ class UpdateInfoComponent extends Component {
         super(props);
 
         this.state = {
-            queryType: 1, // 1 - số lượng công việc giảm dần, 2 - số lượng công việc tăng dần
+            message: '',
+            error: false,
         }
+
+        this.handleChangePassword = this.handleChangePassword.bind(this);
     }
 
-    loadJobListFunc(page) {
-
+    componentWillMount() {
+        this.setState({message: '', error: false});
     }
 
-    handlePagination(pageNum) {
-        // if (pageNum !== this.props.EmployerReducer.currentApplyingPage) {
-        //     this.loadJobListFunc(pageNum);
-        // }
+    handleChangeUserInfo() {
+        let fullname = '', tel = '';        
+        let {user} = this.props.AccountReducer;
+
+        let newFullname = document.getElementById('name-input');
+        let newTel = document.getElementById('tel-input');
+
+        if(user.fullname !== newFullname.value) {
+            fullname = newFullname.value;
+        }
+        if(user.tel !== newTel.value) {
+            tel = newTel.value;
+        }
+
+        changeUserInfo(fullname, tel).then(res=>{
+            if(res.data.code === '202') {
+                let {onSendUpdateInfo} = this.props;
+                onSendUpdateInfo();
+                Swal.fire({
+                    title: 'Cập nhật thông tin thành công',
+                    icon: 'success',
+                })
+            }
+        }).catch(err=>{
+            newFullname.value = user.fullname;
+            newTel.value = user.tel;
+            alert('Server gặp sự cố, thử lại sau');
+        })
     }
 
-    handleSearchTopic() {
-        let searchStr = document.getElementById('user-search-input').value;
-        if (searchStr === '') {
-            return;
+    handleChangePassword(e) {
+        e.preventDefault();
+        
+        let oldPW = document.getElementById('old-password-input');
+        let newPW = document.getElementById('new-password-input');
+        let confirmPW = document.getElementById('confirm-password-input');
+
+        if(confirmPW.value !== newPW.value) {
+            this.setState({message: 'Mật khẩu mới không trùng khớp', error: true}, () => {
+                Swal.fire({
+                    title: 'Đổi mật khẩu thất bại',
+                    icon: 'error',
+                })
+            })
         }
         else {
-            // gọi api
+            changeUserPassword(oldPW.value, newPW.value).then(res=>{
+                if(res.data.code === '105') {
+                    Swal.fire({
+                        title: 'Đổi mật khẩu thành công, vui lòng đăng nhập lại',
+                        icon: 'success',
+                    })
+                    let {onSignOut} = this.props;
+                    onSignOut();
+                    localStorage.clear();
+                    history.push('/login');
+                }
+                else {
+                    this.setState({message: 'Mật khẩu cũ không đúng', error: true}, () => {
+                        Swal.fire({
+                            title: 'Đổi mật khẩu thất bại',
+                            icon: 'error',
+                        })
+                    })
+                }
+            }).catch(err=>{                
+                Swal.fire({
+                    title: 'Server gặp sự cố',
+                    icon: 'error',
+                });
+            })
         }
-    }
-
-    renderTagsList() {
-        // let { tutorData, status, message, loading } = this.props.UsersReducer;
-        let content = [];
-        // for (let e of tutorData) {
-        //     let imgSrc = e.avatarLink;
-        //     if (imgSrc === "" || imgSrc === null) {
-        //     }
-
-        content.push(<tr key={0}>
-            <td>1</td>
-            <td>Kinh doanh buôn bán</td>
-            <td>20</td>
-            <td>
-                <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i>
-            </td>
-            <td>
-                <i className='icon-feather-trash-2 cursor-pointer text-primary' onClick={() => { console.log('remove') }}></i>
-            </td>
-        </tr>);
-        // }
-        //}
-
-        return content;
-    }
-
-    renderPagination(page, totalPage) {
-        let content = [];
-        let start = 1,
-            end = 4;
-        if (totalPage - 4 < page) {
-            if (totalPage - 4 <= 0) {
-                start = 1;
-            } else {
-                start = totalPage - 4;
-            }
-            end = totalPage;
-        } else {
-            start = page;
-            end = page + 3;
-        }
-
-        for (let e = start; e <= end; e++) {
-            content.push(
-                <li className={'page-item ' + (page === e ? "active" : '')} key={e}>
-                    <div
-                        className="page-link cursor-pointer"
-                        onClick={() => {
-                            this.handlePagination(e);
-                        }}
-                    >
-                        {e}
-                    </div>
-                </li>
-            );
-        }
-        return content;
+        
     }
 
     render() {
@@ -121,7 +129,7 @@ class UpdateInfoComponent extends Component {
                                             <label>Tên đăng nhập</label>
                                         </div>
                                         <div className="col-8 input-group">
-                                            <input id='username-input' className="form-control" defaultValue={user.username}></input>
+                                            <p>{user.username}</p>
                                         </div>
                                     </div>
                                     <div className="row mt-2">
@@ -142,11 +150,11 @@ class UpdateInfoComponent extends Component {
                                     </div>
                                     <hr></hr>
                                     <div className='text-center'>
-                                        <button type='submit' className='btn btn-primary'>Cập nhật thông tin</button>
+                                        <div onClick={()=>{this.handleChangeUserInfo()}} className='btn btn-primary'>Cập nhật thông tin</div>
                                     </div>                             
                                 </div>
     
-                                <div className='col-6 border-left border-dark'>
+                                <form onSubmit={this.handleChangePassword} className='col-6 border-left border-dark'>
                                     <br></br>
                                     <br></br>
                                     <div className="row mt-2">
@@ -154,7 +162,7 @@ class UpdateInfoComponent extends Component {
                                             <label>Nhập mật khâu cũ</label>
                                         </div>
                                         <div className="col-7 input-group">
-                                            <input id='old-password-input' type='password' className="form-control"></input>
+                                            <input id='old-password-input' required type='password' className="form-control"></input>
                                         </div>
                                     </div>
                                     <div className="row mt-2">
@@ -162,7 +170,7 @@ class UpdateInfoComponent extends Component {
                                             <label>Nhập mật khâu mới</label>
                                         </div>
                                         <div className="col-7 input-group">
-                                            <input id='new-password-input' type='password' className="form-control"></input>
+                                            <input id='new-password-input' required type='password' className="form-control"></input>
                                         </div>
                                     </div>
                                     <div className="row mt-2">
@@ -170,14 +178,25 @@ class UpdateInfoComponent extends Component {
                                             <label>Nhập lại mật khâu mới</label>
                                         </div>
                                         <div className="col-7 input-group">
-                                            <input id='confirm-password-input' type='password' className="form-control"></input>
+                                            <input id='confirm-password-input' required type='password' className="form-control"></input>
                                         </div>
                                     </div>
+
+                                    {(
+                                        this.state.error
+                                        ?
+                                        <div className="alert alert-danger rounded mt-2" role="alert">
+                                            {this.state.message}
+                                        </div>
+                                        :
+                                        ''
+                                    )}                                    
+
                                     <hr></hr>
                                     <div className='text-center'>
                                         <button type='submit' className='btn btn-primary'>Đổi mật khẩu</button>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
     
@@ -195,7 +214,14 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        onSendUpdateInfo: () => {
+            dispatch(sendUpdateInfo());
+        },
+        onSignOut: () => {
+            dispatch({
+                type: 'USER_LOG_OUT',
+            })
+        },
     }
 }
 

@@ -12,6 +12,20 @@ function getUserInfo() {
     return axios.get('users/');
 }
 
+function changeUserInfo(fullname, tel) {
+    return axios.put('users/updateProfile',{
+        fullname,
+        tel
+    })
+}
+
+function changeUserPassword(oldPassword, newPassword) {
+    return axios.put('users/changePassword',{
+        oldPassword,
+        newPassword
+    })
+}
+
 function getUserList(take, page, queryName, account_status, type) {
     return axios.post('users/getClientUsersList/' + type,{
             take,
@@ -52,4 +66,4 @@ function getJobsByApplicantId(page, take, queryName, status, employer) {
     })
 }
 
-export {signIn, getUserInfo, getUserList, setUserStatus, getUserDetail, getJobsByEmployerId, getJobsByApplicantId}
+export {signIn, getUserInfo, changeUserInfo, changeUserPassword, getUserList, setUserStatus, getUserDetail, getJobsByEmployerId, getJobsByApplicantId}

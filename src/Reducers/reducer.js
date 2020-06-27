@@ -9,6 +9,7 @@ import JobsListReducer from './GeneralReducers/JobList.reducer';
 import JobDetailReducer from './GeneralReducers/JobDetail.reducer';
 import TagListReducer from './GeneralReducers/TagList.reducer';
 import TagDetailReducer from './GeneralReducers/TagDetail.reducer'
+import EmployeeListReducer from './GeneralReducers/EmployeeList.reducer';
 
 const reducer = combineReducers({
     AccountReducer,
@@ -17,6 +18,7 @@ const reducer = combineReducers({
     TopicListReducer,
     TopicDetailReducer,
     UserDetailReducer,
+    EmployeeListReducer,
     JobsListReducer,
     JobDetailReducer,
     TagListReducer,

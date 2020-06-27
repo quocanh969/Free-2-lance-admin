@@ -19,6 +19,7 @@ import Topics from './Components/JobsManagement/Topic';
 import TopicDetail from './Components/JobsManagement/TopicDetailTab/TopicDetail';
 import { history } from './Ultis/history/history';
 import EmployeeUsers from './Components/UsersManagement/EmployeeUsers';
+import UpdateInfo from './Components/Account/UpdateInfo';
 
 function App() {
   return (
@@ -40,6 +41,8 @@ function App() {
           <SRoute path='/topic-detail' exact component={TopicDetail}></SRoute>
           
           <SRoute path='/report-management' exact component={Reports}></SRoute>          
+
+          <SRoute path='/user-profile' exact component={UpdateInfo}></SRoute>  
 
           <Route path='/login' exact component={Login}></Route>
           {/* <Redirect to='/not-found'></Redirect> */}

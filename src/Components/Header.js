@@ -152,8 +152,8 @@ class HeaderComponent extends Component {
                         {/* Dropdown - User Information */}
                         <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">                            
                             <NavLink to='/user-profile' className="dropdown-item cursor-pointer">
-                                <i className="icon-line-awesome-sign-out mr-2" />
-                                Đăng xuất
+                                <i className="icon-feather-user" />&nbsp;
+                                Tài khoản
                             </NavLink>
                             <div className="dropdown-item cursor-pointer" onClick={()=>{this.handleSignOut()}}>
                                 <i className="icon-line-awesome-sign-out mr-2" />

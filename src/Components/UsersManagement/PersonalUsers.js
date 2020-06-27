@@ -120,7 +120,6 @@ class PersonalUsersComponent extends Component {
     renderUserList() {
         let { personal } = this.props.UserListReducer;
         let content = [];
-
         personal.forEach((e, index) => {
             console.log(e);
             content.push(

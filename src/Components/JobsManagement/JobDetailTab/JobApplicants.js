@@ -1,44 +1,54 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
+import { loadApplicantsByJobId } from '../../../Actions/Job.action';
 
 class JobApplicantsComponent extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            queryType: 0, // 0 - đang duyệt, 1 - đã tuyển
+        }
     }
 
+    componentWillMount() {
+        //this.loadJobListFunc(1, 8, this.state.queryType);
+    }
     
-    loadJobListFunc(page) {
-
+    loadJobListFunc(page, take, status) {
+        let {job} =  this.props.JobDetailReducer;
+        let {onLoadApplicantByJobId} = this.props;
+        onLoadApplicantByJobId(page, take, job.id_job, status)
     }
 
     handlePagination(pageNum) {
-        // if (pageNum !== this.props.EmployerReducer.currentApplyingPage) {
-        //     this.loadJobListFunc(pageNum);
-        // }
+        if (pageNum !== this.props.JobDetailReducer.currentApplicant) {
+            this.loadJobListFunc(pageNum, 8, this.state.queryType);
+        }
+    }
+
+    handleChangeQuery(newQuery) {
+        this.setState({queryType: newQuery}, () => {
+            this.loadJobListFunc(1, 8, this.state.queryType);
+        });
     }
 
     
     renderUserStatus(status) {
         switch(status)
         {
-            case -1:
+            case 0:
                 {
                     return(
-                        <span className='text-danger'>Bị cấm</span>
+                        <span className='text-danger'>Đang duyệt</span>
                     )
                 }
             case 1:
             {
                 return(
-                    <span className='text-warning'>Chờ xác thực</span>
-                )
-            }
-            case 2:
-            {
-                return(
-                    <span className='text-success'>Đã xác thực</span>
+                    <span className='text-success'>Đã nhận</span>
                 )
             }
             default: return '';
@@ -55,8 +65,8 @@ class JobApplicantsComponent extends Component {
 
         content.push(<tr key={0}>
             <td>1</td>
-            <td>John Cena</td>
-            <td>tranquocanh858@gmail.com</td>
+            <td><div className='text-truncate' style={{ width: '80px' }}>124 Đường số 12345678215ssx12ca32151v515e415e4eq</div></td>
+            <td><div className='text-truncate' style={{ width: '80px' }}>124 Đường số 12345678215ssx12ca32151v515e415e4eq</div></td>
             <td>0123456789</td>
             <td>0123456789101</td>
             <td><div className='text-truncate' style={{ width: '150px' }}>124 Đường số 12345678215ssx12ca32151v515e415e4eq</div></td>
@@ -66,7 +76,7 @@ class JobApplicantsComponent extends Component {
                 </div>              
             </td>
             <td className='text-center'>
-                <NavLink to='/user-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
+                <NavLink to={'/user-detail/id='}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
             </td>
         </tr>);
         // }
@@ -114,6 +124,10 @@ class JobApplicantsComponent extends Component {
 
         return (
             <div>
+                <div className='btn-group btn-group-sm my-2'>
+                    <div onClick={() => { if(this.state.queryType !== 0 ) {this.handleChangeQuery(0)}}} className={"btn " + (this.state.queryType === 0 ? 'btn-secondary' : 'btn-outline-secondary')}>Đang duyệt</div>
+                    <div onClick={() => { if(this.state.queryType !== 1 ) {this.handleChangeQuery(1)} }}className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}>Đã tuyển</div>
+                </div>
                 {/* Table */}
                 <div className="table-responsive">
                     <table className="col-12 table" id="dataTable" width="100%" cellSpacing={0} >
@@ -122,7 +136,7 @@ class JobApplicantsComponent extends Component {
                                 <th>Id</th>
                                 <th>Tên</th>
                                 <th>Email</th>
-                                <th>Số điện thoại</th>
+                                <th>Sđt</th>
                                 <th>Số CMND</th>
                                 <th>Địa chỉ</th>
                                 <th>Trạng thái</th>
@@ -170,7 +184,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        onLoadApplicantByJobId: (page, take, id, id_status) => {
+            dispatch(loadApplicantsByJobId(page, take, id, id_status));
+        }
     }
 }
 

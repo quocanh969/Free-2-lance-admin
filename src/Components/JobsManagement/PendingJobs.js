@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { prettierNumber, prettierDate } from '../../Ultis/Helper/HelperFunction';
 
 import Swal from 'sweetalert2';
-import { loadJobList } from '../../Actions/Job.action';
+import { loadJobList, loadApplicantsByJobId } from '../../Actions/Job.action';
+import { setJobStatus } from '../../Services/Job.service';
 
 class PendingJobsComponent extends Component {
 
@@ -51,9 +52,12 @@ class PendingJobsComponent extends Component {
 
         if (current_value === val) return;
 
-        if (val === 0) {
+        if (val === 0 || val === 1) {
+            let text = '';
+            if(val === 0) text = 'gỡ';
+            else text = 'khổi phục'
             Swal.fire({
-                text: "Bạn có chắc là muốn gỡ công việc này xuống !",
+                text: "Bạn có chắc là muốn "+ text + " công việc này xuống !",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ok, tôi đồng ý',
@@ -61,10 +65,29 @@ class PendingJobsComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
+                    setJobStatus(id_job, val).then(res=>{
+                        if(res.data.code === '106') {
+                            this.loadJobListFunc(this.props.JobsListReducer.currentJobPage);
+                            Swal.fire({
+                                text: 'Thay đổi thành công',
+                                icon: 'success',
+                            })
+                        }
+                        else {
+                            Swal.fire({
+                                text: 'Thay đổi thất bại',
+                                icon: 'error',
+                            })
+                            document.getElementById('select-status-' + id_job).value = current_value;
+                        }
+                    }).catch(err=>{
+                        Swal.fire({
+                            text: 'Server gặp vấn đề',
+                            icon: 'error',
+                        })
+                        document.getElementById('select-status-' + id_job).value = current_value;
                     })
+                    
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire({
                         text: 'Thay đổi không được thực hiện',
@@ -109,7 +132,7 @@ class PendingJobsComponent extends Component {
             <tr key={index}>            
                 <td>{e.id_job}</td>
                 <td><div className='text-truncate' style={{ width: '180px' }}>{e.title}</div></td>
-                <td><div className='text-truncate' style={{ width: '70px' }}>{e.job_topic}</div></td>
+                <td><div className='text-truncate' style={{ width: '70px' }}>{e.topic_name}</div></td>
                 <td>{prettierNumber(e.salary)} VNĐ</td>
                 <td>{prettierDate(e.post_date)}</td>
                 <td>{prettierDate(e.expire_date)}</td>
@@ -261,9 +284,12 @@ const mapStateToProps = (state) => {
   
   const mapDispatchToProps = (dispatch) => {
     return {
-      onLoadJobsList: (page, take, query) => {
-          dispatch(loadJobList(page, take, query));
-      }
+        onLoadJobsList: (page, take, query) => {
+            dispatch(loadJobList(page, take, query));
+        },
+        onLoadApplicantsByJobId: (page, take, id_job, id_status) => {
+            dispatch(loadApplicantsByJobId(page, take, id_job, id_status));
+        },
     };
   };
   

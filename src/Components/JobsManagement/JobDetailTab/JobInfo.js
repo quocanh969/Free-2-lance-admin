@@ -7,6 +7,7 @@ import imagePlaceholder from '../../../Assets/images/image-placeholder.jpg';
 import JobApplicants from './JobApplicants';
 
 import Swal from 'sweetalert2';
+import { udpateJobStatus } from '../../../Actions/Job.action';
 
 class JobInfoComponent extends Component {
 
@@ -14,54 +15,14 @@ class JobInfoComponent extends Component {
         super(props);
 
         this.state = {
-            tab: 1,         
-            id_job: 1,
-            employer: 1,
-            title: 'Đấm nhau',
-            salary: 200000,
-            job_topic: 1,
-            area_province: 7,
-            area_district: 1,
-            address: '124 đường số 1A',
-            description: 'Copyright Disclaimer All is part of a hobby & passion to share music with the community. All music used in the creation of this video are the intellectual property of those who owns it. No copyright infringement is, or will be intended on this channel whatsoever. If you wish to have the video removed, please contact the email at the bottom of this description. Your content will be promptly removed within 24 hours time.',
-            post_date: new Date(),
-            expire_date: new Date(),
-            dealable: true,
-            job_type: true,// 0 - công việc thời vụ, 1 - công việc theo sp
-            isOnline: true,
-            isCompany: true,
-            vacancy: 4,
-            requirement: 'Copyright Disclaimer All is part of a hobby & passion to share music with the community. All music used in the creation of this video are the intellectual property of those who owns it. No copyright infringement is, or will be intended on this channel whatsoever. If you wish to have the video removed, please contact the email at the bottom of this description. Your content will be promptly removed within 24 hours time.',
-            id_status: 1,
-
-            fullname: 'John Cena',
-            email: 'tranquocanh858@gmail.com',
-
-            images: ['','','','','',''],
-
-            tags: [
-                {
-                    id: 1,
-                    tag_name: 'thời vụ',
-                },
-                {
-                    id: 1,
-                    tag_name: 'thời vụ',
-                },
-                {
-                    id: 1,
-                    tag_name: 'thời vụ',
-                },
-                {
-                    id: 1,
-                    tag_name: 'thời vụ',
-                },
-            ]
+            tab: 1,
         }
     }
 
     handleChangeStatus(newStatus) {
-        if(this.state.id_status === newStatus)
+        let {job} = this.props.JobDetailReducer;
+
+        if(job.id_status === newStatus)
         {
             return;
         }
@@ -77,6 +38,7 @@ class JobInfoComponent extends Component {
             {
                 text = 'khôi phục';
             }
+
             Swal.fire({
                 text: "Bạn có chắc là muốn " + text + " công việc này",
                 icon: 'warning',
@@ -86,11 +48,12 @@ class JobInfoComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
+                    let{onUpdateJobStatus} = this.props;
+                    onUpdateJobStatus(job.id_job, newStatus);
                     Swal.fire({
                         text: 'Thay đổi thành công',
                         icon: 'success',
-                    });
-                    this.setState({id_status: newStatus});
+                    });                    
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire({
                         text: 'Thay đổi không được thực hiện',
@@ -109,7 +72,7 @@ class JobInfoComponent extends Component {
             content.push(
                 <div className='col-3 p-1' key={index}>
                     <div className='image-field text-center'>
-                        <img src={getImageSrc(null, imagePlaceholder)}></img>
+                        <img src={getImageSrc(e, imagePlaceholder)}></img>
                     </div>                    
                 </div>
             )
@@ -119,10 +82,9 @@ class JobInfoComponent extends Component {
 
     renderTags(tags) {
         let content = [];
-        console.log(tags);
         tags.forEach((e, index) => {
             content.push(
-                <span key={index}>{e.tag_name}, &nbsp;</span>
+                <span key={index}>{e}, &nbsp;</span>
             )
         })
 
@@ -130,40 +92,41 @@ class JobInfoComponent extends Component {
     }
 
     render() {
+        let {job} = this.props.JobDetailReducer;
         return (
             <div>
                 <div className="profile-head">
                     <div className='d-flex justify-content-between'>
                         <div>
                             <h5>
-                                {this.state.title.toUpperCase()}
+                                {job.title.toUpperCase()}
                             </h5>
                             {(
-                                this.state.id_status === 0
+                                job.id_status === 0
                                 ?
                                 ''
                                 :
                                 (
-                                    this.state.id_status === 1
+                                    job.id_status === 1
                                     ?
-                                    <h6>( Ngày đăng: {prettierDate(this.state.post_date)} - Ngày hết hạn: {prettierDate(this.state.expire_date)} )</h6>
+                                    <h6>( Ngày đăng: {prettierDate(job.post_date)} - Ngày hết hạn: {prettierDate(job.expire_date)} )</h6>
                                     :
                                     (
-                                        this.state.job_type
+                                        job.job_type
                                         ?
-                                        <h6>( Ngày hết hạn: {prettierDate(this.state.deadline)} )</h6>
+                                        <h6>( Ngày hết hạn: {prettierDate(job.deadline)} )</h6>
                                         :
-                                        <h6>( Ngày bắt đầu: {prettierDate(this.state.start_date)} - Ngày kết thúc: {prettierDate(this.state.end_date)} )</h6>
+                                        <h6>( Ngày bắt đầu: {prettierDate(job.start_date)} - Ngày kết thúc: {prettierDate(job.end_date)} )</h6>
                                     )
                                 )
                             )}                            
                         </div>
                         <div>
                             <div className="btn-group btn-group-sm" role="group">
-                                <div onClick={() => { this.handleChangeStatus(0) }} className={"btn " + (this.state.id_status === 0 ? 'btn-danger' : 'btn-outline-danger')}>Bị gỡ</div>
-                                <div onClick={() => { this.handleChangeStatus(1) }}className={"btn " + (this.state.id_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Đang tuyển</div>
-                                <div className={"btn " + (this.state.id_status === 2 ? 'btn-warning' : 'btn-outline-warning')}>Đang thực hiện</div>
-                                <div className={"btn " + (this.state.id_status === 3 ? 'btn-success' : 'btn-outline-success')}>Hoàn thành</div>
+                                <div onClick={() => { this.handleChangeStatus(0) }} className={"btn " + (job.id_status === 0 ? 'btn-danger' : 'btn-outline-danger')}>Bị gỡ</div>
+                                <div onClick={() => { this.handleChangeStatus(1) }}className={"btn " + (job.id_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Đang tuyển</div>
+                                <div className={"btn " + (job.id_status === 2 ? 'btn-warning' : 'btn-outline-warning')}>Đang thực hiện</div>
+                                <div className={"btn " + (job.id_status === 3 ? 'btn-success' : 'btn-outline-success')}>Hoàn thành</div>
                             </div>
                         </div>
                     </div>
@@ -199,21 +162,27 @@ class JobInfoComponent extends Component {
                                     <label>Tên người đăng</label>
                                 </div>
                                 <div className="col-4">
-                                    <p>{this.state.fullname}</p>
+                                    <p>{job.name_employer}</p>
                                 </div>
                                 <div className="col-2">
                                     <label>Email</label>
                                 </div>
                                 <div className="col-4">
-                                    <p>{this.state.email}</p>
+                                    <p>{job.email}</p>
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="col-2">
                                     <label>Mức lương</label>
                                 </div>
-                                <div className="col-10">
-                                    <p>{prettierNumber(this.state.salary)} VNĐ</p>
+                                <div className="col-4">
+                                    <p>{prettierNumber(job.salary)} VNĐ</p>
+                                </div>
+                                <div className="col-2">
+                                    <label>Chủ đề</label>
+                                </div>
+                                <div className="col-4">
+                                    <p>{job.topic_name}</p>
                                 </div>
                             </div>
                             <div className="row">
@@ -221,13 +190,13 @@ class JobInfoComponent extends Component {
                                     <label>Số lượng cần tuyển</label>
                                 </div>
                                 <div className="col-4">
-                                    <p>{this.state.vacancy}</p>
+                                    <p>{job.vacancy}</p>
                                 </div>
                                 <div className="col-2">
                                     <label>Danh sách tags</label>
                                 </div>
                                 <div className="col-4">
-                                    <p>{this.renderTags(this.state.tags)}</p>
+                                    <p>{this.renderTags(job.tags)}</p>
                                 </div>
                             </div>
                             <div className="row">
@@ -235,13 +204,13 @@ class JobInfoComponent extends Component {
                                     <label>Khu vực</label>
                                 </div>
                                 <div className="col-4">
-                                    <p>{this.state.area_province}</p>
+                                    <p>{job.province_name}</p>
                                 </div>
                                 <div className="col-2">
                                     <label>Quận</label>
                                 </div>
                                 <div className="col-4">
-                                    <p>{this.state.area_district}</p>
+                                    <p>{job.district_name}</p>
                                 </div>
                             </div>
                             <div className="row">
@@ -250,10 +219,10 @@ class JobInfoComponent extends Component {
                                 </div>
                                 <div className="col-10">
                                     <p>
-                                        {this.state.job_type ? 'Công việc thời vụ' : 'Công việc theo sản phẩm'},&nbsp;&nbsp;
-                                        {this.state.dealable ? 'Cho phép đấu giá' : 'Lương cứng'},&nbsp;&nbsp;
-                                        {this.state.isOnline ? 'Online' : 'Offline'},&nbsp;&nbsp;
-                                        {this.state.isCompany ? 'Trực thuộc công ty' : 'Cá nhân'}
+                                        {job.job_type ? 'Công việc thời vụ' : 'Công việc theo sản phẩm'},&nbsp;&nbsp;
+                                        {job.dealable ? 'Cho phép đấu giá' : 'Lương cứng'},&nbsp;&nbsp;
+                                        {job.isOnline ? 'Online' : 'Offline'},&nbsp;&nbsp;
+                                        {job.isCompany ? 'Trực thuộc công ty' : 'Cá nhân'}
                                     </p>
                                 </div>
                             </div>
@@ -262,7 +231,7 @@ class JobInfoComponent extends Component {
                                     <label>Địa điểm</label>
                                 </div>
                                 <div className="col-10">
-                                    <p>{this.state.address}</p>
+                                    <p>{job.address}</p>
                                 </div>
                             </div>
                             <div className="row">
@@ -270,7 +239,7 @@ class JobInfoComponent extends Component {
                                     <label>Mô tả công việc</label>
                                 </div>
                                 <div className="col-10">
-                                    <p>{this.state.description}</p>
+                                    <p>{job.description}</p>
                                 </div>
                             </div>
                             <div className="row">
@@ -278,7 +247,7 @@ class JobInfoComponent extends Component {
                                     <label>Yêu cầu công việc</label>
                                 </div>
                                 <div className="col-10">
-                                    <p>{this.state.requirement}</p>
+                                    <p>{job.requirement}</p>
                                 </div>
                             </div>
                             
@@ -287,7 +256,7 @@ class JobInfoComponent extends Component {
                         
                         <div className={'tab-pane fade ' + (this.state.tab === 3 ? 'show active' : '')} id="home" role="tabpanel" aria-labelledby="home-tab">
                             <div className="row">
-                                {this.renderImages(this.state.images)}
+                                {this.renderImages(job.imgs)}
                             </div>
                         </div>
 
@@ -309,7 +278,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        onUpdateJobStatus: (id_job, id_status) => {
+            dispatch(udpateJobStatus(id_job, id_status));
+        }
     }
 }
 

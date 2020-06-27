@@ -149,7 +149,10 @@ export const loadJobsByEmployer = (page, take, queryName, status, id_user) => {
 export const loadJobsByApplicant = (page, take, queryName, status, id_user) => {
     return (dispatch) => {
         getJobsByApplicantId(page, take, queryName, status, id_user).then((res) => {
-            dispatch(updateTaskList(res.data.data.jobsList, res.data.data.total, res.data.data.page));
+            if(res.data.code === '200')
+            {
+                dispatch(updateTaskList(res.data.data.jobsList, res.data.data.total, res.data.data.page));
+            }            
         }).catch(err=> {
         })
     }
@@ -163,7 +166,6 @@ export const loadJobsByApplicant = (page, take, queryName, status, id_user) => {
         };
     }
 }
-
 
 export const udpateUserStatus = (id_user, newStatus) => {
     return (dispatch) => {

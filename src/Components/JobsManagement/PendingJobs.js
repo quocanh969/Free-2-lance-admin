@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { prettierNumber, prettierDate } from '../../Ultis/Helper/HelperFunction';
 
 import Swal from 'sweetalert2';
+import { loadJobList } from '../../Actions/Job.action';
 
 class PendingJobsComponent extends Component {
 
@@ -11,18 +12,38 @@ class PendingJobsComponent extends Component {
         super(props);
 
         this.state = {
-            queryType: 1, // 1 - đang tuyển, 2 - đang thực hiên, 3 - đã hoàn thành
+            query: {},
+            queryType: 5,
         }
     }
 
-    loadJobListFunc(page) {
+    componentWillMount() {
+        this.loadJobListFunc(1);
+    }
 
+    loadJobListFunc(page) {
+        let {onLoadJobsList} = this.props;
+        onLoadJobsList(1,8,this.state.query);
+    }
+    
+    handleFilter(newType) {
+        let temp = this.state.query;
+        if(newType === 5) { // lấy tất cả
+            temp['job_type'] = '';
+        }
+        else {
+            temp['job_type'] = newType;
+        }
+        
+        this.setState({query: temp, queryType: newType},() => {
+            this.loadJobListFunc(1);
+        })
     }
 
     handlePagination(pageNum) {
-        // if (pageNum !== this.props.EmployerReducer.currentApplyingPage) {
-        //     this.loadJobListFunc(pageNum);
-        // }
+        if (pageNum !== this.props.JobsListReducer.currentJobPage) {
+            this.loadJobListFunc(pageNum);
+        }
     }
 
     handleChangeStatus(id_job, current_value) {
@@ -68,44 +89,44 @@ class PendingJobsComponent extends Component {
 
     handleSearchUser() {
         let searchStr = document.getElementById('job-search-input').value;
-        if (searchStr === '') {
+        if (searchStr === this.state.query.title) {
             return;
         }
         else {
-            // gọi api
+            let temp = this.state.query;
+            temp['title'] = searchStr;
+            this.setState({query: temp},() => {
+                this.loadJobListFunc(1);
+            })
         }
     }
 
-    renderUserList() {
-        // let { tutorData, status, message, loading } = this.props.UsersReducer;
+    renderJobList(jobs) {
         let content = [];
-        // for (let e of tutorData) {
-        //     let imgSrc = e.avatarLink;
-        //     if (imgSrc === "" || imgSrc === null) {
-        //     }
 
-        content.push(<tr key={0}>            
-            <td>1</td>
-            <td><div className='text-truncate' style={{ width: '250px' }}>Đấm nhau với The Rock và Bốc bát họ</div></td>
-            <td><div className='text-truncate' style={{ width: '100px' }}>Bốc bát họ</div></td>
-            <td>{prettierNumber(200000)} VNĐ</td>
-            <td>{prettierDate(new Date())}</td>
-            <td>{prettierDate(new Date())}</td>
-            <td>
-                <select id={'select-status-' + 1} defaultValue={1} onChange={()=>{this.handleChangeStatus(1, 1)}}>
-                    <option value={0}>Bị gở</option>
-                    <option value={1}>Đang tuyển</option>
-                    <option value={2}>Đang thực hiện</option>
-                    <option value={3}>Hoàn thành</option>
-                </select>
-            </td>
-            <td className='text-center'>
-                <NavLink to='/job-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
-            </td>
-        </tr>);
-        // }
-        //}
-
+        jobs.forEach((e, index) => {
+            content.push(
+            <tr key={index}>            
+                <td>{e.id_job}</td>
+                <td><div className='text-truncate' style={{ width: '180px' }}>{e.title}</div></td>
+                <td><div className='text-truncate' style={{ width: '70px' }}>{e.job_topic}</div></td>
+                <td>{prettierNumber(e.salary)} VNĐ</td>
+                <td>{prettierDate(e.post_date)}</td>
+                <td>{prettierDate(e.expire_date)}</td>
+                <td>
+                    <select id={'select-status-' + 1} defaultValue={e.id_status} onChange={()=>{this.handleChangeStatus(e.id_job, e.id_status)}}>
+                        <option value={0}>Bị gở</option>
+                        <option value={1}>Đang tuyển</option>
+                        <option value={2}>Đang thực hiện</option>
+                        <option value={3}>Hoàn thành</option>
+                    </select>
+                </td>
+                <td className='text-center'>
+                    <NavLink to={'/job-detail/id='+e.id_job}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
+                </td>
+            </tr>);  
+        })
+        
         return content;
     }
 
@@ -142,9 +163,9 @@ class PendingJobsComponent extends Component {
         return content;
     }
 
-    render() {
-        let { totalApplyingJobs, currentApplyingPage } = {totalApplyingJobs: 8, currentApplyingPage: 1};
-        let totalPage = Math.ceil(totalApplyingJobs / 4);
+    render() {        
+        let { jobs, currentJobPage, totalJobPage } = this.props.JobsListReducer;
+        let totalPage = Math.ceil(totalJobPage / 4);
 
         return (
             <div className="container-fluid">
@@ -163,10 +184,10 @@ class PendingJobsComponent extends Component {
                         <div className="row my-1">
                             <div className="col-9">
                                 <div className="btn-group btn-group-sm" role="group">
-                                    <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                                    <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Đang tuyển</div>
-                                    <div onClick={() => { this.setState({ queryType: 4 }) }} className={"btn " + (this.state.queryType === 4 ? 'btn-secondary' : 'btn-outline-secondary')}>Đang thực hiện</div>
-                                    <div onClick={() => { this.setState({ queryType: 5 }) }} className={"btn " + (this.state.queryType === 5 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
+                                    <div onClick={() => { if(this.state.queryType !== 5) {this.handleFilter(5)} }} className={"btn " + (this.state.queryType === 5 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
+                                    <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-danger' : 'btn-outline-danger')}>Đang tuyển</div>
+                                    <div onClick={() => { if(this.state.queryType !== 2) {this.handleFilter(2)} }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}>Đang thực hiện</div>
+                                    <div onClick={() => { if(this.state.queryType !== 3) {this.handleFilter(3)} }} className={"btn " + (this.state.queryType === 3 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
                                 </div>
                             </div>
                             <div className="col-3 text-right">
@@ -193,11 +214,11 @@ class PendingJobsComponent extends Component {
                                         <th>Ngày đăng</th>
                                         <th>Hết hạn</th>
                                         <th>Trạng thái</th>
-                                        <th>Chi tiết</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderUserList()}
+                                    {this.renderJobList(jobs)}
                                 </tbody>
                             </table>
 
@@ -205,20 +226,20 @@ class PendingJobsComponent extends Component {
 
                         {/* Pagination */}
                         {(
-                            totalApplyingJobs === 0
+                            totalJobPage === 0
                                 ?
                                 ''
                                 :
                                 <nav aria-label="...">
                                     <ul className="pagination">
-                                        <li className={"pagination-item " + ((currentApplyingPage === 1 || totalPage - currentApplyingPage < 3) && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage - 1); }}>
+                                        <li className={"pagination-item " + ((currentJobPage === 1 || totalPage - currentJobPage < 3) && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentJobPage - 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-left" />
                                             </div>
                                         </li>
-                                        {this.renderPagination(currentApplyingPage, totalPage)}
-                                        <li className={"pagination-item " + (totalPage - currentApplyingPage < 3 && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage + 1); }}>
+                                        {this.renderPagination(currentJobPage, totalPage)}
+                                        <li className={"pagination-item " + (totalPage - currentJobPage < 3 && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentJobPage + 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-right" />
                                             </div>
                                         </li>
@@ -240,11 +261,9 @@ const mapStateToProps = (state) => {
   
   const mapDispatchToProps = (dispatch) => {
     return {
-      onReset: () => {
-        dispatch({
-          type: 'USER_LOG',
-        });
-      },
+      onLoadJobsList: (page, take, query) => {
+          dispatch(loadJobList(page, take, query));
+      }
     };
   };
   

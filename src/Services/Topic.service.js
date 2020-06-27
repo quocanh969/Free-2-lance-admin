@@ -16,4 +16,32 @@ function setTopicStatus(id, status) {
     })
 }
 
-export { getTopicsList, setTopicStatus }
+function updateTopic(id, updates) {
+    let body = {
+        name: '',
+        img: '',
+        status: null,
+    };
+    for (let i = 0; i < updates.length; i++) {
+        body[updates[i].field] = updates[i].value;
+    }
+    // console.log(body);
+    return axios.put(`/topics/updateTopicById/${id}`, {
+        name: body.name,
+        status: body.status,
+        img: body.img,
+    })
+}
+
+function addTopic(name, img) {
+    return axios.post('/topics/addNewTopic', {
+        name,
+        img,
+    })
+}
+
+function getTopicDetails(id) {
+    return axios.get(`/topics/getTopicById/${id}`);
+}
+
+export { getTopicsList, setTopicStatus, updateTopic, getTopicDetails, addTopic }

@@ -57,61 +57,53 @@ class TopicsComponent extends Component {
 
         if (current_value === val) return;
 
-        if (val === 0 || (current_value === 1 && val === 0)) {
-            let text = '';
-            if (val === 0) {
-                text = 'Xóa';
-            }
-            else {
-                text = 'Khôi phục';
-            }
-            Swal.fire({
-                text: "Bạn có chắc là muốn " + text + " chủ đề này",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ok, tôi đồng ý',
-                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
-                reverseButtons: true,
-            }).then((result) => {
-                if (result.value) {
-                    setTopicStatus(id_jobtopic, val).then(res => {
-                        if (res.data.code === '202') {
-                            this.loadListFunc(this.props.TopicListReducer.currentPage, '', 2);
-                            Swal.fire({
-                                text: 'Thay đổi thành công',
-                                icon: 'success',
-                            })
-                        }
-                        else {
-                            Swal.fire({
-                                text: 'Thay đổi không được thực hiện',
-                                icon: 'error',
-                            })
-                            document.getElementById('select-status-' + id_jobtopic).value = current_value;
-                        }
-                    }).catch(err => {
-                        alert('Server gặp sự cố')
-                    })
-
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire({
-                        text: 'Thay đổi không được thực hiện',
-                        icon: 'error',
-                    })
-                    document.getElementById('select-status-' + id_jobtopic).value = current_value;
-                }
-                else {
-                    document.getElementById('select-status-' + id_jobtopic).value = current_value;
-                }
-            })
+        let text = '';
+        if (val === 0) {
+            text = 'Xóa';
         }
         else {
-            Swal.fire({
-                text: 'Bạn không thể thay đổi trạng thái của người dùng này',
-                icon: 'warning',
-            });
-            document.getElementById('select-status-' + id_jobtopic).value = current_value;
+            text = 'Khôi phục';
         }
+        Swal.fire({
+            text: "Bạn có chắc là muốn " + text + " chủ đề này",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ok, tôi đồng ý',
+            cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.value) {
+                setTopicStatus(id_jobtopic, val).then(res => {
+                    if (res.data.code === '202') {
+                        this.loadListFunc(this.props.TopicListReducer.currentPage, '', 2);
+                        Swal.fire({
+                            text: 'Thay đổi thành công',
+                            icon: 'success',
+                        })
+                    }
+                    else {
+                        Swal.fire({
+                            text: 'Thay đổi không được thực hiện',
+                            icon: 'error',
+                        })
+                        document.getElementById('select-status-' + id_jobtopic).value = current_value;
+                    }
+                }).catch(err => {
+                    alert('Server gặp sự cố')
+                })
+
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    text: 'Thay đổi không được thực hiện',
+                    icon: 'error',
+                })
+                document.getElementById('select-status-' + id_jobtopic).value = current_value;
+            }
+            else {
+                document.getElementById('select-status-' + id_jobtopic).value = current_value;
+            }
+        })
+
 
     }
 
@@ -125,7 +117,7 @@ class TopicsComponent extends Component {
                 <td>{e.count}</td>
                 <td>
                     {/* <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i> */}
-                    <NavLink to={'/topic-detail/id='+e.id_jobtopic}><i className='icon-line-awesome-wrench cursor-pointer text-primary'></i></NavLink>
+                    <NavLink to={'/topic-detail/id=' + e.id_jobtopic}><i className='icon-line-awesome-wrench cursor-pointer text-primary'></i></NavLink>
                 </td>
                 <td>
                     {/* <i className='icon-feather-trash-2 cursor-pointer text-primary' onClick={() => { console.log('remove') }}></i> */}
@@ -199,7 +191,7 @@ class TopicsComponent extends Component {
                                     <div onClick={() => { if (this.state.queryType != 2) this.handleSort(2) }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}>Số lượng công việc giảm dần&nbsp;<i className='icon-feather-arrow-down'></i></div>
                                 </div>
                             </div>
-                            
+
                             <div className="col-3 text-right">
                                 <div className="input-group mb-3">
                                     <input type="text" id="user-search-input" className="form-control" placeholder="Tìm theo tên chủ đề .." />
@@ -210,7 +202,11 @@ class TopicsComponent extends Component {
                                     </div>
                                 </div>
                             </div>
-                            <div className='col-3'><div className='w-100 btn btn-danger px-0'><i className='icon-feather-plus'></i>&nbsp;Thêm chủ đề mới</div></div>
+                            <div className='col-3'>
+                                <NavLink to={'/add-topic'}>
+                                    <div className='w-100 btn btn-danger px-0'>&nbsp;Thêm chủ đề mới</div>
+                                </NavLink>
+                            </div>
                         </div>
 
                         {/* Table */}

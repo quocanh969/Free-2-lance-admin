@@ -7,6 +7,8 @@ import UserInfo from './UserDetailTab/UserInfo';
 import UserJobList from './UserDetailTab/UserJobList';
 import UserTaskList from './UserDetailTab/UserTaskList';
 
+import {loadUserDetail, loadJobsByEmployer, loadJobsByApplicant} from '../../Actions/User.acction';
+
 class UserDetailComponent extends Component {
 
     constructor(props) {
@@ -15,6 +17,14 @@ class UserDetailComponent extends Component {
         this.state = {
             tab: 1,
         }
+    }
+
+    componentWillMount() {
+        let {id_user} = this.props.match.params;
+        let {onLoadUserDetail, onLoadJobList, onLoadTaskList} = this.props;
+        onLoadUserDetail(id_user);
+        onLoadJobList(1,8,'',5,id_user);
+        onLoadTaskList(1,8,'',5,id_user);
     }
 
     switchTab() {
@@ -72,7 +82,15 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        onLoadUserDetail: (id_user) => {
+            dispatch(loadUserDetail(id_user));
+        },
+        onLoadJobList: (page, take, queryName, status, id_user) => {
+            dispatch(loadJobsByEmployer(page, take, queryName, status, id_user));
+        },
+        onLoadTaskList: (page, take, queryName, status, id_user) => {
+            dispatch(loadJobsByApplicant(page, take, queryName, status, id_user));
+        },
     }
 }
 

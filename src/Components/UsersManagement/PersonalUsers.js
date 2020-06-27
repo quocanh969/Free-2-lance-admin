@@ -125,7 +125,7 @@ class PersonalUsersComponent extends Component {
             content.push(
             <tr key={index}>
                 <td>{e.id_user}</td>
-                <td>{e.fullname}</td>
+                <td><div className='text-truncate' style={{ width: '100px' }}>{e.fullname}</div></td>
                 <td><div className='text-truncate' style={{ width: '100px' }}>{e.email}</div></td>
                 <td>{e.dial}</td>
                 <td>{e.identity}</td>
@@ -226,7 +226,7 @@ class PersonalUsersComponent extends Component {
                                         <th>Id</th>
                                         <th>Tên</th>
                                         <th>Email</th>
-                                        <th>Số điện thoại</th>
+                                        <th>Sđt</th>
                                         <th>Số CMND</th>
                                         <th>Địa chỉ</th>
                                         <th>Trạng thái</th>

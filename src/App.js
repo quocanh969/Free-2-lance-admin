@@ -15,28 +15,35 @@ import Tags from './Components/OtherManagement/Tags';
 import UserDetail from './Components/UsersManagement/UserDetail';
 import JobDetail from './Components/JobsManagement/JobDetail';
 import Login from './Components/Account/Login';
-import Locations from './Components/OtherManagement/Locations';
 import Topics from './Components/JobsManagement/Topic';
 import TopicDetail from './Components/JobsManagement/TopicDetailTab/TopicDetail';
 import { history } from './Ultis/history/history';
 import EmployeeUsers from './Components/UsersManagement/EmployeeUsers';
+import UpdateInfo from './Components/Account/UpdateInfo';
 
 function App() {
   return (
       <Router history={history}>   
         <Switch>                  
-          <SRoute path='/' exact component={Home}></SRoute>          
+          <SRoute path='/' exact component={Home}></SRoute>  
+
           <SRoute path='/personal-user-management' exact component={PersonalUsers}></SRoute>
           <SRoute path='/business-user-management' exact component={BusinessUsers}></SRoute>
           <SRoute path='/employee-user-management' exact component={EmployeeUsers}></SRoute>
-          <SRoute path='/user-detail' exact component={UserDetail}></SRoute>
+          <SRoute path='/user-detail/id=:id_user' exact component={UserDetail}></SRoute>
+
           <SRoute path='/tags-management' exact component={Tags}></SRoute>
+
           <SRoute path='/job-management' exact component={PendingJobs}></SRoute>
+          <SRoute path='/job-detail/id=:id_job' exact component={JobDetail}></SRoute>
+
           <SRoute path='/topic-management' exact component={Topics}></SRoute>
-          <SRoute path='/topic-detail/id=:id' exact component={TopicDetail}></SRoute>
-          <SRoute path='/job-detail' exact component={JobDetail}></SRoute>
-          <SRoute path='/report-management' exact component={Reports}></SRoute>
-          <SRoute path='/area-management' exact component={Locations}></SRoute>
+          <SRoute path='/topic-detail' exact component={TopicDetail}></SRoute>
+          
+          <SRoute path='/report-management' exact component={Reports}></SRoute>          
+
+          <SRoute path='/user-profile' exact component={UpdateInfo}></SRoute>  
+
           <Route path='/login' exact component={Login}></Route>
           {/* <Redirect to='/not-found'></Redirect> */}
         </Switch>

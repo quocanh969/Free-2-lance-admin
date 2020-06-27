@@ -28,4 +28,28 @@ function setUserStatus(id_user, account_status) {
     })
 }
 
-export {signIn, getUserInfo, getUserList, setUserStatus}
+function getUserDetail(id_user) {
+    return axios.get('users/getClientUserDetails/' + id_user)
+}
+
+function getJobsByEmployerId(page, take, queryName, status, employer) {
+    return axios.post('jobs/getJobsByEmployer/' + employer, {
+        page,
+        take,
+        isASC: 1,
+        queryName,
+        status,
+    })
+}
+
+function getJobsByApplicantId(page, take, queryName, status, employer) {
+    return axios.post('jobs/getJobsByApplicant/' + employer, {
+        page,
+        take,
+        isASC: 1,
+        queryName,
+        status,
+    })
+}
+
+export {signIn, getUserInfo, getUserList, setUserStatus, getUserDetail, getJobsByEmployerId, getJobsByApplicantId}

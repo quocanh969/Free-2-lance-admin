@@ -3,6 +3,8 @@ import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { prettierNumber, prettierDate } from '../../../Ultis/Helper/HelperFunction';
 
+import {loadJobsByApplicant} from '../../../Actions/User.acction';
+
 import Swal from 'sweetalert2';
 
 class UserTaskListComponent extends Component {
@@ -11,68 +13,38 @@ class UserTaskListComponent extends Component {
         super(props);
 
         this.state = {
-            queryType: 1, // 1 - đang tuyển, 2 - đang thực hiên, 3 - đã hoàn thành
+            queryType: 5, 
+            queryName: '',
         }
     }
 
-    loadJobListFunc(page) {
-
+    loadTaskListFunc(page, queryName, status) {
+        let {onLoadTaskList} = this.props;
+        let {userInfo} = this.props.UserDetailReducer;        
+        onLoadTaskList(page, 8, queryName, status, userInfo.personal.id_user);
     }
 
     handlePagination(pageNum) {
-        // if (pageNum !== this.props.EmployerReducer.currentApplyingPage) {
-        //     this.loadJobListFunc(pageNum);
-        // }
+        if (pageNum !== this.props.UserDetailReducer.currentTask) {
+            this.loadTaskListFunc(pageNum, this.state.queryName, this.state.queryType);
+        }
     }
-
-    handleChangeStatus(id_job, current_value) {
-        let val = Number.parseInt(document.getElementById('select-status-' + id_job).value);
-
-        if (current_value === val) return;
-
-        if (val === 0) {
-            Swal.fire({
-                text: "Bạn có chắc là muốn gỡ công việc này xuống !",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ok, tôi đồng ý',
-                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
-                reverseButtons: true,
-            }).then((result) => {
-                if (result.value) {
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
-                    })
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire({
-                        text: 'Thay đổi không được thực hiện',
-                        icon: 'error',
-                    })
-                    document.getElementById('select-status-' + id_job).value = current_value;
-                }
-                else {
-                    document.getElementById('select-status-' + id_job).value = current_value;
-                }
-            })
-        }
-        else {
-            Swal.fire({
-                text: 'Bạn không thể thay đổi trạng thái này của công việc',
-                icon: 'warning',
-            });
-            document.getElementById('select-status-' + id_job).value = current_value;
-        }
-
+   
+    handleFilter(newType) {
+        this.setState({queryType: newType},() => {
+            this.loadTaskListFunc(1, this.state.queryName, this.state.queryType);
+        })
     }
 
     handleSearchUser() {
         let searchStr = document.getElementById('job-search-input').value;
-        if (searchStr === '') {
+        if (searchStr === this.state.queryName) {
             return;
         }
         else {
-            // gọi api
+            this.setState({queryName: searchStr},() => {
+                this.loadTaskListFunc(1, this.state.queryName, this.state.queryType);
+            })
         }
     }
 
@@ -107,33 +79,28 @@ class UserTaskListComponent extends Component {
         }
     }
 
-    renderTaskList() {
-        // let { tutorData, status, message, loading } = this.props.UsersReducer;
+    renderTaskList(taskList) {
         let content = [];
-        // for (let e of tutorData) {
-        //     let imgSrc = e.avatarLink;
-        //     if (imgSrc === "" || imgSrc === null) {
-        //     }
-
-        content.push(<tr key={0}>
-            <td>1</td>
-            <td><div className='text-truncate' style={{ width: '250px' }}>Đấm nhau với The Rock và Bốc bát họ</div></td>
-            <td><div className='text-truncate' style={{ width: '100px' }}>Bốc bát họ</div></td>
-            <td>{prettierNumber(200000)} VNĐ</td>
-            <td>{prettierDate(new Date())}</td>
-            <td>{prettierDate(new Date())}</td>
-            <td>
-                <div className='text-center'>
-                    {this.renderTaskStatus(0)}
-                </div>
-            </td>
-            <td className='text-center'>
-                <NavLink to='/job-detail'><i className='icon-feather-eye cursor-pointer'></i></NavLink>
-            </td>
-        </tr>);
-        // }
-        //}
-
+        taskList.forEach((e, index) => {
+            content.push(
+            <tr key={index}>
+                <td>{e.id_job}</td>
+                <td><div className='text-truncate' style={{ width: '180px' }}>{e.title}</div></td>
+                <td><div className='text-truncate' style={{ width: '70px' }}>{e.job_topic}</div></td>
+                <td>{prettierNumber(e.salary)} VNĐ</td>
+                <td>{prettierDate(e.post_date)}</td>
+                <td>{prettierDate(e.expire_date)}</td>
+                <td>
+                    <div className='text-center'>
+                        {this.renderTaskStatus(e.id_status)}
+                    </div>
+                </td>
+                <td className='text-center'>
+                    <NavLink to={'/job-detail/id='+e.id_job}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
+                </td>
+            </tr>);
+        })
+        
         return content;
     }
 
@@ -171,8 +138,8 @@ class UserTaskListComponent extends Component {
     }
 
     render() {
-        let { totalApplyingJobs, currentApplyingPage } = { totalApplyingJobs: 8, currentApplyingPage: 1 };
-        let totalPage = Math.ceil(totalApplyingJobs / 4);
+        let { taskList, totalTask, currentTask } = this.props.UserDetailReducer;
+        let totalPage = Math.ceil(totalTask / 8);
 
         return (
             <div className="container-fluid px-0">
@@ -184,10 +151,10 @@ class UserTaskListComponent extends Component {
                     <div className="row my-1">
                         <div className='col-9'>
                             <div className="btn-group btn-group-sm" role="group">
-                                <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                                <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Đang ứng tuyển</div>
-                                <div onClick={() => { this.setState({ queryType: 4 }) }} className={"btn " + (this.state.queryType === 4 ? 'btn-secondary' : 'btn-outline-secondary')}>Đang thực hiện</div>
-                                <div onClick={() => { this.setState({ queryType: 5 }) }} className={"btn " + (this.state.queryType === 5 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
+                                <div onClick={() => { if(this.state.queryType !== 5) {this.handleFilter(5)} }} className={"btn " + (this.state.queryType === 5 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
+                                <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-danger' : 'btn-outline-danger')}>Đang ứng tuyển</div>
+                                <div onClick={() => { if(this.state.queryType !== 2) {this.handleFilter(2)} }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}>Đang thực hiện</div>
+                                <div onClick={() => { if(this.state.queryType !== 3) {this.handleFilter(3)} }} className={"btn " + (this.state.queryType === 3 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
                             </div>
                         </div>
                         <div className="col-3 text-right">
@@ -218,7 +185,7 @@ class UserTaskListComponent extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.renderTaskList()}
+                                {this.renderTaskList(taskList)}
                             </tbody>
                         </table>
 
@@ -226,20 +193,20 @@ class UserTaskListComponent extends Component {
 
                     {/* Pagination */}
                     {(
-                        totalApplyingJobs === 0
+                        totalTask === 0
                             ?
                             ''
                             :
                             <nav aria-label="...">
                                 <ul className="pagination">
-                                    <li className={"pagination-item " + ((currentApplyingPage === 1 || totalPage - currentApplyingPage < 3) && "d-none")}>
-                                        <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage - 1); }}>
+                                    <li className={"pagination-item " + ((currentTask === 1 || totalPage - currentTask < 3) && "d-none")}>
+                                        <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentTask - 1); }}>
                                             <i className="icon-material-outline-keyboard-arrow-left" />
                                         </div>
                                     </li>
-                                    {this.renderPagination(currentApplyingPage, totalPage)}
-                                    <li className={"pagination-item " + (totalPage - currentApplyingPage < 3 && "d-none")}>
-                                        <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage + 1); }}>
+                                    {this.renderPagination(currentTask, totalPage)}
+                                    <li className={"pagination-item " + (totalPage - currentTask < 3 && "d-none")}>
+                                        <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentTask + 1); }}>
                                             <i className="icon-material-outline-keyboard-arrow-right" />
                                         </div>
                                     </li>
@@ -261,7 +228,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        onLoadTaskList: (page, take, queryName, status, id_user) => {
+            dispatch(loadJobsByApplicant(page, take, queryName, status, id_user));
+        },
     }
 }
 

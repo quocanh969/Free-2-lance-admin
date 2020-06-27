@@ -3,6 +3,9 @@ import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Swal from 'sweetalert2';
+import { loadEmployeeList } from '../../Actions/Employee.action';
+import { history } from '../../Ultis/history/history';
+import { resetEmployeePW, removeEmployee, addNewEmployee } from '../../Services/Employee.service';
 
 class EmployeeUsersComponent extends Component {
 
@@ -10,22 +13,29 @@ class EmployeeUsersComponent extends Component {
         super(props);
 
         this.state = {
-            queryType: 1, // 1 - tất cả, 2 - bị cấm, 3 - chưa kích hoạt, 4 - chờ xác thực, 5 - đã xác thực
+            queryName: '',
         }
     }
 
-    componentWillMount() {
-        this.loadJobListFunc(1, '', 3); // lấy tất cả
+    componentWillMount() {        
+        let {user} = this.props.AccountReducer;
+        if(user === null || user.isManager === 0) {
+            history.push('/');
+        }
+        else {
+            this.loadJobListFunc(1, this.state.queryName);
+        }
     }
 
-    loadJobListFunc(page, queryName, account_status) {
-        
+    loadJobListFunc(page, queryName) {
+        let {onLoadEmployeeList} = this.props;
+        onLoadEmployeeList(page, 8, queryName);
     }
 
     handlePagination(pageNum) {
-        // if (pageNum !== this.props.EmployerReducer.currentApplyingPage) {
-        //     this.loadJobListFunc(pageNum);
-        // }
+        if (pageNum !== this.props.EmployeeListReducer.currentEmployeePage) {
+            this.loadJobListFunc(pageNum, this.state.queryName);
+        }
     }
 
     handleSearchEmployee() {
@@ -34,76 +44,131 @@ class EmployeeUsersComponent extends Component {
             return;
         }
         else {
-            // gọi api
-        }
-    }
-
-    handleChangeStatus(id_user, current_value) {
-        let val = Number.parseInt(document.getElementById('select-status-' + id_user).value);
-
-        if (current_value === val) return;
-
-        if (val === -1 || (current_value === -1 && val === 1)) {
-            let text = '';
-            if (val === -1) {
-                text = 'cấm';
-            }
-            else {
-                text = 'kích hoạt';
-            }
-            Swal.fire({
-                text: "Bạn có chắc là muốn " + text + " tài khoản người dùng",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Ok, tôi đồng ý',
-                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
-                reverseButtons: true,
-            }).then((result) => {
-                if (result.value) {
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
-                    })
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire({
-                        text: 'Thay đổi không được thực hiện',
-                        icon: 'error',
-                    })
-                    document.getElementById('select-status-' + id_user).value = current_value;
-                }
-                else {
-                    document.getElementById('select-status-' + id_user).value = current_value;
-                }
+            this.setState({queryName: searchStr}, () => {
+                this.loadJobListFunc(1, this.state.queryName);
             })
         }
-        else {
-            Swal.fire({
-                text: 'Bạn không thể thay đổi trạng thái của người dùng này',
-                icon: 'warning',
-            });
-            document.getElementById('select-status-' + id_user).value = current_value;
-        }
-
     }
 
-    renderUserList() {
-        let { personal } = this.props.UserListReducer;
+    handleResetPW(id_user) {
+        resetEmployeePW(id_user).then(res=>{
+            if(res.data.code === '105') {
+                Swal.fire({
+                    title: 'Mật khẩu của tài khoản chọn đã được khôi phục thành "admin123"',
+                    icon: 'success',
+                });
+            }
+            else {
+                Swal.fire({
+                    title: 'Khôi phục mật khẩu thất bại',
+                    icon: 'error',
+                });
+            }
+        }).catch(err=>{
+            Swal.fire({
+                title: 'Server gặp sự cố',
+                icon: 'error',
+                position: 'top',
+            });
+        })
+    }
+
+    handleRemove(id_user) {
+        removeEmployee(id_user).then(res=>{
+            if(res.data.code === '200') {
+                this.loadJobListFunc(1,this.state.queryName);
+                Swal.fire({
+                    title: 'Tài khoản đã bị xóa',
+                    icon: 'success',
+                });
+            }
+            else {
+                Swal.fire({
+                    title: 'Xóa tài khoản thất bại',
+                    icon: 'error',
+                });
+            }
+        }).catch(err=>{
+            Swal.fire({
+                title: 'Server gặp sự cố',
+                icon: 'error',
+                position: 'top',
+            });
+        })
+    }
+
+    TriggerAddNew() {
+        Swal.fire({
+            title: 'Thêm mới nhân viên',
+            html: `
+                <div class='text-left'>
+                    <label class='mt-1'>Tên nhân viên:</label>
+                    <input type='text' id='fullname-input' class='form-control'>
+                    <label class='mt-1'>Số điện thoại:</label>
+                    <input type='text' id='tel-input' class='form-control'>
+                    <label class='mt-1'>Username:</label>
+                    <input type='text' id='username-input' class='form-control'>
+                </div>
+            `,
+            showCloseButton: true,
+            focusConfirm: false,
+        }).then((result) => {
+            if (result.value) {
+                let fullname = document.getElementById('fullname-input').value;
+                let tel = document.getElementById('tel-input').value;
+                let username = document.getElementById('username-input').value;
+                this.handleAddNew(fullname, tel, username);
+            }
+            else {
+                
+            }
+        })
+    }
+
+    handleAddNew(fullname, tel, username) {
+        addNewEmployee(username, tel, fullname).then((res) => {
+            if(res.data.code === '201') {
+                this.loadJobListFunc(1,'');
+                Swal.fire({
+                    title: 'Thêm mới tài khoản thành công',
+                    icon: 'success',
+                });
+            }
+            else {
+                Swal.fire({
+                    title: 'Thêm mới tài khoản thất bại',
+                    icon: 'error',
+                });
+            }
+        }).catch(err=> {
+            Swal.fire({
+                title: 'Server gặp sự cố',
+                icon: 'error',
+                position: 'top',
+            });
+        })   
+    }
+
+    renderEmployeeList(employees) {
         let content = [];
 
-        // personal.forEach((e, index) => {
-            content.push(<tr key={0}>
-                <td>{1}</td>
-                <td>adsf</td>
-                <td>asdf</td>
-                <td>asdfasdf</td>
+        employees.forEach((e, index) => {
+            content.push(<tr key={index}>
+                <td>{e.id_user}</td>
+                <td><div className='text-truncate' style={{width: '130px'}}>{e.fullname}</div></td>
+                <td>{e.tel}</td>
+                <td>{e.username}</td>
                 <td>
-                    {(1 ? <span className='text-danger'>Quản lý</span> : <span className='text-success'>Nhân viên</span>)}
+                    {(e.isManager === 1 ? <span className='text-danger'>Quản lý</span> : <span className='text-success'>Nhân viên</span>)}
+                </td>
+                <td className='text-center'>
+                    <div><i className='icon-material-outline-autorenew cursor-pointer' onClick={()=>{this.handleResetPW(e.id_user)}}></i></div>
                 </td>
                 <td className='text-center'>
                     <div><i className='icon-feather-trash-2 cursor-pointer'></i></div>
                 </td>
             </tr>); 
-        // })
+        })
             
         return content;
     }
@@ -142,8 +207,8 @@ class EmployeeUsersComponent extends Component {
     }
 
     render() {
-        let { totalApplyingJobs, currentApplyingPage } = {totalApplyingJobs: 8, currentApplyingPage: 1};
-        let totalPage = Math.ceil(totalApplyingJobs / 4);
+        let { employees, currentEmployeePage, totalEmployee } = this.props.EmployeeListReducer;
+        let totalPage = Math.ceil(totalEmployee / 4);
 
         return (
             <div className="container-fluid">
@@ -160,7 +225,7 @@ class EmployeeUsersComponent extends Component {
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className='col-6'></div>                            
+                            <div className='col-5'></div>                            
                             <div className="col-4 text-right">
                                 <div className="input-group mb-3">
                                     <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên nhân viên .." />
@@ -171,7 +236,7 @@ class EmployeeUsersComponent extends Component {
                                     </div>
                                 </div>                                
                             </div>
-                            <div className='col-2'><div className='w-100 btn btn-danger px-0'><i className='icon-feather-plus'></i>&nbsp;Thêm nhân viên</div></div>
+                            <div className='col-3'><div className='w-100 btn btn-danger px-0' onClick={()=>{this.TriggerAddNew()}}><i className='icon-feather-plus'></i>&nbsp;Thêm nhân viên</div></div>
                         </div>
                         
                         {/* Table */}
@@ -184,11 +249,12 @@ class EmployeeUsersComponent extends Component {
                                         <th>Số điện thoại</th>
                                         <th>Username</th>
                                         <th>Vai trò</th>                                        
+                                        <th>Khôi phục mật khẩu</th>
                                         <th>Gỡ tài khoản</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderUserList()}
+                                    {this.renderEmployeeList(employees)}
                                 </tbody>
                             </table>
 
@@ -196,20 +262,20 @@ class EmployeeUsersComponent extends Component {
 
                         {/* Pagination */}
                         {(
-                            totalApplyingJobs === 0
+                            totalEmployee === 0
                                 ?
                                 ''
                                 :
                                 <nav aria-label="...">
                                     <ul className="pagination">
-                                        <li className={"pagination-item " + ((currentApplyingPage === 1 || totalPage - currentApplyingPage < 3) && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage - 1); }}>
+                                        <li className={"pagination-item " + ((currentEmployeePage === 1 || totalPage - currentEmployeePage < 3) && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentEmployeePage - 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-left" />
                                             </div>
                                         </li>
-                                        {this.renderPagination(currentApplyingPage, totalPage)}
-                                        <li className={"pagination-item " + (totalPage - currentApplyingPage < 3 && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage + 1); }}>
+                                        {this.renderPagination(currentEmployeePage, totalPage)}
+                                        <li className={"pagination-item " + (totalPage - currentEmployeePage < 3 && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentEmployeePage + 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-right" />
                                             </div>
                                         </li>
@@ -231,7 +297,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        
+        onLoadEmployeeList: (page, take, queryName) => {
+            dispatch(loadEmployeeList(page, take, queryName));
+        }
     }
 }
 

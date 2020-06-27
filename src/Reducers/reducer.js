@@ -5,12 +5,14 @@ import UserListReducer from './GeneralReducers/UserList.reducer';
 import UserDetailReducer from './GeneralReducers/UserDetail.reducer';
 import JobsListReducer from './GeneralReducers/JobList.reducer';
 import JobDetailReducer from './GeneralReducers/JobDetail.reducer';
+import EmployeeListReducer from './GeneralReducers/EmployeeList.reducer';
 
 const reducer = combineReducers({    
     AccountReducer,
     SignInReducer,
     UserListReducer,
     UserDetailReducer,
+    EmployeeListReducer,
     JobsListReducer,
     JobDetailReducer,
   });

@@ -33,7 +33,7 @@ function App() {
           <SRoute path='/tags-management' exact component={Tags}></SRoute>
           <SRoute path='/job-management' exact component={PendingJobs}></SRoute>
           <SRoute path='/topic-management' exact component={Topics}></SRoute>
-          <SRoute path='/topic-detail' exact component={TopicDetail}></SRoute>
+          <SRoute path='/topic-detail/id=:id' exact component={TopicDetail}></SRoute>
           <SRoute path='/job-detail' exact component={JobDetail}></SRoute>
           <SRoute path='/report-management' exact component={Reports}></SRoute>
           <SRoute path='/area-management' exact component={Locations}></SRoute>

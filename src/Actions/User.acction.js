@@ -44,8 +44,8 @@ export const sendLogIn = (username, password) => {
 export const sendUpdateInfo = (username, password) => {
     return (dispatch) => {
         getUserInfo().then((res) => {
-            if(res.data.length > 0) {
-                dispatch(udpateUser(res.data[0]));
+            if(res.data.data.length > 0) {
+                dispatch(udpateUser(res.data.data[0]));
             }
         }).catch(err=> {
             alert("Server gặp sự cố");

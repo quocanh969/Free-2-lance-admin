@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, NavLink } from 'react-router-dom';
 
 import avatarPlaceholder from '../Assets/images/avatar_placeholder.png';
 import { getImageSrc } from '../Ultis/Helper/HelperFunction';
@@ -151,6 +151,10 @@ class HeaderComponent extends Component {
                         </a>
                         {/* Dropdown - User Information */}
                         <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">                            
+                            <NavLink to='/user-profile' className="dropdown-item cursor-pointer">
+                                <i className="icon-line-awesome-sign-out mr-2" />
+                                Đăng xuất
+                            </NavLink>
                             <div className="dropdown-item cursor-pointer" onClick={()=>{this.handleSignOut()}}>
                                 <i className="icon-line-awesome-sign-out mr-2" />
                                 Đăng xuất

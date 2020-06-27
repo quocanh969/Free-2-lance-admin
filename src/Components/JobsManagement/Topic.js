@@ -192,15 +192,21 @@ class TopicsComponent extends Component {
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className='col-6'>
+                            {/* <div className='col-6'>
                                 <div className="btn-group" role="group">
                                     <div onClick={() => { if (this.state.queryType != 1) this.handleSort(1) }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}><i className='icon-feather-arrow-up'></i>&nbsp;Số lượng công việc tăng dần</div>
                                     <div onClick={() => { if (this.state.queryType != 2) this.handleSort(2) }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}>Số lượng công việc giảm dần&nbsp;<i className='icon-feather-arrow-down'></i></div>
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="col-4 text-right">
+                                <div className="btn-group btn-group-sm" role="group">
+                                    <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}><i className='icon-feather-arrow-up'></i>&nbsp;Số lượng công việc tăng dần</div>
+                                    <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}>Số lượng công việc giảm dần&nbsp;<i className='icon-feather-arrow-down'></i></div>                                
+                                </div>
+                            </div>                            
+                            <div className="col-3 text-right">
                                 <div className="input-group mb-3">
-                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên chủ đề .." />
+                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm theo tên chủ đề .." />
                                     <div className="input-group-append">
                                         <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchTopic() }}>
                                             <i className="fa fa-search"></i>
@@ -208,7 +214,7 @@ class TopicsComponent extends Component {
                                     </div>
                                 </div>
                             </div>
-                            <div className='col-2'><div className='w-100 btn btn-danger px-0'><i className='icon-feather-plus'></i>&nbsp;Thêm chủ đề mới</div></div>
+                            <div className='col-3'><div className='w-100 btn btn-danger px-0'><i className='icon-feather-plus'></i>&nbsp;Thêm chủ đề mới</div></div>
                         </div>
 
                         {/* Table */}

@@ -4,15 +4,54 @@ import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 import { history } from '../Ultis/history/history';
 
+import { getFigureData, getPercentageData } from '../Actions/Home.action';
+
 class HomeComponent extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentWillMount() {
+    this.loadDataFunc();
+  }
+
+  loadDataFunc() {
+    console.log("FLAG")
+    let { onGetFigureData, onGetPercentageData } = this.props;
+    onGetFigureData();
+    onGetPercentageData();
+  }
+
+  calculatePercentage(total, extract) {
+    return (extract / total * 100);
+  }
+
   render() {
+    // console.log(this.props.HomeReducer.percentageData);
+    let { percentageData, figureData } = this.props.HomeReducer;
+    let p1 = this.calculatePercentage(percentageData.total1, percentageData.extract1);
+    let p2 = this.calculatePercentage(percentageData.total2, percentageData.extract2);
+    let p3 = this.calculatePercentage(percentageData.total3, percentageData.extract3);
+    let p4 = this.calculatePercentage(percentageData.total4, percentageData.extract4);
+    let p5 = this.calculatePercentage(percentageData.total5, percentageData.extract5);
+    p1 = Math.round(p1);
+    p2 = Math.round(p2);
+    p3 = Math.round(p3);
+    p4 = Math.round(p4);
+    p5 = Math.round(p5);
+
+    let f1 = Math.round(figureData.avgPerJob);
+    let f2 = Math.round(figureData.avgJobPerDay);
+    let f3 = Math.round(figureData.totalActiveUsers);
+    let f4 = Math.round(figureData.totalBusinessUsers);
+
     return (
       <div className="container-fluid">
         {/* Page Heading */}
         <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
           <NavLink to='/login' className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-            <i className="fas fa-download fa-sm text-white-50" /> Generate Report
+            <i className="fas fa-download fa-sm text-white-50" /> Xuất báo cáo
           </NavLink>
         </div>
         {/* Content Row */}
@@ -23,8 +62,8 @@ class HomeComponent extends Component {
               <div className="card-body">
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
-                    <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">Earnings (Monthly)</div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                    <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">Số ứng viên trung bình/ công việc</div>
+                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f1}</div>
                   </div>
                   <div className="col-auto">
                     <i className="fas fa-calendar fa-2x text-gray-300" />
@@ -39,8 +78,8 @@ class HomeComponent extends Component {
               <div className="card-body">
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
-                    <div className="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual)</div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                    <div className="text-xs font-weight-bold text-success text-uppercase mb-1">Số công việc mới mỗi ngày</div>
+                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f2}</div>
                   </div>
                   <div className="col-auto">
                     <i className="fas fa-dollar-sign fa-2x text-gray-300" />
@@ -55,10 +94,10 @@ class HomeComponent extends Component {
               <div className="card-body">
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
-                    <div className="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
+                    <div className="text-xs font-weight-bold text-info text-uppercase mb-1">Số người dùng cá nhân</div>
                     <div className="row no-gutters align-items-center">
                       <div className="col-auto">
-                        <div className="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                        <div className="h5 mb-0 mr-3 font-weight-bold text-gray-800">{f3}</div>
                       </div>
                       <div className="col">
                         <div className="progress progress-sm mr-2">
@@ -80,8 +119,8 @@ class HomeComponent extends Component {
               <div className="card-body">
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
-                    <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Requests</div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                    <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">Số doanh nghiệp</div>
+                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f4}</div>
                   </div>
                   <div className="col-auto">
                     <i className="fas fa-comments fa-2x text-gray-300" />
@@ -166,33 +205,33 @@ class HomeComponent extends Component {
             {/* Project Card Example */}
             <div className="card shadow mb-4">
               <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Projects</h6>
+                <h6 className="m-0 font-weight-bold text-primary">Thống kê báo cáo tỉ lệ</h6>
               </div>
               <div className="card-body">
-                <h4 className="small font-weight-bold">Server Migration <span className="float-right">20%</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ được ứng viên được nhận <span className="float-right">{p1}%</span></h4>
                 <div className="progress mb-4">
-                  <div className="progress-bar bg-danger" role="progressbar" style={{ width: '20%' }} aria-valuenow={20} aria-valuemin={0} aria-valuemax={100} />
+                  <div className="progress-bar bg-danger" role="progressbar" style={{ width: `${p1}%` }} aria-valuenow={p1} aria-valuemin={0} aria-valuemax={100} />
                 </div>
-                <h4 className="small font-weight-bold">Sales Tracking <span className="float-right">40%</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ công việc thời vụ <span className="float-right">{p2}%</span></h4>
                 <div className="progress mb-4">
-                  <div className="progress-bar bg-warning" role="progressbar" style={{ width: '40%' }} aria-valuenow={40} aria-valuemin={0} aria-valuemax={100} />
+                  <div className="progress-bar bg-warning" role="progressbar" style={{ width: `${p2}%` }} aria-valuenow={p2} aria-valuemin={0} aria-valuemax={100} />
                 </div>
-                <h4 className="small font-weight-bold">Customer Database <span className="float-right">60%</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ ứng viên làm thỏa mãn nhà tuyển dụng <span className="float-right">{p3}%</span></h4>
                 <div className="progress mb-4">
-                  <div className="progress-bar" role="progressbar" style={{ width: '60%' }} aria-valuenow={60} aria-valuemin={0} aria-valuemax={100} />
+                  <div className="progress-bar" role="progressbar" style={{ width: `${p3}%` }} aria-valuenow={p3} aria-valuemin={0} aria-valuemax={100} />
                 </div>
-                <h4 className="small font-weight-bold">Payout Details <span className="float-right">80%</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ nhà tuyển dụng thỏa mãn ứng viên <span className="float-right">{p4}%</span></h4>
                 <div className="progress mb-4">
-                  <div className="progress-bar bg-info" role="progressbar" style={{ width: '80%' }} aria-valuenow={80} aria-valuemin={0} aria-valuemax={100} />
+                  <div className="progress-bar bg-info" role="progressbar" style={{ width: `${p4}%` }} aria-valuenow={p4} aria-valuemin={0} aria-valuemax={100} />
                 </div>
-                <h4 className="small font-weight-bold">Account Setup <span className="float-right">Complete!</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ công việc hoàn thành <span className="float-right">{p5}%</span></h4>
                 <div className="progress">
-                  <div className="progress-bar bg-success" role="progressbar" style={{ width: '100%' }} aria-valuenow={100} aria-valuemin={0} aria-valuemax={100} />
+                  <div className="progress-bar bg-success" role="progressbar" style={{ width: `${p5}%` }} aria-valuenow={p5} aria-valuemin={0} aria-valuemax={100} />
                 </div>
               </div>
             </div>
             {/* Color System */}
-            <div className="row">
+            {/* <div className="row">
               <div className="col-lg-6 mb-4">
                 <div className="card bg-primary text-white shadow">
                   <div className="card-body">
@@ -241,7 +280,7 @@ class HomeComponent extends Component {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="col-lg-6 mb-4">
             {/* Illustrations */}
@@ -281,7 +320,12 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-
+    onGetFigureData: () => {
+      dispatch(getFigureData());
+    },
+    onGetPercentageData: () => {
+      dispatch(getPercentageData());
+    }
   };
 };
 

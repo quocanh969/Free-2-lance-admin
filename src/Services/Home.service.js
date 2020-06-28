@@ -8,4 +8,16 @@ function getPercentageDataAPI() {
     return axios.get('/stats/getPercentageStats');
 }
 
-export { getFigureDataAPI, getPercentageDataAPI };
+function getAnnualJobsChartDataAPI() { 
+    return axios.get('/stats/annualJobsChartData');
+}
+
+function getAnnualUsersChartDataAPI() {
+    return axios.get('/stats/annualUsersChartData');
+}
+
+function getPendingReportsAPI() {
+    return axios.get('/stats/getPendingReports');
+}
+
+export { getFigureDataAPI, getPercentageDataAPI, getAnnualJobsChartDataAPI, getAnnualUsersChartDataAPI, getPendingReportsAPI };

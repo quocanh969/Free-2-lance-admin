@@ -4,7 +4,10 @@ import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 import { history } from '../Ultis/history/history';
 
-import { getFigureData, getPercentageData } from '../Actions/Home.action';
+import { getFigureData, getPercentageData, getAnnualJobsChartData, getAnnualUsersChartData, getPendingReports } from '../Actions/Home.action';
+
+import '../../node_modules/react-vis/dist/style.css';
+import { XYPlot, LineSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, ArcSeries } from 'react-vis';
 
 class HomeComponent extends Component {
   constructor(props) {
@@ -16,10 +19,12 @@ class HomeComponent extends Component {
   }
 
   loadDataFunc() {
-    console.log("FLAG")
-    let { onGetFigureData, onGetPercentageData } = this.props;
+    let { onGetFigureData, onGetPercentageData, onGetAnnualJobsChartData, onGetAnnualUsersChartData, onGetPendingReports } = this.props;
     onGetFigureData();
     onGetPercentageData();
+    onGetAnnualJobsChartData();
+    onGetAnnualUsersChartData();
+    onGetPendingReports();
   }
 
   calculatePercentage(total, extract) {
@@ -28,7 +33,7 @@ class HomeComponent extends Component {
 
   render() {
     // console.log(this.props.HomeReducer.percentageData);
-    let { percentageData, figureData } = this.props.HomeReducer;
+    let { percentageData, figureData, annualJobsChartData, annualUsersChartData, pendingReports } = this.props.HomeReducer;
     let p1 = this.calculatePercentage(percentageData.total1, percentageData.extract1);
     let p2 = this.calculatePercentage(percentageData.total2, percentageData.extract2);
     let p3 = this.calculatePercentage(percentageData.total3, percentageData.extract3);
@@ -45,6 +50,18 @@ class HomeComponent extends Component {
     let f3 = Math.round(figureData.totalActiveUsers);
     let f4 = Math.round(figureData.totalBusinessUsers);
 
+    let annualJobsChart = [];
+    let annualUsersChart = [];
+    let i = 0;
+    for (let e in annualJobsChartData) {
+      annualJobsChart.push({ x: ++i, y: annualJobsChartData[e] });
+    }
+    i = 0;
+    for (let e in annualUsersChartData) {
+      annualUsersChart.push({ x: ++i, y: annualUsersChartData[e] });
+    }
+    console.log("FLAG");
+    console.log(pendingReports)
     return (
       <div className="container-fluid">
         {/* Page Heading */}
@@ -63,7 +80,7 @@ class HomeComponent extends Component {
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
                     <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">Số ứng viên trung bình/ công việc</div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f1}</div>
+                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f1} ứng viên</div>
                   </div>
                   <div className="col-auto">
                     <i className="fas fa-calendar fa-2x text-gray-300" />
@@ -79,7 +96,7 @@ class HomeComponent extends Component {
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
                     <div className="text-xs font-weight-bold text-success text-uppercase mb-1">Số công việc mới mỗi ngày</div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f2}</div>
+                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f2} công việc</div>
                   </div>
                   <div className="col-auto">
                     <i className="fas fa-dollar-sign fa-2x text-gray-300" />
@@ -97,13 +114,13 @@ class HomeComponent extends Component {
                     <div className="text-xs font-weight-bold text-info text-uppercase mb-1">Số người dùng cá nhân</div>
                     <div className="row no-gutters align-items-center">
                       <div className="col-auto">
-                        <div className="h5 mb-0 mr-3 font-weight-bold text-gray-800">{f3}</div>
+                        <div className="h5 mb-0 mr-3 font-weight-bold text-gray-800">{f3} tài khoản</div>
                       </div>
-                      <div className="col">
+                      {/* <div className="col">
                         <div className="progress progress-sm mr-2">
                           <div className="progress-bar bg-info" role="progressbar" style={{ width: '50%' }} aria-valuenow={50} aria-valuemin={0} aria-valuemax={100} />
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="col-auto">
@@ -119,8 +136,8 @@ class HomeComponent extends Component {
               <div className="card-body">
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
-                    <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">Số doanh nghiệp</div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f4}</div>
+                    <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">Số người dùng doanh nghiệp</div>
+                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f4} tài khoản</div>
                   </div>
                   <div className="col-auto">
                     <i className="fas fa-comments fa-2x text-gray-300" />
@@ -133,12 +150,12 @@ class HomeComponent extends Component {
         {/* Content Row */}
         <div className="row">
           {/* Area Chart */}
-          <div className="col-xl-8 col-lg-7">
+          <div className="col-xl-6 col-lg-7">
             <div className="card shadow mb-4">
               {/* Card Header - Dropdown */}
               <div className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 className="m-0 font-weight-bold text-primary">Earnings Overview</h6>
-                <div className="dropdown no-arrow">
+                <h6 className="m-0 font-weight-bold text-primary">Số công việc được đăng trong năm theo tháng</h6>
+                {/* <div className="dropdown no-arrow">
                   <a className="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i className="fas fa-ellipsis-v fa-sm fa-fw text-gray-400" />
                   </a>
@@ -149,23 +166,30 @@ class HomeComponent extends Component {
                     <div className="dropdown-divider" />
                     <a className="dropdown-item" href="#">Something else here</a>
                   </div>
-                </div>
+                </div> */}
               </div>
               {/* Card Body */}
               <div className="card-body">
                 <div className="chart-area">
-                  <canvas id="myAreaChart" />
+                  {/* <canvas id="myAreaChart" /> */}
+                  <XYPlot height={300} width={550}>
+                    <LineSeries data={annualJobsChart} />
+                    <VerticalGridLines />
+                    <HorizontalGridLines />
+                    <XAxis title="Tháng" titlePosition="middle-under" style={{ title: { fontSize: '16px' } }} />
+                    <YAxis title="Số lượng công việc được đăng" />
+                  </XYPlot>
                 </div>
               </div>
             </div>
           </div>
           {/* Pie Chart */}
-          <div className="col-xl-4 col-lg-5">
+          <div className="col-xl-6 col-lg-7">
             <div className="card shadow mb-4">
               {/* Card Header - Dropdown */}
               <div className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 className="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                <div className="dropdown no-arrow">
+                <h6 className="m-0 font-weight-bold text-primary">Số tài khoản đăng ký trong năm theo tháng</h6>
+                {/* <div className="dropdown no-arrow">
                   <a className="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i className="fas fa-ellipsis-v fa-sm fa-fw text-gray-400" />
                   </a>
@@ -176,14 +200,21 @@ class HomeComponent extends Component {
                     <div className="dropdown-divider" />
                     <a className="dropdown-item" href="#">Something else here</a>
                   </div>
-                </div>
+                </div> */}
               </div>
               {/* Card Body */}
               <div className="card-body">
-                <div className="chart-pie pt-4 pb-2">
-                  <canvas id="myPieChart" />
+                <div className="chart-area">
+                  {/* <canvas id="myPieChart" /> */}
+                  <XYPlot height={300} width={550}>
+                    <LineSeries data={annualUsersChart} />
+                    <VerticalGridLines />
+                    <HorizontalGridLines />
+                    <XAxis title="Tháng" titlePosition="middle-under" style={{ title: { fontSize: '16px' } }} />
+                    <YAxis title="Số lượng tài khoản mới" />
+                  </XYPlot>
                 </div>
-                <div className="mt-4 text-center small">
+                {/* <div className="mt-4 text-center small">
                   <span className="mr-2">
                     <i className="fas fa-circle text-primary" /> Direct
                     </span>
@@ -193,7 +224,7 @@ class HomeComponent extends Component {
                   <span className="mr-2">
                     <i className="fas fa-circle text-info" /> Referral
                     </span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -286,18 +317,18 @@ class HomeComponent extends Component {
             {/* Illustrations */}
             <div className="card shadow mb-4">
               <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Illustrations</h6>
+                <h6 className="m-0 font-weight-bold text-primary">Khiếu nại đang chờ xem xét</h6>
               </div>
               <div className="card-body">
                 <div className="text-center">
                   <img className="img-fluid px-3 px-sm-4 mt-3 mb-4" style={{ width: '25rem' }} src="img/undraw_posting_photo.svg" alt="" />
                 </div>
-                <p>Add some quality, svg illustrations to your project courtesy of <a target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a constantly updated collection of beautiful svg images that you can use completely free and without attribution!</p>
-                <a target="_blank" rel="nofollow" href="https://undraw.co/">Browse Illustrations on unDraw →</a>
+                <p>Hiện đang có {pendingReports} khiếu nại đang đợi xử lý</p>
+                <a target="_blank" rel="nofollow" href="/report-management">Xem thêm →</a>
               </div>
             </div>
             {/* Approach */}
-            <div className="card shadow mb-4">
+            {/* <div className="card shadow mb-4">
               <div className="card-header py-3">
                 <h6 className="m-0 font-weight-bold text-primary">Development Approach</h6>
               </div>
@@ -305,7 +336,7 @@ class HomeComponent extends Component {
                 <p>SB Admin 2 makes extensive use of Bootstrap 4 utility classes in order to reduce CSS bloat and poor page performance. Custom CSS classes are used to create custom components and custom utility classes.</p>
                 <p className="mb-0">Before working with this theme, you should become familiar with the Bootstrap framework, especially the utility classes.</p>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -325,6 +356,15 @@ const mapDispatchToProps = (dispatch) => {
     },
     onGetPercentageData: () => {
       dispatch(getPercentageData());
+    },
+    onGetAnnualJobsChartData: () => {
+      dispatch(getAnnualJobsChartData());
+    },
+    onGetAnnualUsersChartData: () => {
+      dispatch(getAnnualUsersChartData())
+    },
+    onGetPendingReports: () => {
+      dispatch(getPendingReports());
     }
   };
 };

@@ -12,8 +12,8 @@ const JobsListReducer = (state = initState, action) => {
             return {
                 ...state,
                 jobs: action.list,
-                currentJobPage: action.total,
-                totalJobPage: action.page,
+                totalJobPage: action.total,
+                currentJobPage: action.page,
             };      
         default: return state;
     }

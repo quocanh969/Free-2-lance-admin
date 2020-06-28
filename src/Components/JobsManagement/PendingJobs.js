@@ -188,7 +188,7 @@ class PendingJobsComponent extends Component {
 
     render() {        
         let { jobs, currentJobPage, totalJobPage } = this.props.JobsListReducer;
-        let totalPage = Math.ceil(totalJobPage / 4);
+        let totalPage = Math.ceil(totalJobPage / 8);
 
         return (
             <div className="container-fluid">

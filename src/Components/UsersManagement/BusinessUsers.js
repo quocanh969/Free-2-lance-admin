@@ -186,7 +186,7 @@ class BusinessUsersComponent extends Component {
 
     render() {
         let { totalBusiness, businessCurrentPage } = this.props.UserListReducer;
-        let totalPage = Math.ceil(totalBusiness / 4);
+        let totalPage = Math.ceil(totalBusiness / 8);
 
         return (
             <div className="container-fluid">
@@ -284,7 +284,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
     return {
         onGetBusinessList: (page, queryName, account_status) => {
-            dispatch(getBusinessList(4, page, queryName, account_status));
+            dispatch(getBusinessList(8, page, queryName, account_status));
         },
     }
 }

@@ -11,6 +11,7 @@ import TagListReducer from './GeneralReducers/TagList.reducer';
 import TagDetailReducer from './GeneralReducers/TagDetail.reducer'
 import EmployeeListReducer from './GeneralReducers/EmployeeList.reducer';
 import HomeReducer from './GeneralReducers/Home.reducer';
+import ReportsReducer from './GeneralReducers/Report.reducer';
 
 const reducer = combineReducers({
     AccountReducer,
@@ -25,6 +26,7 @@ const reducer = combineReducers({
     TagListReducer,
     TagDetailReducer,
     HomeReducer,
+    ReportsReducer,
 });
 
 export default reducer;

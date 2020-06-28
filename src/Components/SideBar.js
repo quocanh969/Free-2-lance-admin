@@ -30,7 +30,7 @@ class SideBarComponent extends Component {
             return (
                 <ul className="navbar-nav bg-black sidebar sidebar-dark accordion" id="accordionSidebar">
                     {/* Sidebar - Brand */}
-                    <NavLink id='icon' className="py-2 text-center font-size-25" to='/login'>
+                    <NavLink id='icon' className="py-2 text-center font-size-25" to='/'>
                         <span className='font-weight-bold'><span className='text-primary'>FREE</span><span className='text-danger'>2</span><span className='text-white'>LANCE</span></span>
                     </NavLink>
                     {/* Divider */}

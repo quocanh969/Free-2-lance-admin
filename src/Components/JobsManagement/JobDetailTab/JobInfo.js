@@ -96,8 +96,8 @@ class JobInfoComponent extends Component {
         return (
             <div>
                 <div className="profile-head">
-                    <div className='d-flex justify-content-between'>
-                        <div>
+                    <div className='row'>
+                        <div className='col-7'>
                             <h5>
                                 {job.title.toUpperCase()}
                             </h5>
@@ -121,7 +121,7 @@ class JobInfoComponent extends Component {
                                 )
                             )}                            
                         </div>
-                        <div>
+                        <div className='col-5'>
                             <div className="btn-group btn-group-sm" role="group">
                                 <div onClick={() => { this.handleChangeStatus(0) }} className={"btn " + (job.id_status === 0 ? 'btn-danger' : 'btn-outline-danger')}>Bị gỡ</div>
                                 <div onClick={() => { this.handleChangeStatus(1) }}className={"btn " + (job.id_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Đang tuyển</div>
@@ -143,12 +143,12 @@ class JobInfoComponent extends Component {
                                 role="tab" aria-controls="home" aria-selected="true"
                                 onClick={() => { if (this.state.tab !== 3) { this.setState({ tab: 3 }) } }}
                             >Hình ảnh liên quan đến công việc</div>
-                        </li>
+                        </li>                        
                         <li className="nav-item">
                             <div className={'nav-link cursor-pointer ' + (this.state.tab === 2 ? 'active' : '')} id="home-tab" data-toggle="tab"
                                 role="tab" aria-controls="home" aria-selected="true"
                                 onClick={() => { if (this.state.tab !== 2) { this.setState({ tab: 2 }) } }}
-                            >Danh sách người ứng tuyển</div>
+                            >{(job.id_status === 1 || job.id_status === 0? 'Danh sách người ứng tuyển' : 'Danh sách người tham gia')}</div>
                         </li>
                     </ul>
                 </div>

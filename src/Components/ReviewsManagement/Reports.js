@@ -4,25 +4,39 @@ import { connect } from 'react-redux';
 
 import Swal from 'sweetalert2';
 import { prettierDate } from '../../Ultis/Helper/HelperFunction';
+import { loadReportList } from '../../Actions/Report.action';
+import { setReportStatus } from '../../Services/Report.service';
 
 class ReportsComponent extends Component {
-    
+
     constructor(props) {
         super(props);
 
         this.state = {
-            queryType: 1, // 1 - tất cả, 2 - chưa giải quyết, 3 - đã giải quyết
+            queryType: 3, // 1 - tất cả, 2 - chưa giải quyết, 3 - đã giải quyết
+            queryName: '',
         }
     }
 
-    loadJobListFunc(page) {
+    componentWillMount() {
+        this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
+    }
 
+    loadJobListFunc(page, status, queryName) {
+        let { onLoadReportList } = this.props;
+        onLoadReportList(page, 8, status, queryName);
     }
 
     handlePagination(pageNum) {
-        // if (pageNum !== this.props.EmployerReducer.currentApplyingPage) {
-        //     this.loadJobListFunc(pageNum);
-        // }
+        if (pageNum !== this.props.ReportsReducer.currentReportPage) {
+            this.loadJobListFunc(pageNum, this.state.queryType, this.state.queryName);
+        }
+    }
+
+    handleFilter(newType) {
+        this.setState({ queryType: newType }, () => {
+            this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
+        })
     }
 
     handleSearchUser() {
@@ -31,7 +45,9 @@ class ReportsComponent extends Component {
             return;
         }
         else {
-            // gọi api
+            this.setState({ queryName: searchStr }, () => {
+                this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
+            });
         }
     }
 
@@ -40,8 +56,8 @@ class ReportsComponent extends Component {
 
         if (current_value === val) return;
 
-        if (val === 2) {            
-            const {value: solve} = Swal.fire({
+        if (val === 1) {
+            const { value: solve } = Swal.fire({
                 text: "Bạn đã giải quyết xong khiếu nại này, vui lòng nhập phương thức của bạn",
                 input: 'text',
                 showCancelButton: true,
@@ -50,16 +66,33 @@ class ReportsComponent extends Component {
                 reverseButtons: true,
                 inputValidator: (value) => {
                     if (!value) {
-                      return 'Bạn vẫn chưa điền phương thức giải quyết !'
+                        return 'Bạn vẫn chưa điền phương thức giải quyết !'
                     }
                 }
             }).then((result) => {
                 if (result.value) {
                     console.log(result.value);
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
+
+                    setReportStatus(id_user, 1, result.value).then(res=>{
+                        if(res.data.code === '106') {
+                            Swal.fire({
+                                text: 'Thay đổi thành công',
+                                icon: 'success',
+                            })
+                        }
+                        else {
+                            Swal.fire({
+                                text: 'Thay đổi thất bại, vui lòng thử lại sau',
+                                icon: 'error',
+                            })
+                        }
+                    }).catch(err=> {
+                        Swal.fire({
+                            text: 'Server có vấn đề, vui lòng thử lại sau',
+                            icon: 'error',
+                        })
                     })
+                    
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire({
                         text: 'Thay đổi không được thực hiện',
@@ -81,9 +114,25 @@ class ReportsComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
+                    setReportStatus(id_user, 0, null).then(res=>{
+                        if(res.data.code === '106') {
+                            this.loadJobListFunc(this.props.ReportsReducer.currentReportPage, this.state.queryType,this.state.queryName);
+                            Swal.fire({
+                                text: 'Thay đổi thành công',
+                                icon: 'success',
+                            })
+                        }
+                        else {
+                            Swal.fire({
+                                text: 'Thay đổi thất bại, vui lòng thử lại sau',
+                                icon: 'error',
+                            })
+                        }
+                    }).catch(err=> {
+                        Swal.fire({
+                            text: 'Server có vấn đề, vui lòng thử lại sau',
+                            icon: 'error',
+                        })
                     })
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire({
@@ -100,77 +149,92 @@ class ReportsComponent extends Component {
 
     }
 
-    handleDetail(id_report) {
-        let name1 = 'John Cena', role1 = 'người làm thuê', name2 = 'The Rock', role2 = 'người thuê', date = prettierDate(new Date()), status = 'Chưa giải quyết', content = `A BEAUTIFUL, RESPONSIVE, CUSTOMIZABLE, ACCESSIBLE (WAI-ARIA) REPLACEMENT FOR JAVASCRIPT'S POPUP BOXES`;
-        
+    handleDetail(report) {
+        let role1_text = 'Người làm thuê';
+        if(report.role1 === 1) {
+            role1_text = 'Người thuê';
+        }
+
+        let role2_text = 'Người làm thuê';
+        if(report.role2 === 1) {
+            role2_text = 'Người thuê';
+        }
+
+        let statusText = `<div class='col-7 text-danger'>Chờ giải quyết</div>`;
+        let solutionText = ``;
+
+        if(report.status === 1) {
+            statusText = `<div class='col-7 text-success'>Đã giải quyết</div>`
+            solutionText = `<div class='my-1 py-2 row text-left rounded bg-f0eee3'>
+                                <label class='font-weight-bold col-5'>Tình trạng :</label>
+                                ${report.solution}
+                            </div>`;
+        }
+
         Swal.fire({
             title: '<b>Chi tiết khiếu nại</b>',
             html:
-              `<div>
+                `<div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Người khiếu nại :</label>
-                        <div class='col-7'>${name1}</div>                    
+                        <div class='col-7'>${report.user1_name}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Vai trò :</label>
-                        <div class='col-7'>${role1}</div>                    
+                        <div class='col-7'>${role1_text}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Người bị khiếu nại :</label>
-                        <div class='col-7'>${name2}</div>
+                        <div class='col-7'>${report.user2_name}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Vai trò :</label>
-                        <div class='col-7'>${role2}</div>                    
+                        <div class='col-7'>${role2_text}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Ngày phản hồi :</label>
-                        <div class='col-7'>${date}</div>
+                        <div class='col-7'>${prettierDate(report.report_date)}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Tình trạng :</label>
-                        <div class='col-7'>${status}</div>
+                        ${statusText}
                     </div>
+                    ${solutionText}
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Nội dung :</label>
-                        <div class='col-7'>${content}</div>
+                        <div class='col-7'>${report.content}</div>
                     </div>
                 </div>`,
-            showCloseButton: true,  
-            showConfirmButton: false,          
+            showCloseButton: true,
+            showConfirmButton: false,
             focusConfirm: false
         })
-    }    
+    }
 
-    renderReportsList() {
-        // let { tutorData, status, message, loading } = this.props.UsersReducer;
+    renderReportsList(reports) {
         let content = [];
-        // for (let e of tutorData) {
-        //     let imgSrc = e.avatarLink;
-        //     if (imgSrc === "" || imgSrc === null) {
-        //     }
 
-        content.push(<tr key={0}>
-            <td>{prettierDate(new Date())}</td>
-            <td>John Cena</td>
-            <td>Người làm thuê</td>
-            <td>The Rock</td>
-            <td>Người thuê</td>
-            <td>
-                <div className='text-truncate' style={{ width: '150px' }}>124 Đường số 12345678215ssx12ca32151v515e415e4eq</div>                
-            </td>
-            <td>
-                <select id={'select-status-' + 1} defaultValue={1} onChange={() => { this.handleChangeStatus(1, 1) }}>                    
-                    <option value={1}>Chờ giải quyết</option>
-                    <option value={2}>Đã giải quyết</option>
-                </select>
-            </td>
-            <td className='text-center'>
-                <i className='icon-feather-eye cursor-pointer text-primary' onClick={()=>{this.handleDetail(1)}}></i>
-            </td>
-        </tr>);
-        // }
-        //}
+        reports.forEach((e, index) => {
+            content.push(
+                <tr key={index}>
+                    <td><div style={{width: '90px'}}>{prettierDate(e.report_date)}</div></td>
+                    <td><div className='text-truncate' style={{ width: '120px' }}>{e.user1_name}</div></td>
+                    <td><div className='text-truncate' style={{ width: '120px' }}>{e.user2_name}</div></td>
+                    <td>
+                        {e.content}
+                    </td>
+                    <td>
+                        <select id={'select-status-' + e.id_report} value={e.status} onChange={() => { this.handleChangeStatus(e.id_report, e.status) }}>
+                            <option value={0}>Chờ giải quyết</option>
+                            <option value={1}>Đã giải quyết</option>
+                        </select>
+                    </td>
+                    <td className='text-center'>
+                        <i className='icon-feather-eye cursor-pointer text-primary' onClick={() => { this.handleDetail(e) }}></i>
+                    </td>
+                </tr>);
+
+        })
 
         return content;
     }
@@ -193,7 +257,7 @@ class ReportsComponent extends Component {
 
         for (let e = start; e <= end; e++) {
             content.push(
-                <li className={'page-item '+ (page === e ? "active" : '')} key={e}>
+                <li className={'page-item ' + (page === e ? "active" : '')} key={e}>
                     <div
                         className="page-link cursor-pointer"
                         onClick={() => {
@@ -209,8 +273,8 @@ class ReportsComponent extends Component {
     }
 
     render() {
-        let { totalApplyingJobs, currentApplyingPage } = {totalApplyingJobs: 8, currentApplyingPage: 1};
-        let totalPage = Math.ceil(totalApplyingJobs / 4);
+        let { reports, totalReport, currentReportPage } = this.props.ReportsReducer;
+        let totalPage = Math.ceil(totalReport / 8);
 
         return (
             <div className="container-fluid">
@@ -229,9 +293,9 @@ class ReportsComponent extends Component {
                         <div className="row my-1">
                             <div className='col-8'>
                                 <div className="btn-group btn-group-sm" role="group">
-                                    <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                                    <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-danger' : 'btn-outline-danger')}>Chưa giải quyết</div>
-                                    <div onClick={() => { this.setState({ queryType: 3 }) }} className={"btn " + (this.state.queryType === 3 ? 'btn-secondary' : 'btn-outline-success')}>Đã giải quyết</div>
+                                    <div onClick={() => { if(this.state.queryType !== 3) {this.handleFilter(3)} }} className={"btn " + (this.state.queryType === 3 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
+                                    <div onClick={() => { if(this.state.queryType !== 0) {this.handleFilter(0)} }} className={"btn " + (this.state.queryType === 0 ? 'btn-danger' : 'btn-outline-danger')}>Chưa giải quyết</div>
+                                    <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-success')}>Đã giải quyết</div>
                                 </div>
                             </div>
                             <div className="col-4 text-right">
@@ -245,7 +309,7 @@ class ReportsComponent extends Component {
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/* Table */}
                         <div className="table-responsive">
                             <table className="col-12 table" id="dataTable" width="100%" cellSpacing={0} >
@@ -253,16 +317,14 @@ class ReportsComponent extends Component {
                                     <tr>
                                         <th>Ngày đăng</th>
                                         <th>Người khiếu nại</th>
-                                        <th>Vai trò</th>
-                                        <th>Người khiếu nại</th>
-                                        <th>Vai trò</th>
+                                        <th>Người bi khiếu nại</th>
                                         <th>Nội dung</th>
                                         <th>Trạng thái</th>
-                                        <th>Chi tiết</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderReportsList()}
+                                    {this.renderReportsList(reports)}
                                 </tbody>
                             </table>
 
@@ -270,26 +332,26 @@ class ReportsComponent extends Component {
 
                         {/* Pagination */}
                         {(
-                            totalApplyingJobs === 0
+                            totalReport === 0
                                 ?
                                 ''
                                 :
                                 <nav aria-label="...">
                                     <ul className="pagination">
-                                        <li className={"pagination-item " + ((currentApplyingPage === 1 || totalPage - currentApplyingPage < 3) && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage - 1); }}>
+                                        <li className={"pagination-item " + ((currentReportPage === 1 || totalPage - currentReportPage < 3) && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentReportPage - 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-left" />
                                             </div>
                                         </li>
-                                        {this.renderPagination(currentApplyingPage, totalPage)}
-                                        <li className={"pagination-item " + (totalPage - currentApplyingPage < 3 && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage + 1); }}>
+                                        {this.renderPagination(currentReportPage, totalPage)}
+                                        <li className={"pagination-item " + (totalPage - currentReportPage < 3 && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentReportPage + 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-right" />
                                             </div>
                                         </li>
                                     </ul>
 
-                                    
+
 
 
                                 </nav>
@@ -305,13 +367,15 @@ class ReportsComponent extends Component {
 // Container
 const mapStateToProps = (state) => {
     return state;
-  }
-  
-  const mapDispatchToProps = dispatch => {
+}
+
+const mapDispatchToProps = dispatch => {
     return {
-  
+        onLoadReportList: (page, take, status, queryName) => {
+            dispatch(loadReportList(page, take, status, queryName));
+        }
     }
-  }
-  
-  const Reports = withRouter(connect(mapStateToProps, mapDispatchToProps)(ReportsComponent));
-  export default Reports;
+}
+
+const Reports = withRouter(connect(mapStateToProps, mapDispatchToProps)(ReportsComponent));
+export default Reports;

@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom';
+import { withRouter, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { getTopics } from '../../Actions/Topic.action';
+import { setTopicStatus } from '../../Services/Topic.service';
+
+var Swal = require('sweetalert2');
 
 class TopicsComponent extends Component {
 
@@ -8,52 +12,120 @@ class TopicsComponent extends Component {
         super(props);
 
         this.state = {
-            queryType: 1, // 1 - số lượng công việc giảm dần, 2 - số lượng công việc tăng dần
+            queryType: 1, // 1 - số lượng công việc tăng dần, 2 - số lượng công việc giảm dần
+            queryName: '',
         }
+        this.handleSort = this.handleSort.bind(this);
+
     }
 
-    loadJobListFunc(page) {
+    componentWillMount() {
+        this.loadListFunc(1, this.state.queryName, 2)
+    }
 
+    loadListFunc(page, queryName, status) {
+        let { onGetTopicsList } = this.props;
+        onGetTopicsList(page, 10, this.state.queryName, status, this.state.queryType);
+    }
+
+    handleSort(isAsc) {
+        this.setState({ queryType: isAsc }, () => {
+            this.loadListFunc(1, this.state.queryName, 2);
+        })
     }
 
     handlePagination(pageNum) {
-        // if (pageNum !== this.props.EmployerReducer.currentApplyingPage) {
-        //     this.loadJobListFunc(pageNum);
-        // }
+        if (pageNum !== this.props.TopicListReducer.currentPage) {
+            this.loadListFunc(pageNum, '', 2);
+        }
     }
 
     handleSearchTopic() {
         let searchStr = document.getElementById('user-search-input').value;
-        if (searchStr === '') {
+        if (searchStr === this.state.queryName) {
             return;
         }
         else {
-            // gọi api
+            this.setState({ queryName: searchStr }, () => {
+                this.loadListFunc(1, this.state.queryName, 2);
+            })
         }
     }
 
-    renderTagsList() {
-        // let { tutorData, status, message, loading } = this.props.UsersReducer;
+    handleChangeStatus(id_jobtopic, current_value) {
+        let val = Number.parseInt(document.getElementById('select-status-' + id_jobtopic).value);
+
+        if (current_value === val) return;
+
+        let text = '';
+        if (val === 0) {
+            text = 'Xóa';
+        }
+        else {
+            text = 'Khôi phục';
+        }
+        Swal.fire({
+            text: "Bạn có chắc là muốn " + text + " chủ đề này",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ok, tôi đồng ý',
+            cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.value) {
+                setTopicStatus(id_jobtopic, val).then(res => {
+                    if (res.data.code === '202') {
+                        this.loadListFunc(this.props.TopicListReducer.currentPage, '', 2);
+                        Swal.fire({
+                            text: 'Thay đổi thành công',
+                            icon: 'success',
+                        })
+                    }
+                    else {
+                        Swal.fire({
+                            text: 'Thay đổi không được thực hiện',
+                            icon: 'error',
+                        })
+                        document.getElementById('select-status-' + id_jobtopic).value = current_value;
+                    }
+                }).catch(err => {
+                    alert('Server gặp sự cố')
+                })
+
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    text: 'Thay đổi không được thực hiện',
+                    icon: 'error',
+                })
+                document.getElementById('select-status-' + id_jobtopic).value = current_value;
+            }
+            else {
+                document.getElementById('select-status-' + id_jobtopic).value = current_value;
+            }
+        })
+    }
+
+    renderTopicsList() {
+        let { topics } = this.props.TopicListReducer;
         let content = [];
-        // for (let e of tutorData) {
-        //     let imgSrc = e.avatarLink;
-        //     if (imgSrc === "" || imgSrc === null) {
-        //     }
-
-        content.push(<tr key={0}>
-            <td>1</td>
-            <td>Kinh doanh buôn bán</td>
-            <td>20</td>
-            <td>
-                <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i>
-            </td>
-            <td>
-                <i className='icon-feather-trash-2 cursor-pointer text-primary' onClick={() => { console.log('remove') }}></i>
-            </td>
-        </tr>);
-        // }
-        //}
-
+        for (let e of topics) {
+            content.push(<tr key={0}>
+                <td>{e.id_jobtopic}</td>
+                <td>{e.name}</td>
+                <td>{e.count}</td>
+                <td>
+                    {/* <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i> */}
+                    <NavLink to={'/topic-detail/id=' + e.id_jobtopic}><i className='icon-line-awesome-wrench cursor-pointer text-primary'></i></NavLink>
+                </td>
+                <td>
+                    {/* <i className='icon-feather-trash-2 cursor-pointer text-primary' onClick={() => { console.log('remove') }}></i> */}
+                    <select id={'select-status-' + e.id_jobtopic} value={e.status} onChange={() => { this.handleChangeStatus(e.id_jobtopic, e.status) }}>
+                        <option value={0}>Đã xóa</option>
+                        <option value={1}>Đang dùng</option>
+                    </select>
+                </td>
+            </tr>);
+        }
         return content;
     }
 
@@ -91,8 +163,10 @@ class TopicsComponent extends Component {
     }
 
     render() {
-        let { totalApplyingJobs, currentApplyingPage } = { totalApplyingJobs: 8, currentApplyingPage: 1 };
-        let totalPage = Math.ceil(totalApplyingJobs / 4);
+        // let { totalApplyingJobs, currentApplyingPage } = { totalApplyingJobs: 8, currentApplyingPage: 1 };
+        let { currentPage, total } = this.props.TopicListReducer;
+
+        let totalPage = Math.ceil(total / 10);
 
         return (
             <div className="container-fluid">
@@ -111,10 +185,11 @@ class TopicsComponent extends Component {
                         <div className="row my-1">
                             <div className='col-6'>
                                 <div className="btn-group btn-group-sm" role="group">
-                                    <div onClick={() => { this.setState({ queryType: 2 }) }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}><i className='icon-feather-arrow-up'></i>&nbsp;Số lượng công việc tăng dần</div>
-                                    <div onClick={() => { this.setState({ queryType: 1 }) }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}>Số lượng công việc giảm dần&nbsp;<i className='icon-feather-arrow-down'></i></div>                                
+                                    <div onClick={() => { if (this.state.queryType != 1) this.handleSort(1) }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}><i className='icon-feather-arrow-up'></i>&nbsp;Số lượng công việc tăng dần</div>
+                                    <div onClick={() => { if (this.state.queryType != 2) this.handleSort(2) }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}>Số lượng công việc giảm dần&nbsp;<i className='icon-feather-arrow-down'></i></div>
                                 </div>
-                            </div>                            
+                            </div>
+
                             <div className="col-3 text-right">
                                 <div className="input-group mb-3">
                                     <input type="text" id="user-search-input" className="form-control" placeholder="Tìm theo tên chủ đề .." />
@@ -123,9 +198,13 @@ class TopicsComponent extends Component {
                                             <i className="fa fa-search"></i>
                                         </div>
                                     </div>
-                                </div>                                
+                                </div>
                             </div>
-                            <div className='col-3'><div className='w-100 btn btn-danger px-0'><i className='icon-feather-plus'></i>&nbsp;Thêm chủ đề mới</div></div>
+                            <div className='col-3'>
+                                <NavLink to={'/add-topic'}>
+                                    <div className='w-100 btn btn-danger px-0'>&nbsp;Thêm chủ đề mới</div>
+                                </NavLink>
+                            </div>
                         </div>
 
                         {/* Table */}
@@ -137,11 +216,11 @@ class TopicsComponent extends Component {
                                         <th>Chủ đề</th>
                                         <th>Số công việc</th>
                                         <th>Chỉnh sửa</th>
-                                        <th>Xóa</th>
+                                        <th>Trạng thái</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderTagsList()}
+                                    {this.renderTopicsList()}
                                 </tbody>
                             </table>
 
@@ -149,34 +228,29 @@ class TopicsComponent extends Component {
 
                         {/* Pagination */}
                         {(
-                            totalApplyingJobs === 0
+                            total === 0
                                 ?
                                 ''
                                 :
                                 <nav aria-label="...">
                                     <ul className="pagination">
-                                        <li className={"pagination-item " + ((currentApplyingPage === 1 || totalPage - currentApplyingPage < 3) && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage - 1); }}>
+                                        <li className={"pagination-item " + ((currentPage === 1 || totalPage - currentPage < 3) && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentPage - 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-left" />
                                             </div>
                                         </li>
-                                        {this.renderPagination(currentApplyingPage, totalPage)}
-                                        <li className={"pagination-item " + (totalPage - currentApplyingPage < 3 && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentApplyingPage + 1); }}>
+                                        {this.renderPagination(currentPage, totalPage)}
+                                        <li className={"pagination-item " + (totalPage - currentPage < 3 && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentPage + 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-right" />
                                             </div>
                                         </li>
                                     </ul>
-
-
-
-
                                 </nav>
                         )}
                     </div>
-
                 </div>
-            </div>
+            </div >
         )
     }
 }
@@ -188,7 +262,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        onGetTopicsList: (page, take, queryName, status, isAsc) => {
+            dispatch(getTopics(page, take, queryName, status, isAsc));
+        },
     }
 }
 

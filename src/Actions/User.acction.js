@@ -70,7 +70,7 @@ export const getPersonalList = (take, page, queryName, account_status) => {
                 dispatch(udpatePersonalList(res.data.data.usersList, res.data.data.total, res.data.data.page));
             }            
         }).catch(err=> {
-            alert("Server gặp sự cố");
+            alert("Server gặp sự cố\n" + err);
         })
     }
 

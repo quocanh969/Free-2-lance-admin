@@ -128,11 +128,11 @@ class UserInfoComponent extends Component {
                                 {(
                                     userInfo.personal.isBusinessUser === false
                                     ?
-                                    <span className="col proile-rating">Đánh giá từ người tuyển dụng : <span>{userInfo.rating_as_employee.rating_as_employee}/10 <i className="fa fa-star text-warning"></i></span></span>
+                                    <span className="col proile-rating">Đánh giá từ người tuyển dụng : <span>{userInfo.rating_as_employee.rating_as_employee}/5 <i className="fa fa-star text-warning"></i></span></span>
                                     :
                                     ''
                                 )}
-                                <span className="col proile-rating">Đánh giá từ người ứng tuyển: <span>{userInfo.rating_as_employer.rating_as_employer}/10 <i className="fa fa-star text-warning"></i></span></span>
+                                <span className="col proile-rating">Đánh giá từ người ứng tuyển: <span>{userInfo.rating_as_employer.rating_as_employer}/5 <i className="fa fa-star text-warning"></i></span></span>
                             </div>
 
                             <ul className="nav nav-tabs" id="myTab" role="tablist">

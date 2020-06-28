@@ -62,7 +62,9 @@ export const udpateJobStatus = (id_job, id_status) => {
 export const loadApplicantsByJobId = (page, take, id_job, id_status) => {
     return (dispatch) => {
         getApplicantsByJobId(page, take, id_job, id_status).then((res) => {
-            console.log(res);
+            if(res.data.code === '200') {
+                dispatch(updateApplicantByJobId(res.data.data.applicantsList, res.data.data.total, res.data.data.page));
+            }            
         }).catch(err=> {
             alert('Server gặp sự cố');
         })

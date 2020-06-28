@@ -208,7 +208,7 @@ class EmployeeUsersComponent extends Component {
 
     render() {
         let { employees, currentEmployeePage, totalEmployee } = this.props.EmployeeListReducer;
-        let totalPage = Math.ceil(totalEmployee / 4);
+        let totalPage = Math.ceil(totalEmployee / 8);
 
         return (
             <div className="container-fluid">

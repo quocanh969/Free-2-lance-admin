@@ -182,7 +182,7 @@ class PersonalUsersComponent extends Component {
 
     render() {
         let { totalPersnal, personalCurrentPage } = this.props.UserListReducer;
-        let totalPage = Math.ceil(totalPersnal / 4);
+        let totalPage = Math.ceil(totalPersnal / 8);
 
         return (
             <div className="container-fluid">
@@ -279,7 +279,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
     return {
         onGetPersonalList: (page, queryName, account_status) => {
-            dispatch(getPersonalList(4, page, queryName, account_status));
+            dispatch(getPersonalList(8, page, queryName, account_status));
         },
     }
 }

@@ -42,35 +42,50 @@ class UserDetailComponent extends Component {
     }
 
     render() {
-        return (
-            <div className="container-fluid">
-                {/* Page Heading */}
-                <h1 className="h3 mb-5 text-gray-800">Thông tin chi tiết người dùng</h1>
-                {/* Userlist DataTales Example */}
-                <div className="card shadow mb-4">
-                    <div className='card-header px-0'>
-                        <span className="p-3 h6 m-0 font-weight-bold text-primary icon-header">
-                            <i className="icon-feather-user"/>
-                        </span>
-                        <span onClick={()=>{if(this.state.tab !== 1){this.setState({tab: 1})}}}
-                            className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 1 ? 'tab-active' : '')}>
-                            Thông tin người dùng                
-                        </span>
-                        <span onClick={()=>{if(this.state.tab !== 2){this.setState({tab: 2})}}}
-                            className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 2 ? 'tab-active' : '')}>
-                            Danh sách công việc đăng tuyển              
-                        </span>
-                        <span onClick={()=>{if(this.state.tab !== 3){this.setState({tab: 3})}}}
-                            className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 3 ? 'tab-active' : '')}>
-                            Danh sách công việc ứng tuyển      
-                        </span>
-                    </div>
-                    <div className="card-body">
-                        {this.switchTab()}
+        let {userInfo} = this.props.UserDetailReducer;
+
+        if(userInfo === null) {
+            return '';
+        }
+        else {
+            return (
+                <div className="container-fluid">
+                    {/* Page Heading */}
+                    <h1 className="h3 mb-5 text-gray-800">Thông tin chi tiết người dùng</h1>
+                    {/* Userlist DataTales Example */}
+                    <div className="card shadow mb-4">
+                        <div className='card-header px-0'>
+                            <span className="p-3 h6 m-0 font-weight-bold text-primary icon-header">
+                                <i className="icon-feather-user"/>
+                            </span>
+                            <span onClick={()=>{if(this.state.tab !== 1){this.setState({tab: 1})}}}
+                                className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 1 ? 'tab-active' : '')}>
+                                Thông tin người dùng                
+                            </span>
+                            <span onClick={()=>{if(this.state.tab !== 2){this.setState({tab: 2})}}}
+                                className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 2 ? 'tab-active' : '')}>
+                                Danh sách công việc đăng tuyển              
+                            </span>
+                            {(
+                                userInfo.personal.isBusinessUser
+                                ?
+                                ''
+                                :
+                                <span onClick={()=>{if(this.state.tab !== 3){this.setState({tab: 3})}}}
+                                    className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 3 ? 'tab-active' : '')}>
+                                    Danh sách công việc ứng tuyển      
+                                </span>
+                            )}
+                            
+                        </div>
+                        <div className="card-body">
+                            {this.switchTab()}
+                        </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
+        
     }
 }
 

@@ -109,14 +109,14 @@ class UserInfoComponent extends Component {
                     <div className="col-md-8">
 
                         <div className="profile-head">
-                            <div className='d-flex justify-content-between'>
-                                <div>
+                            <div className='row'>
+                                <div className='col-6'>
                                     <h5>
                                         {userInfo.personal.fullname.toUpperCase()}
                                     </h5>
                                     <h6>(Ngày tạo tài khoản: {prettierDate(userInfo.personal.createDate)})</h6>
                                 </div>
-                                <div>
+                                <div className='col-6'>
                                     <div className="btn-group btn-group-sm" role="group">
                                         <div onClick={() => { if(userInfo.personal.account_status !== -1 ) {this.handleChangeStatus(-1)} }} className={"btn " + (userInfo.personal.account_status === -1 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
                                         <div onClick={() => { if(userInfo.personal.account_status !== 1 ) {this.handleChangeStatus(1)} }} className={"btn " + (userInfo.personal.account_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Chờ xác thực</div>

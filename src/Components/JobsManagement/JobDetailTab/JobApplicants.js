@@ -47,7 +47,7 @@ class JobApplicantsComponent extends Component {
     handleDetail(applicant) {
         let stt = "<div class='col-7 text-success'>Đã tuyển</div>";
         if (this.state.queryType === 0) {
-            stt = "<div class='col-7 text-danger'>Đã tuyển</div>";
+            stt = "<div class='col-7 text-danger'>Đang tuyển</div>";
         }
         Swal.fire({
             title: '<b>Chi tiết đơn ứng tuyển</b>',

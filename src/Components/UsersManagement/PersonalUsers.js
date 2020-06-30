@@ -125,7 +125,7 @@ class PersonalUsersComponent extends Component {
             content.push(
             <tr key={index}>
                 <td>{e.id_user}</td>
-                <td><div className='text-truncate' style={{ width: '100px' }}>{e.fullname}</div></td>
+                <td><div className='text-truncate' style={{ width: '100%' }}>{e.fullname}</div></td>
                 <td><div className='text-truncate' style={{ width: '100px' }}>{e.email}</div></td>
                 <td>{e.dial}</td>
                 <td>{e.identity}</td>
@@ -198,7 +198,7 @@ class PersonalUsersComponent extends Component {
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className='col-8'>
+                            <div className='col-7'>
                                 <div className="btn-group btn-group-sm" role="group">
                                     <div onClick={() => { if(this.state.queryType !== 3 ) this.handleFilter(3) }} className={"btn " + (this.state.queryType === 3 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
                                     <div onClick={() => { if(this.state.queryType !== -1 ) this.handleFilter(-1) }} className={"btn " + (this.state.queryType === -1 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
@@ -206,9 +206,22 @@ class PersonalUsersComponent extends Component {
                                     <div onClick={() => { if(this.state.queryType !== 2 ) this.handleFilter(2) }} className={"btn " + (this.state.queryType === 2 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
                                 </div>
                             </div>
-                            <div className="col-4 text-right">
+                            <div className="col-5 text-right d-flex">
+                                <div className='mr-2'>
+                                    <div className='btn btn-primary' 
+                                        onClick={()=>{
+                                            if(this.state.queryName.length > 0) {
+                                                document.getElementById('user-search-input').value='';
+                                                this.setState({queryName: ''}, ()=>{
+                                                    this.loadJobListFunc(1, this.state.queryName, this.state.queryType)
+                                                    }) 
+                                                }
+                                            }}>
+                                        <i className='icon-feather-rotate-ccw'></i>
+                                    </div>
+                                </div>
                                 <div className="input-group mb-3">
-                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên/email .." />
+                                    <input type="search" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên/email .." />
                                     <div className="input-group-append">
                                         <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchUser() }}>
                                             <i className="fa fa-search"></i>
@@ -230,7 +243,7 @@ class PersonalUsersComponent extends Component {
                                         <th>Số CMND</th>
                                         <th>Địa chỉ</th>
                                         <th>Trạng thái</th>
-                                        <th>Chi tiết</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -14,35 +14,6 @@ class LoginComponent extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    getTimeColor() {
-        let today = new Date();       
-        let datetime = today.getHours()
-        if(datetime >= 22 || datetime <= 4)
-        {
-            return 'bg-night';
-        }
-        else if(datetime >= 5 && datetime <= 7)
-        {
-            return 'bg-early-morning';
-        }
-        else if(datetime >= 8 && datetime <= 11)
-        {
-            return 'bg-morning';
-        }
-        else if(datetime >= 12 && datetime <= 15)
-        {
-            return 'bg-noon';
-        }
-        else if(datetime >= 16 && datetime <= 19)
-        {
-            return 'bg-afternoon';
-        }
-        else
-        {
-            return 'bg-evening';
-        }
-    }
-
     handleSubmit(e) {
         e.preventDefault();
         let {onSendLogin} = this.props;
@@ -54,12 +25,11 @@ class LoginComponent extends Component {
         
     }
 
-    render() {    
-        let bgClass = this.getTimeColor();
+    render() {
         let {sending, code, message } = this.props.SignInReducer;
 
         return (
-            <div id='background-login' className={"container-fluid pt-5 " + bgClass}>
+            <div id='background-login' className={"container-fluid pt-5 "}>
                 {/* Outer Row */}
                 <div className="row justify-content-center">
                     <div className="col-6 mt-2">

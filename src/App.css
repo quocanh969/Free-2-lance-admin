@@ -2,6 +2,10 @@
   text-decoration: none;
 }
 
+#background-login {
+  background-image: linear-gradient( black, #4e73df, white);
+}
+
 .cursor-pointer {
   cursor: pointer;
 }

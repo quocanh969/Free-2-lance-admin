@@ -155,7 +155,7 @@ class EmployeeUsersComponent extends Component {
         employees.forEach((e, index) => {
             content.push(<tr key={index}>
                 <td>{e.id_user}</td>
-                <td><div className='text-truncate' style={{width: '130px'}}>{e.fullname}</div></td>
+                <td ><div className='text-truncate' aria-label={e.fullname} style={{width: '130px'}}>{e.fullname}</div></td>
                 <td>{e.tel}</td>
                 <td>{e.username}</td>
                 <td>
@@ -225,10 +225,23 @@ class EmployeeUsersComponent extends Component {
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className='col-5'></div>                            
-                            <div className="col-4 text-right">
+                            <div className='col-4'></div>                            
+                            <div className="col-5 text-right d-flex">
+                                <div className='mr-2'>
+                                    <div className='btn btn-primary' 
+                                        onClick={()=>{
+                                            if(this.state.queryName.length > 0) {
+                                                document.getElementById('user-search-input').value='';
+                                                this.setState({queryName: ''}, ()=>{
+                                                    this.loadJobListFunc(1, '');
+                                                    }) 
+                                                }
+                                            }}>
+                                        <i className='icon-feather-rotate-ccw'></i>
+                                    </div>
+                                </div>
                                 <div className="input-group mb-3">
-                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên nhân viên .." />
+                                    <input type="search" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên nhân viên .." />
                                     <div className="input-group-append">
                                         <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchEmployee() }}>
                                             <i className="fa fa-search"></i>

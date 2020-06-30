@@ -24,16 +24,16 @@ class PendingJobsComponent extends Component {
 
     loadJobListFunc(page) {
         let {onLoadJobsList} = this.props;
-        onLoadJobsList(1,8,this.state.query);
+        onLoadJobsList(page,8,this.state.query);
     }
     
     handleFilter(newType) {
         let temp = this.state.query;
         if(newType === 5) { // lấy tất cả
-            temp['job_type'] = '';
+            temp['id_status'] = '';
         }
         else {
-            temp['job_type'] = newType;
+            temp['id_status'] = newType;
         }
         
         this.setState({query: temp, queryType: newType},() => {
@@ -130,14 +130,14 @@ class PendingJobsComponent extends Component {
         jobs.forEach((e, index) => {
             content.push(
             <tr key={index}>            
-                <td>{e.id_job}</td>
+                <td aria-label={e.id_job}>{e.id_job}</td>
                 <td><div className='text-truncate' style={{ width: '180px' }}>{e.title}</div></td>
                 <td><div className='text-truncate' style={{ width: '70px' }}>{e.topic_name}</div></td>
                 <td>{prettierNumber(e.salary)} VNĐ</td>
                 <td>{prettierDate(e.post_date)}</td>
                 <td>{prettierDate(e.expire_date)}</td>
                 <td>
-                    <select id={'select-status-' + 1} defaultValue={e.id_status} onChange={()=>{this.handleChangeStatus(e.id_job, e.id_status)}}>
+                    <select id={'select-status-' + 1} value={e.id_status} onChange={()=>{this.handleChangeStatus(e.id_job, e.id_status)}}>
                         <option value={0}>Bị gở</option>
                         <option value={1}>Đang tuyển</option>
                         <option value={2}>Đang thực hiện</option>
@@ -205,7 +205,7 @@ class PendingJobsComponent extends Component {
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className="col-9">
+                            <div className="col-8">
                                 <div className="btn-group btn-group-sm" role="group">
                                     <div onClick={() => { if(this.state.queryType !== 5) {this.handleFilter(5)} }} className={"btn " + (this.state.queryType === 5 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
                                     <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-danger' : 'btn-outline-danger')}>Đang tuyển</div>
@@ -213,9 +213,24 @@ class PendingJobsComponent extends Component {
                                     <div onClick={() => { if(this.state.queryType !== 3) {this.handleFilter(3)} }} className={"btn " + (this.state.queryType === 3 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
                                 </div>
                             </div>
-                            <div className="col-3 text-right">
+                            <div className="col-4 d-flex text-right">
+                                <div className='mr-2'>
+                                    <div className='btn btn-primary' 
+                                        onClick={()=>{
+                                            if(this.state.query.title && this.state.query.title.length > 0) {
+                                                document.getElementById('job-search-input').value='';
+                                                let temp = this.state.query;
+                                                temp['title'] = ''
+                                                this.setState({query: temp}, ()=>{
+                                                    this.loadJobListFunc(1)
+                                                    }) 
+                                                }
+                                            }}>
+                                        <i className='icon-feather-rotate-ccw'></i>
+                                    </div>
+                                </div>
                                 <div className="input-group mb-3">
-                                    <input type="text" id="job-search-input" className="form-control" placeholder="Tìm kiếm theo tên .." />
+                                    <input type="search" id="job-search-input" className="form-control" placeholder="Tìm kiếm theo tên .." />
                                     <div className="input-group-append">
                                         <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchUser() }}>
                                             <i className="fa fa-search"></i>

@@ -149,7 +149,7 @@ class UserTaskListComponent extends Component {
                 <div>
                     {/* Headline */}
                     <div className="row my-1">
-                        <div className='col-9'>
+                        <div className='col-7'>
                             <div className="btn-group btn-group-sm" role="group">
                                 <div onClick={() => { if(this.state.queryType !== 5) {this.handleFilter(5)} }} className={"btn " + (this.state.queryType === 5 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
                                 <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-danger' : 'btn-outline-danger')}>Đang ứng tuyển</div>
@@ -157,9 +157,22 @@ class UserTaskListComponent extends Component {
                                 <div onClick={() => { if(this.state.queryType !== 3) {this.handleFilter(3)} }} className={"btn " + (this.state.queryType === 3 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
                             </div>
                         </div>
-                        <div className="col-3 text-right">
+                        <div className="col-5 text-right d-flex">
+                            <div className='mr-2'>
+                                <div className='btn btn-primary' 
+                                    onClick={()=>{
+                                        if(this.state.queryName.length > 0) {
+                                            document.getElementById('job-search-input').value='';
+                                            this.setState({queryName: ''}, ()=>{
+                                                this.loadJobListFunc(1, this.state.queryName, this.state.queryType)
+                                                }) 
+                                            }
+                                        }}>
+                                    <i className='icon-feather-rotate-ccw'></i>
+                                </div>
+                            </div>
                             <div className="input-group mb-3">
-                                <input type="text" id="job-search-input" className="form-control" placeholder="Tìm kiếm theo tên .." />
+                                <input type="search" id="job-search-input" className="form-control" placeholder="Tìm kiếm theo tên .." />
                                 <div className="input-group-append">
                                     <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchUser() }}>
                                         <i className="fa fa-search"></i>

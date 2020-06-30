@@ -192,7 +192,7 @@ class TopicsComponent extends Component {
 
                             <div className="col-3 text-right">
                                 <div className="input-group mb-3">
-                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm theo tên chủ đề .." />
+                                    <input type="search" id="user-search-input" className="form-control" placeholder="Tìm theo tên chủ đề .." />
                                     <div className="input-group-append">
                                         <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchTopic() }}>
                                             <i className="fa fa-search"></i>

@@ -180,7 +180,7 @@ class TagsComponent extends Component {
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className='col-6'>
+                            <div className='col-5'>
                                 <div className="btn-group" role="group">
                                     <div onClick={() => { if (this.state.queryType != 1) this.handleSort(1) }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-secondary')}><i className='icon-feather-arrow-up'></i>&nbsp;Tăng theo ID</div>
                                     <div onClick={() => { if (this.state.queryType != 0) this.handleSort(0) }} className={"btn " + (this.state.queryType === 0 ? 'btn-secondary' : 'btn-outline-secondary')}>Giảm theo ID&nbsp;<i className='icon-feather-arrow-down'></i></div>
@@ -188,7 +188,7 @@ class TagsComponent extends Component {
                             </div>
                             <div className="col-4 text-right">
                                 <div className="input-group mb-3">
-                                    <input type="text" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên dán nhãn .." />
+                                    <input type="search" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo tên dán nhãn .." />
                                     <div className="input-group-append">
                                         <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchTag() }}>
                                             <i className="fa fa-search"></i>
@@ -196,7 +196,7 @@ class TagsComponent extends Component {
                                     </div>
                                 </div>
                             </div>
-                            <div className='col-2'>
+                            <div className='col-3'>
                                 <NavLink to={'/add-tag'}>
                                     <div className='w-100 btn btn-danger px-0'><i className='icon-feather-plus'>
                                     </i>&nbsp;Thêm nhãn mới</div>

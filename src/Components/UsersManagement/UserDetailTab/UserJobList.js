@@ -85,7 +85,7 @@ class UserJobListComponent extends Component {
             <tr key={index}>
                 <td>{e.id_job}</td>
                 <td><div className='text-truncate' style={{ width: '180px' }}>{e.title}</div></td>
-                <td><div className='text-truncate' style={{ width: '70px' }}>{e.job_topic}</div></td>
+                <td><div className='text-truncate' style={{ width: '70px' }}>{e.topic_name}</div></td>
                 <td>{prettierNumber(e.salary)} VNĐ</td>
                 <td>{prettierDate(e.post_date)}</td>
                 <td>{prettierDate(e.expire_date)}</td>
@@ -193,7 +193,7 @@ class UserJobListComponent extends Component {
                                     <th>Ngày đăng</th>
                                     <th>Hết hạn</th>
                                     <th>Trạng thái</th>
-                                    <th>Chi tiết</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>

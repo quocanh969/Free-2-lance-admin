@@ -128,12 +128,11 @@ class BusinessUsersComponent extends Component {
             content.push(
             <tr key={index}>
                 <td>{e.id_user}</td>
-                <td><div className='text-truncate' aria-label={e.fullname} style={{ width: '100px' }}>{e.fullname}</div></td>
-                <td><div className='text-truncate' style={{ width: '70px' }}>{e.email}</div></td>
+                <td><div className='text-truncate' style={{ width: '100%' }}>{e.fullname}</div></td>
+                <td><div className='text-truncate' style={{ width: '100px' }}>{e.email}</div></td>
                 <td><div className='text-truncate' style={{ width: '100px' }}>{e.company_name}</div></td>
                 <td>{e.position}</td>
-                <td>{e.dial}</td>
-                <td>{e.identity}</td>            
+                <td>{e.dial}</td>         
                 <td>
                     <select id={'select-status-' + e.id_user} value={e.account_status} onChange={() => { this.handleChangeStatus(e.id_user, e.account_status) }}>
                         <option value={-1}>Bị cấm</option>
@@ -246,8 +245,7 @@ class BusinessUsersComponent extends Component {
                                         <th>Email</th>
                                         <th>Công ty</th>
                                         <th>Vai trò</th>
-                                        <th>Sđt</th>
-                                        <th>CMND</th>                                        
+                                        <th>Sđt</th>                                       
                                         <th>Trạng thái</th>
                                         <th></th>
                                     </tr>

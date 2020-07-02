@@ -8,6 +8,14 @@ const initState = {
     taskList: [],
     totalTask: 0,
     currentTask: 0,
+
+    payment: ["", ""],
+    totalPayment: 2,
+    currentPaymentPage: 1,
+
+    transaction: ["", ""],
+    totalTransaction: 2,
+    currentTransactionPage: 1,
 }
 
 const UserDetailReducer = (state = initState, action) => {

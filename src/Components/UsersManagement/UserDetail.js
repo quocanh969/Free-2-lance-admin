@@ -6,8 +6,11 @@ import '../../Assets/css/detail.css';
 import UserInfo from './UserDetailTab/UserInfo';
 import UserJobList from './UserDetailTab/UserJobList';
 import UserTaskList from './UserDetailTab/UserTaskList';
+import UserTransaction from './UserDetailTab/UserTransaction';
+import UserPayment from './UserDetailTab/UserPayment';
 
 import {loadUserDetail, loadJobsByEmployer, loadJobsByApplicant} from '../../Actions/User.acction';
+
 
 class UserDetailComponent extends Component {
 
@@ -15,7 +18,7 @@ class UserDetailComponent extends Component {
         super(props);
 
         this.state = {
-            tab: 1,
+            tab: 5,
         }
     }
 
@@ -36,6 +39,10 @@ class UserDetailComponent extends Component {
                 return <UserJobList></UserJobList>
             case 3:
                 return <UserTaskList></UserTaskList>
+            case 4:
+                return <UserTransaction></UserTransaction>
+            case 5:
+                return <UserPayment></UserPayment>
             default:
                 return ''
         }
@@ -60,11 +67,11 @@ class UserDetailComponent extends Component {
                             </span>
                             <span onClick={()=>{if(this.state.tab !== 1){this.setState({tab: 1})}}}
                                 className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 1 ? 'tab-active' : '')}>
-                                Thông tin người dùng                
+                                Thông tin người dùng
                             </span>
                             <span onClick={()=>{if(this.state.tab !== 2){this.setState({tab: 2})}}}
                                 className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 2 ? 'tab-active' : '')}>
-                                Danh sách công việc đăng tuyển              
+                                Danh sách công việc đăng tuyển
                             </span>
                             {(
                                 userInfo.personal.isBusinessUser
@@ -76,6 +83,21 @@ class UserDetailComponent extends Component {
                                     Danh sách công việc ứng tuyển      
                                 </span>
                             )}
+                            <span onClick={()=>{if(this.state.tab !== 5){this.setState({tab: 5})}}}
+                                className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 5 ? 'tab-active' : '')}>
+                                Thanh toán
+                            </span>
+                            {(
+                                userInfo.personal.isBusinessUser
+                                ?
+                                ''
+                                :
+                                <span onClick={()=>{if(this.state.tab !== 4){this.setState({tab: 4})}}}
+                                className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 4 ? 'tab-active' : '')}>
+                                    Thu nhập             
+                                </span>
+                                )}
+                            
                             
                         </div>
                         <div className="card-body">

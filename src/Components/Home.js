@@ -172,7 +172,7 @@ class HomeComponent extends Component {
               <div className="card-body">
                 <div className="chart-area">
                   {/* <canvas id="myAreaChart" /> */}
-                  <XYPlot height={300} width={550}>
+                  <XYPlot height={300} width={500}>
                     <LineSeries data={annualJobsChart} />
                     <VerticalGridLines />
                     <HorizontalGridLines />
@@ -206,7 +206,7 @@ class HomeComponent extends Component {
               <div className="card-body">
                 <div className="chart-area">
                   {/* <canvas id="myPieChart" /> */}
-                  <XYPlot height={300} width={550}>
+                  <XYPlot height={300} width={500}>
                     <LineSeries data={annualUsersChart} />
                     <VerticalGridLines />
                     <HorizontalGridLines />

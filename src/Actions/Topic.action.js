@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 
 export const getTopics = (page, take, queryName, status, isAsc) => {
     return (dispatch) => {
+        dispatch(requestTopicsList());
         getTopicsList(page, take, queryName, status, isAsc).then((res) => {
             if (res.data.code === '200') {
                 let topicsList = res.data.data.topicsList;
@@ -17,12 +18,17 @@ export const getTopics = (page, take, queryName, status, isAsc) => {
     }
 
     function updateTopicsList(list, total, currentPage) {
-        console.log("Cur page: " + currentPage)
         return {
             type: "TOPIC_LIST_UPDATE",
             list,
             total,
             currentPage,
+        };
+    }
+
+    function requestTopicsList() {
+        return {
+            type: "TOPIC_LIST_REQUEST",
         };
     }
 }

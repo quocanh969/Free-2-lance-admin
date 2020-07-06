@@ -117,31 +117,54 @@ class PersonalUsersComponent extends Component {
 
     }
 
-    renderUserList() {
+    renderUserList(total) {
         let { personal } = this.props.UserListReducer;
         let content = [];
-        personal.forEach((e, index) => {
-            console.log(e);
+
+        if(total === - 1) {
             content.push(
-            <tr key={index}>
-                <td>{e.id_user}</td>
-                <td><div className='text-truncate' style={{ width: '100%' }}>{e.fullname}</div></td>
-                <td><div className='text-truncate' style={{ width: '100px' }}>{e.email}</div></td>
-                <td>{e.dial}</td>
-                <td>{e.identity}</td>
-                <td><div className='text-truncate' style={{ width: '150px' }}>{e.address}</div></td>
-                <td>
-                    <select id={'select-status-' + e.id_user} value={e.account_status} onChange={() => { this.handleChangeStatus(e.id_user, e.account_status) }}>
-                        <option value={-1}>Bị cấm</option>
-                        <option value={1}>Chờ xác thực</option>
-                        <option value={2}>Đã xác thực</option>
-                    </select>
-                </td>
-                <td className='text-center'>
-                    <NavLink to={'/user-detail/id='+e.id_user}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
-                </td>
-            </tr>); 
-        })
+                <tr key={0}>
+                    <td colSpan='8' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
+        }
+        else if(personal.length > 0) {
+            personal.forEach((e, index) => {
+                console.log(e);
+                content.push(
+                <tr key={index}>
+                    <td>{e.id_user}</td>
+                    <td><div className='text-truncate' style={{ width: '100%' }}>{e.fullname}</div></td>
+                    <td><div className='text-truncate' style={{ width: '100px' }}>{e.email}</div></td>
+                    <td>{e.dial}</td>
+                    <td>{e.identity}</td>
+                    <td><div className='text-truncate' style={{ width: '150px' }}>{e.address}</div></td>
+                    <td>
+                        <select id={'select-status-' + e.id_user} value={e.account_status} onChange={() => { this.handleChangeStatus(e.id_user, e.account_status) }}>
+                            <option value={-1}>Bị cấm</option>
+                            <option value={1}>Chờ xác thực</option>
+                            <option value={2}>Đã xác thực</option>
+                        </select>
+                    </td>
+                    <td className='text-center'>
+                        <NavLink to={'/user-detail/id='+e.id_user}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
+                    </td>
+                </tr>); 
+            })
+        }
+        else {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='8' className='p-5'>
+                        Danh sách người dùng cá nhân rỗng !!
+                    </td>                    
+                </tr>
+            )
+        }
             
         return content;
     }
@@ -247,7 +270,7 @@ class PersonalUsersComponent extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderUserList()}
+                                    {this.renderUserList(totalPersnal)}
                                 </tbody>
                             </table>
 

@@ -124,31 +124,52 @@ class PendingJobsComponent extends Component {
         }
     }
 
-    renderJobList(jobs) {
+    renderJobList(jobs, total) {
         let content = [];
-
-        jobs.forEach((e, index) => {
+        if(total === - 1) {
             content.push(
-            <tr key={index}>            
-                <td aria-label={e.id_job}>{e.id_job}</td>
-                <td><div className='text-truncate' style={{ width: '180px' }}>{e.title}</div></td>
-                <td><div className='text-truncate' style={{ width: '70px' }}>{e.topic_name}</div></td>
-                <td>{prettierNumber(e.salary)} VNĐ</td>
-                <td>{prettierDate(e.post_date)}</td>
-                <td>{prettierDate(e.expire_date)}</td>
-                <td>
-                    <select id={'select-status-' + 1} value={e.id_status} onChange={()=>{this.handleChangeStatus(e.id_job, e.id_status)}}>
-                        <option value={0}>Bị gở</option>
-                        <option value={1}>Đang tuyển</option>
-                        <option value={2}>Đang thực hiện</option>
-                        <option value={3}>Hoàn thành</option>
-                    </select>
-                </td>
-                <td className='text-center'>
-                    <NavLink to={'/job-detail/id='+e.id_job}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
-                </td>
-            </tr>);  
-        })
+                <tr key={0}>
+                    <td colSpan='7' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
+        }
+        else if(jobs.length > 0) {
+            jobs.forEach((e, index) => {
+                content.push(
+                <tr key={index}>            
+                    <td aria-label={e.id_job}>{e.id_job}</td>
+                    <td><div className='text-truncate' style={{ width: '180px' }}>{e.title}</div></td>
+                    <td><div className='text-truncate' style={{ width: '70px' }}>{e.topic_name}</div></td>
+                    <td>{prettierNumber(e.salary)} VNĐ</td>
+                    <td>{prettierDate(e.post_date)}</td>
+                    <td>{prettierDate(e.expire_date)}</td>
+                    <td>
+                        <select id={'select-status-' + 1} value={e.id_status} onChange={()=>{this.handleChangeStatus(e.id_job, e.id_status)}}>
+                            <option value={0}>Bị gở</option>
+                            <option value={1}>Đang tuyển</option>
+                            <option value={2}>Đang thực hiện</option>
+                            <option value={3}>Hoàn thành</option>
+                        </select>
+                    </td>
+                    <td className='text-center'>
+                        <NavLink to={'/job-detail/id='+e.id_job}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
+                    </td>
+                </tr>);  
+            })
+        }
+        else {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='8' className='p-5'>
+                        Danh sách công việc rỗng !!
+                    </td>                    
+                </tr>
+            )
+        }
         
         return content;
     }
@@ -256,7 +277,7 @@ class PendingJobsComponent extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderJobList(jobs)}
+                                    {this.renderJobList(jobs, totalJobPage)}
                                 </tbody>
                             </table>
 

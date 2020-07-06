@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 
 export const getTags = (page, take, isAsc, queryName) => {
     return (dispatch) => {
+        dispatch(requestTagsList());
         getAllTagsAPI(page, take, isAsc, queryName).then(res => {
             if (res.data.code === '200') {
                 let list = res.data.data.tagsList;
@@ -13,12 +14,19 @@ export const getTags = (page, take, isAsc, queryName) => {
             }
         })
     }
+
     function updateTagsList(list, total, currentPage) {
         return {
             type: 'TAG_LIST_UPDATE',
             list,
             total,
             currentPage,
+        }
+    }
+
+    function requestTagsList() {
+        return {
+            type: 'TAG_LIST_REQUEST',
         }
     }
 }

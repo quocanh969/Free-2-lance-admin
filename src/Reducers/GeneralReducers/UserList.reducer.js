@@ -12,6 +12,11 @@ const initState = {
 const UserListReducer = (state = initState, action) => {
     switch(action.type)
     {
+        case 'PERSONAL_LIST_REQUEST':
+            return {
+                ...state,
+                totalPersnal: -1,
+            };
         case 'PERSONAL_LIST_UDPATE':
             return {
                 ...state,
@@ -19,6 +24,11 @@ const UserListReducer = (state = initState, action) => {
                 personalCurrentPage: action.page,
                 totalPersnal: action.total,
             };
+        case 'BUSINESS_LIST_REQUEST':
+            return {
+                ...state,
+                totalBusiness: -1,
+            };  
         case 'BUSINESS_LIST_UDPATE':
             return {
                 ...state,

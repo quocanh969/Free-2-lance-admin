@@ -21,6 +21,11 @@ const JobDetailReducer = (state = initState, action) => {
                 ...state,
                 job: temp,
             };
+        case 'JOBS_LIST_APPLICANTS_REQUEST':
+            return {
+                ...state,
+                totalApplicants: -1,
+            };
         case 'JOBS_LIST_APPLICANTS_UDPATE':
             return {
                 ...state,

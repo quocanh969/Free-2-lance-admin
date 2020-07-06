@@ -273,31 +273,52 @@ class JobReportsComponent extends Component {
         })
     }
 
-    renderReportsList(reports) {
+    renderReportsList(reports, total) {
         let content = [];
-
-        reports.forEach((e, index) => {
+        if(total === - 1) {
             content.push(
-                <tr key={index}>
-                    <td><div style={{width: '90px'}}>{prettierDate(e.report_date)}</div></td>
-                    <td><div className='text-truncate' style={{ width: '150px' }}>{e.user1_name}</div></td>
-                    <td><div className='text-truncate' style={{ width: '70px' }}>{e.id_job}</div></td>
-                    <td><div className='text-truncate' style={{ width: '120px' }}>{e.user2_name}</div></td>
-                    <td>
-                        {e.content}
-                    </td>
-                    <td>
-                        <select id={'select-status-' + e.id_report} value={e.status} onChange={() => { this.handleChangeStatus(e) }}>
-                            <option value={0}>Chờ giải quyết</option>
-                            <option value={1}>Đã giải quyết</option>
-                        </select>
-                    </td>
-                    <td className='text-center'>
-                        <i className='icon-feather-eye cursor-pointer text-primary' onClick={() => { this.handleDetail(e) }}></i>
-                    </td>
-                </tr>);
+                <tr key={0}>
+                    <td colSpan='7' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
+        }
+        else if(reports.length > 0) {
+            reports.forEach((e, index) => {
+                content.push(
+                    <tr key={index}>
+                        <td><div style={{width: '90px'}}>{prettierDate(e.report_date)}</div></td>
+                        <td><div className='text-truncate' style={{ width: '150px' }}>{e.user1_name}</div></td>
+                        <td><div className='text-truncate' style={{ width: '70px' }}>{e.id_job}</div></td>
+                        <td><div className='text-truncate' style={{ width: '120px' }}>{e.user2_name}</div></td>
+                        <td>
+                            {e.content}
+                        </td>
+                        <td>
+                            <select id={'select-status-' + e.id_report} value={e.status} onChange={() => { this.handleChangeStatus(e) }}>
+                                <option value={0}>Chờ giải quyết</option>
+                                <option value={1}>Đã giải quyết</option>
+                            </select>
+                        </td>
+                        <td className='text-center'>
+                            <i className='icon-feather-eye cursor-pointer text-primary' onClick={() => { this.handleDetail(e) }}></i>
+                        </td>
+                    </tr>);
 
-        })
+            })
+        }
+        else {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='7' className='p-5'>
+                        Danh sách yêu cầu ngưng việc rỗng !!
+                    </td>                    
+                </tr>
+            )
+        }
 
         return content;
     }
@@ -400,7 +421,7 @@ class JobReportsComponent extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderReportsList(jobReports)}
+                                    {this.renderReportsList(jobReports, totalJobReports)}
                                 </tbody>
                             </table>
 

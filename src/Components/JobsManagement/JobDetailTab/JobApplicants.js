@@ -121,29 +121,50 @@ class JobApplicantsComponent extends Component {
         }
     }
 
-    renderUserList(applicants) {
+    renderUserList(applicants, total) {
         let content = [];
 
-        applicants.forEach((e, index) => {
-
+        if(total === - 1) {
             content.push(
-                <tr key={index}>
-                    <td>{e.id_user}</td>
-                    <td><div className='text-truncate' style={{ width: '150px' }}>{e.fullname}</div></td>
-                    <td><div className='text-truncate' style={{ width: '180px' }}>{e.email}</div></td>
-                    <td>{e.dial}</td>
-                    <td className='text-center' style={{ width: '160px' }}>
-                        <div data-toggle="modal" data-target="#CVModal" onClick={()=>{this.handleViewAttachment(e.attachment)}}><i className='icon-material-outline-file-copy cursor-pointer text-primary mb-1'></i></div>
-                    </td>
-                    <td className='text-center' style={{ width: '150px' }}>
-                        <NavLink to={'/user-detail/id=' + e.id_user}><i className='icon-feather-user cursor-pointer'></i></NavLink>
-                    </td>
-                    <td className='text-center' style={{ width: '80px' }}>
-                        <div onClick={() => { this.handleDetail(e) }}><i className='icon-feather-eye cursor-pointer text-primary mb-1'></i></div>
-                    </td>
-                </tr>);
+                <tr key={0}>
+                    <td colSpan='7' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
+        }
+        else if(applicants.length > 0) {
+            applicants.forEach((e, index) => {
+                content.push(
+                    <tr key={index}>
+                        <td>{e.id_user}</td>
+                        <td><div className='text-truncate' style={{ width: '150px' }}>{e.fullname}</div></td>
+                        <td><div className='text-truncate' style={{ width: '180px' }}>{e.email}</div></td>
+                        <td>{e.dial}</td>
+                        <td className='text-center' style={{ width: '160px' }}>
+                            <div data-toggle="modal" data-target="#CVModal" onClick={()=>{this.handleViewAttachment(e.attachment)}}><i className='icon-material-outline-file-copy cursor-pointer text-primary mb-1'></i></div>
+                        </td>
+                        <td className='text-center' style={{ width: '150px' }}>
+                            <NavLink to={'/user-detail/id=' + e.id_user}><i className='icon-feather-user cursor-pointer'></i></NavLink>
+                        </td>
+                        <td className='text-center' style={{ width: '80px' }}>
+                            <div onClick={() => { this.handleDetail(e) }}><i className='icon-feather-eye cursor-pointer text-primary mb-1'></i></div>
+                        </td>
+                    </tr>);
 
-        })
+            })
+        }
+        else {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='7' className='p-5'>
+                        Danh sách người tham gia rỗng !!
+                    </td>                    
+                </tr>
+            )
+        }
 
         return content;
     }
@@ -215,7 +236,7 @@ class JobApplicantsComponent extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.renderUserList(applicants)}
+                                {this.renderUserList(applicants, totalApplicants)}
                             </tbody>
                         </table>
     

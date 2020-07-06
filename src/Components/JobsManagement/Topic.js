@@ -105,27 +105,51 @@ class TopicsComponent extends Component {
         })
     }
 
-    renderTopicsList() {
+    renderTopicsList(total) {
         let { topics } = this.props.TopicListReducer;
         let content = [];
-        for (let e of topics) {
-            content.push(<tr key={0}>
-                <td>{e.id_jobtopic}</td>
-                <td>{e.name}</td>
-                <td>{e.count}</td>
-                <td>
-                    {/* <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i> */}
-                    <NavLink to={'/topic-detail/id=' + e.id_jobtopic}><i className='icon-line-awesome-wrench cursor-pointer text-primary'></i></NavLink>
-                </td>
-                <td>
-                    {/* <i className='icon-feather-trash-2 cursor-pointer text-primary' onClick={() => { console.log('remove') }}></i> */}
-                    <select id={'select-status-' + e.id_jobtopic} value={e.status} onChange={() => { this.handleChangeStatus(e.id_jobtopic, e.status) }}>
-                        <option value={0}>Đã xóa</option>
-                        <option value={1}>Đang dùng</option>
-                    </select>
-                </td>
-            </tr>);
+
+        if(total === - 1) {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='5' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
         }
+        else if(topics.length > 0) {
+            for (let e of topics) {
+                content.push(<tr key={0}>
+                    <td>{e.id_jobtopic}</td>
+                    <td>{e.name}</td>
+                    <td>{e.count}</td>
+                    <td>
+                        {/* <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i> */}
+                        <NavLink to={'/topic-detail/id=' + e.id_jobtopic}><i className='icon-line-awesome-wrench cursor-pointer text-primary'></i></NavLink>
+                    </td>
+                    <td>
+                        {/* <i className='icon-feather-trash-2 cursor-pointer text-primary' onClick={() => { console.log('remove') }}></i> */}
+                        <select id={'select-status-' + e.id_jobtopic} value={e.status} onChange={() => { this.handleChangeStatus(e.id_jobtopic, e.status) }}>
+                            <option value={0}>Đã xóa</option>
+                            <option value={1}>Đang dùng</option>
+                        </select>
+                    </td>
+                </tr>);
+            }
+        }
+        else {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='5' className='p-5'>
+                        Danh sách chủ đề rỗng !!
+                    </td>                    
+                </tr>
+            )
+        }
+
         return content;
     }
 
@@ -220,7 +244,7 @@ class TopicsComponent extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderTopicsList()}
+                                    {this.renderTopicsList(total)}
                                 </tbody>
                             </table>
 

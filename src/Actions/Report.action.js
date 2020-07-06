@@ -2,8 +2,8 @@ import { getReportList, getJobReportsList } from "../Services/Report.service";
 
 export const loadReportList = (page, take, status, queryName) => {
     return (dispatch) => {
+        dispatch(requestReportList());
         getReportList(page, take, status, queryName).then((res) => {
-            console.log(res);
             if(res.data.code === '200') {
                 dispatch(updateReportList(res.data.data.list, res.data.data.total, res.data.data.page));
             }            
@@ -20,10 +20,17 @@ export const loadReportList = (page, take, status, queryName) => {
             page,
         };
     }
+
+    function requestReportList() {
+        return {
+            type: "REPORT_LIST_REQUEST",
+        };
+    }
 }
 
 export const loadJobReportList = (page, take, status, queryName) => {
     return (dispatch) => {
+        dispatch(requestJobReportList());
         getJobReportsList(page, take, status, queryName).then((res) => {
             if(res.data.code === '200') {
                 dispatch(updateJobReportList(res.data.data.list, res.data.data.total, res.data.data.page));
@@ -39,6 +46,12 @@ export const loadJobReportList = (page, take, status, queryName) => {
             list,
             total,
             page,
+        };
+    }
+
+    function requestJobReportList() {
+        return {
+            type: "JOB_REPORT_LIST_REQUEST",
         };
     }
 }

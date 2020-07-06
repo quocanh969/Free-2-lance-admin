@@ -104,27 +104,50 @@ class TagsComponent extends Component {
         }
     }
 
-    renderTagsList() {
+    renderTagsList(total) {
         let { tags } = this.props.TagListReducer;
         let content = [];
-        console.log(tags);
-        for (let e of tags) {
-            console.log(e);
-            content.push(<tr key={0}>
-                <td>{e.id_tag}</td>
-                <td>{e.name}</td>
-                <td>
-                    {/* <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i> */}
-                    <NavLink to={'/tag-detail/id=' + e.id_tag}><i className='icon-line-awesome-wrench cursor-pointer text-primary'></i></NavLink>
-                </td>
-                <td>
-                    <select id={'select-status-' + e.id_tag} value={e.status} onChange={() => { this.handleChangeStatus(e.id_tag, e.status) }}>
-                        <option value={0}>Đã xóa</option>
-                        <option value={1}>Đang dùng</option>
-                    </select>
-                </td>
-            </tr>);
+
+        if(total === - 1) {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='4' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
         }
+        else if(tags.length > 0) {
+            for (let e of tags) {
+                console.log(e);
+                content.push(<tr key={0}>
+                    <td>{e.id_tag}</td>
+                    <td>{e.name}</td>
+                    <td>
+                        {/* <i className='icon-line-awesome-wrench cursor-pointer text-primary' onClick={() => { console.log('edit') }}></i> */}
+                        <NavLink to={'/tag-detail/id=' + e.id_tag}><i className='icon-line-awesome-wrench cursor-pointer text-primary'></i></NavLink>
+                    </td>
+                    <td>
+                        <select id={'select-status-' + e.id_tag} value={e.status} onChange={() => { this.handleChangeStatus(e.id_tag, e.status) }}>
+                            <option value={0}>Đã xóa</option>
+                            <option value={1}>Đang dùng</option>
+                        </select>
+                    </td>
+                </tr>);
+            }
+        }
+        else {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='4' className='p-5'>
+                        Danh sách dán giãn rỗng !!
+                    </td>                    
+                </tr>
+            )
+        }
+
         return content;
     }
 
@@ -217,7 +240,7 @@ class TagsComponent extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderTagsList()}
+                                    {this.renderTagsList(total)}
                                 </tbody>
                             </table>
 

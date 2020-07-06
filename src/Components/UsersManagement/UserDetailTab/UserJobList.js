@@ -78,27 +78,50 @@ class UserJobListComponent extends Component {
         }
     }
 
-    renderJobList(jobList) {
+    renderJobList(jobList, total) {
         let content = [];
-        jobList.forEach((e, index) => {
+
+        if(total === - 1) {
             content.push(
-            <tr key={index}>
-                <td>{e.id_job}</td>
-                <td><div className='text-truncate' style={{ width: '180px' }}>{e.title}</div></td>
-                <td><div className='text-truncate' style={{ width: '70px' }}>{e.topic_name}</div></td>
-                <td>{prettierNumber(e.salary)} VNĐ</td>
-                <td>{prettierDate(e.post_date)}</td>
-                <td>{prettierDate(e.expire_date)}</td>
-                <td>
-                    <div className='text-center'>
-                        {this.renderJobStatus(e.id_status)}
-                    </div>
-                </td>
-                <td className='text-center'>
-                    <NavLink to={'/job-detail/id='+e.id_job}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
-                </td>
-            </tr>);
-        })
+                <tr key={0}>
+                    <td colSpan='8' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
+        }
+        else if(jobList.length > 0) {
+            jobList.forEach((e, index) => {
+                content.push(
+                <tr key={index}>
+                    <td>{e.id_job}</td>
+                    <td><div className='text-truncate' style={{ width: '180px' }}>{e.title}</div></td>
+                    <td><div className='text-truncate' style={{ width: '70px' }}>{e.topic_name}</div></td>
+                    <td>{prettierNumber(e.salary)} VNĐ</td>
+                    <td>{prettierDate(e.post_date)}</td>
+                    <td>{prettierDate(e.expire_date)}</td>
+                    <td>
+                        <div className='text-center'>
+                            {this.renderJobStatus(e.id_status)}
+                        </div>
+                    </td>
+                    <td className='text-center'>
+                        <NavLink to={'/job-detail/id='+e.id_job}><i className='icon-feather-eye cursor-pointer'></i></NavLink>
+                    </td>
+                </tr>);
+            })
+        }
+        else {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='8' className='p-5'>
+                        Danh sách công việc đăng rỗng !!
+                    </td>                    
+                </tr>
+            )
+        }
 
         return content;
     }
@@ -197,7 +220,7 @@ class UserJobListComponent extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.renderJobList(jobList)}
+                                {this.renderJobList(jobList, totalJob)}
                             </tbody>
                         </table>
 

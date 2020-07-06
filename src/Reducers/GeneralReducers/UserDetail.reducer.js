@@ -32,6 +32,11 @@ const UserDetailReducer = (state = initState, action) => {
             return {
                 ...state,
                 userInfo: temp,
+            };
+        case 'USER_DETAIL_JOB_LIST_REQUEST':
+            return {
+                ...state,
+                totalJob: -1,
             }; 
         case 'USER_DETAIL_JOB_LIST_UDPATE':
             return {
@@ -40,6 +45,11 @@ const UserDetailReducer = (state = initState, action) => {
                 totalJob: action.total,
                 currentJob: action.page,
             };
+        case 'USER_DETAIL_TASK_LIST_REQUEST':
+            return {
+                ...state,
+                totalTask: -1,
+            };
         case 'USER_DETAIL_TASK_LIST_UDPATE':
             return {
                 ...state,
@@ -47,12 +57,22 @@ const UserDetailReducer = (state = initState, action) => {
                 totalTask: action.total,
                 currentTask: action.page,
             };
+        case 'USER_TRANSACTION_LIST_REQUEST':
+            return {
+                ...state,
+                totalTransaction: -1,
+            };
         case 'USER_TRANSACTION_LIST_UDPATE':
             return {
                 ...state,
                 transaction: action.list,
                 totalTransaction: action.total,
                 currentTransactionPage: action.page,
+            };
+        case 'USER_PAYMENT_LIST_REQUEST':
+            return {
+                ...state,
+                totalPayment: -1,
             };
         case 'USER_PAYMENT_LIST_UDPATE':
             return {

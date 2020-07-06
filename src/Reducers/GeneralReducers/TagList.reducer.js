@@ -7,6 +7,11 @@ const initState = {
 const TagListReducer = (state = initState, action) => {
     switch(action.type)
     {
+        case 'TAG_LIST_REQUEST':
+            return {
+                ...state,
+                total: -1,
+            };  
         case 'TAG_LIST_UPDATE':
             return {
                 ...state,

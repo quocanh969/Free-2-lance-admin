@@ -65,6 +65,7 @@ export const sendUpdateInfo = (username, password) => {
 
 export const getPersonalList = (take, page, queryName, account_status) => {
     return (dispatch) => {
+        dispatch(requestPersonalList());
         getUserList(take, page, queryName, account_status, 0).then((res) => {
             if(res.data.code === '200') {
                 dispatch(udpatePersonalList(res.data.data.usersList, res.data.data.total, res.data.data.page));
@@ -82,10 +83,17 @@ export const getPersonalList = (take, page, queryName, account_status) => {
             page,
         };
     }
+
+    function requestPersonalList() {
+        return {
+            type: "PERSONAL_LIST_REQUEST",
+        };
+    }
 }
 
 export const getBusinessList = (take, page, queryName, account_status) => {
     return (dispatch) => {
+        dispatch(requestBusinessList());
         getUserList(take, page, queryName, account_status, 1).then((res) => {
             if(res.data.code === '200') {
                 dispatch(udpateBusinessList(res.data.data.usersList, res.data.data.total, res.data.data.page));
@@ -101,6 +109,12 @@ export const getBusinessList = (take, page, queryName, account_status) => {
             list,
             total,
             page,
+        };
+    }
+
+    function requestBusinessList() {
+        return {
+            type: "BUSINESS_LIST_REQUEST",
         };
     }
 }
@@ -126,6 +140,7 @@ export const loadUserDetail = (id_user) => {
 
 export const loadJobsByEmployer = (page, take, queryName, status, id_user) => {
     return (dispatch) => {
+        dispatch(requestJobList());
         getJobsByEmployerId(page, take, queryName, status, id_user).then((res) => {
             if(res.data.code === '200')
             {
@@ -144,10 +159,17 @@ export const loadJobsByEmployer = (page, take, queryName, status, id_user) => {
             page,
         };
     }
+
+    function requestJobList() {
+        return {
+            type: "USER_DETAIL_JOB_LIST_REQUEST",
+        };
+    }
 }
 
 export const loadJobsByApplicant = (page, take, queryName, status, id_user) => {
     return (dispatch) => {
+        dispatch(requestTaskList());
         getJobsByApplicantId(page, take, queryName, status, id_user).then((res) => {
             if(res.data.code === '200')
             {
@@ -163,6 +185,12 @@ export const loadJobsByApplicant = (page, take, queryName, status, id_user) => {
             list,
             total,
             page,
+        };
+    }
+
+    function requestTaskList() {
+        return {
+            type: "USER_DETAIL_TASK_LIST_REQUEST",
         };
     }
 }

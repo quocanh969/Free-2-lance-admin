@@ -221,9 +221,20 @@ class UserTransactionComponent extends Component {
         })
     }
 
-    renderTransaction(transactions) {
+    renderTransaction(transactions, total) {
         let content = [];
-        if(transactions.length > 0) {
+        if(total === -1) {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='7' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
+        }
+        else if(transactions.length > 0) {
             transactions.forEach((e, index) => {
                 let refund = 0;
                 if(e.refund !== null) {
@@ -369,7 +380,7 @@ class UserTransactionComponent extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.renderTransaction(transaction)}
+                                {this.renderTransaction(transaction, totalTransaction)}
                             </tbody>
                         </table>
 

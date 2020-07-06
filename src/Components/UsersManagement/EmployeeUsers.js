@@ -149,26 +149,47 @@ class EmployeeUsersComponent extends Component {
         })   
     }
 
-    renderEmployeeList(employees) {
+    renderEmployeeList(employees, total) {
         let content = [];
-
-        employees.forEach((e, index) => {
-            content.push(<tr key={index}>
-                <td>{e.id_user}</td>
-                <td ><div className='text-truncate' aria-label={e.fullname} style={{width: '130px'}}>{e.fullname}</div></td>
-                <td>{e.tel}</td>
-                <td>{e.username}</td>
-                <td>
-                    {(e.isManager === 1 ? <span className='text-danger'>Quản lý</span> : <span className='text-success'>Nhân viên</span>)}
-                </td>
-                <td className='text-center'>
-                    <div><i className='icon-material-outline-autorenew cursor-pointer' onClick={()=>{this.handleResetPW(e.id_user)}}></i></div>
-                </td>
-                <td className='text-center'>
-                    <div><i className='icon-feather-trash-2 cursor-pointer'></i></div>
-                </td>
-            </tr>); 
-        })
+        if(total === - 1) {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='7' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
+        }
+        else if(employees.length > 0) {
+            employees.forEach((e, index) => {
+                content.push(<tr key={index}>
+                    <td>{e.id_user}</td>
+                    <td ><div className='text-truncate' aria-label={e.fullname} style={{width: '130px'}}>{e.fullname}</div></td>
+                    <td>{e.tel}</td>
+                    <td>{e.username}</td>
+                    <td>
+                        {(e.isManager === 1 ? <span className='text-danger'>Quản lý</span> : <span className='text-success'>Nhân viên</span>)}
+                    </td>
+                    <td className='text-center'>
+                        <div><i className='icon-material-outline-autorenew cursor-pointer' onClick={()=>{this.handleResetPW(e.id_user)}}></i></div>
+                    </td>
+                    <td className='text-center'>
+                        <div><i className='icon-feather-trash-2 cursor-pointer'></i></div>
+                    </td>
+                </tr>); 
+            })
+        }
+        else {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='7' className='p-5'>
+                        Danh sách nhân viên rỗng !!
+                    </td>                    
+                </tr>
+            )
+        }
             
         return content;
     }
@@ -225,7 +246,8 @@ class EmployeeUsersComponent extends Component {
                     <div className="card-body">
                         {/* Headline */}
                         <div className="row my-1">
-                            <div className='col-4'></div>                            
+                            <div className='col-4'><div className='w-100 btn btn-danger px-0' onClick={()=>{this.TriggerAddNew()}}><i className='icon-feather-plus'></i>&nbsp;Thêm nhân viên</div></div>                                                        
+                            <div className='col-3'></div>
                             <div className="col-5 text-right d-flex">
                                 <div className='mr-2'>
                                     <div className='btn btn-primary' 
@@ -249,7 +271,6 @@ class EmployeeUsersComponent extends Component {
                                     </div>
                                 </div>                                
                             </div>
-                            <div className='col-3'><div className='w-100 btn btn-danger px-0' onClick={()=>{this.TriggerAddNew()}}><i className='icon-feather-plus'></i>&nbsp;Thêm nhân viên</div></div>
                         </div>
                         
                         {/* Table */}
@@ -267,7 +288,7 @@ class EmployeeUsersComponent extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderEmployeeList(employees)}
+                                    {this.renderEmployeeList(employees, totalEmployee)}
                                 </tbody>
                             </table>
 

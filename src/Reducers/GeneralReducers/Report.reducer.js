@@ -11,12 +11,22 @@ const initState = {
 const ReportsReducer = (state = initState, action) => {
     switch(action.type)
     {
+        case 'REPORT_LIST_REQUEST':
+            return {
+                ...state,
+                totalReport: -1,
+            };
         case 'REPORT_LIST_UDPATE':
             return {
                 ...state,
                 reports: action.list,
                 totalReport: action.total,
                 currentReportPage: action.page,
+            };
+        case 'JOB_REPORT_LIST_REQUEST':
+            return {
+                ...state,
+                totalJobReports: -1,
             };
         case 'JOB_REPORT_LIST_UDPATE':
             return {

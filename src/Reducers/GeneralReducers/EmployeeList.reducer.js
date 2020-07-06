@@ -7,6 +7,11 @@ const initState = {
 const EmployeeListReducer = (state = initState, action) => {
     switch(action.type)
     {
+        case 'EMPLOYEE_LIST_REQUEST':
+            return {
+                ...state,
+                totalEmployee: -1,
+            }; 
         case 'EMPLOYEE_LIST_UDPATE':
             return {
                 ...state,

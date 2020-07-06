@@ -2,6 +2,7 @@ import { getEmployeeList, addNewEmployee } from "../Services/Employee.service";
 
 export const loadEmployeeList = (page, take, queryName) => {
     return (dispatch) => {
+        dispatch(requestEmployeeList());
         getEmployeeList(page, take, queryName).then((res) => {
             if(res.data.code === '200') {
                 dispatch(updateEmployeeList(res.data.data.employeesList, res.data.data.total, res.data.data.page))
@@ -17,6 +18,12 @@ export const loadEmployeeList = (page, take, queryName) => {
             list,
             total,
             page,
+        };
+    }
+
+    function requestEmployeeList() {
+        return {
+            type: "EMPLOYEE_LIST_REQUEST",
         };
     }
 }

@@ -8,9 +8,12 @@ const initState = {
 const TopicListReducer = (state = initState, action) => {
     switch(action.type)
     {
+        case 'TOPIC_LIST_REQUEST':
+            return {
+                ...state,
+                total: -1,
+            }; 
         case 'TOPIC_LIST_UPDATE':
-            console.log("FLAG");
-            console.log(action);
             return {
                 ...state,
                 topics: action.list,

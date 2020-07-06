@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
 import { prettierDate, prettierNumber } from '../../../Ultis/Helper/HelperFunction';
+import { loadPaymentList } from '../../../Actions/Transaction.action';
 
 class UserPaymentComponent extends Component {
 
@@ -11,38 +12,37 @@ class UserPaymentComponent extends Component {
 
         this.state = {
             queryType: 0,
-            queryId: null,
+            queryId: '',
         }
     }
 
-    loadTransaction(page, queryId) {
-        // let { onLoadJobList } = this.props;
-        // let { userInfo } = this.props.UserDetailReducer;
-        // onLoadJobList(page, 8, queryName, status, userInfo.personal.id_user);
+    loadTransaction(page, id_status, id_job) {
+        let { onLoadPaymentList } = this.props;
+        let { userInfo } = this.props.UserDetailReducer;        
+        onLoadPaymentList(page, userInfo.personal.id_user, id_status, id_job)
     }
 
     handleFilter(newType) {
         this.setState({queryType: newType},() => {
-            // this.loadJobListFunc(1, this.state.queryName, this.state.queryType);
+            this.loadTransaction(1, this.state.queryType, this.state.queryId);
         })
     }
 
     handlePagination(pageNum) {
-        // if (pageNum !== this.props.UserDetailReducer.currentJob) {
-        //     this.loadJobListFunc(pageNum, this.state.queryName, this.state.queryType);
-        // }
+        if (pageNum !== this.props.UserDetailReducer.currentPaymentPage) {
+            this.loadTransaction(pageNum, this.state.queryType, this.state.queryId);
+        }
     }
 
     handleSearchIdApplicant() {
-        let searchStr = document.getElementById('transaction-search-input').value;
+        let searchStr = Number.parseInt(document.getElementById('payment-input-search').value);        
         if (searchStr === this.state.queryId) {
             return;
         }
-        else {
-            let id = Number.parseInt(searchStr);
-            if(!isNaN(id)) {
-                this.setState({ queryId: Number.parseInt(searchStr) }, () => {
-                    //this.loadTransaction(1, this.state.queryName, this.state.queryType);
+        else {            
+            if (isNaN(Number.parseInt(searchStr)) === false) {
+                this.setState({ queryId: searchStr}, () => {
+                    this.loadTransaction(1, this.state.queryType, this.state.queryId);
                 })
             }
             else {
@@ -51,75 +51,27 @@ class UserPaymentComponent extends Component {
                     icon: 'error',
                 })
             }
-            
+
         }
     }
 
-    handleRefundOne(id) {
-        let percentage = 50;
-        Swal.fire({
-            text: "Bạn có chắc là muốn hoàn tiền " + percentage + "% cho công việc này",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ok, tôi đồng ý',
-            cancelButtonText: 'Không, tôi đã suy nghĩ lại',
-            reverseButtons: true,
-        }).then((result) => {
-            if (result.value) {
-                console.log('Giao dịch thành công');                
-                Swal.fire({
-                    text: 'Giao dịch  thành công',
-                    icon: 'success',
-                })
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                Swal.fire({
-                    text: 'Giao dịch không được thực hiện',
-                    icon: 'error',
-                })
-            }
-            else {
-            }
-        })
-    }
+    handleDetail(transaction) {
+        let {userInfo} = this.props.UserDetailReducer;
 
-    handleRefundSelected() {
-        let {payment} = this.props.UserDetailReducer;
-        let selectedArr = [];
-        payment.forEach((e, index) => {
-            let input = document.getElementById('select-input-'+index);
-            if(input.checked) {
-                selectedArr.push(index);
-            }
-        })
+        let sttText = 'Chưa nhận';
+        if(transaction.status === 1) {
+            sttText = 'Đã nhận';
+        }
 
-        console.log(selectedArr);
+        let refund = 0;
+        if(transaction.refund !== null) {
+            refund = transaction.refund;
+        }
 
-        Swal.fire({
-            text: "Bạn có chắc là muốn hoàn tiền cho các công việc được chọn này này",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ok, tôi đồng ý',
-            cancelButtonText: 'Không, tôi đã suy nghĩ lại',
-            reverseButtons: true,
-        }).then((result) => {
-            if (result.value) {
-                console.log('Giao dịch  thành công');                
-                Swal.fire({
-                    text: 'Giao dịch thành công',
-                    icon: 'success',
-                })
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                Swal.fire({
-                    text: 'Giao dịch không được thực hiện',
-                    icon: 'error',
-                })
-            }
-            else {
-            }
-        })
-    }
-
-    handleDetail() {
+        let paid_dateText = 'Chưa nhận';
+        if(transaction.paid_date !== null) {
+            paid_dateText = prettierDate(transaction.paid_date);
+        }
 
         Swal.fire({
             title: '<b>Chi tiết hóa đơn</b>',
@@ -127,42 +79,43 @@ class UserPaymentComponent extends Component {
                 `<div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Người thuê :</label>
-                        <div class='col-7'>JOhn CEna</div>                    
+                        <div class='col-7'>${userInfo.personal.fullname}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Thông tin tài khoản :</label>
-                        <div class='col-7'>0958713698478526</div>                    
+                        <div class='col-7'>${transaction.orderIf}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Người làm :</label>
-                        <div class='col-7'>ThE CoCk</div>                    
+                        <div class='col-7'>${transaction.employee}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Mã công việc :</label>
-                        <div class='col-7'>123</div>
+                        <div class='col-7'>${transaction.id_job}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Số tiền :</label>
-                        <div class='col-7'>2,000,000 VNĐ</div>
+                        <div class='col-7'>${transaction.amount}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày thanh toán :</label>
-                        <div class='col-4'>09/07/2020</div>                    
+                        <div class='col-4'>${paid_dateText}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày bắt đầu công việc :</label>
-                        <div class='col-4'>09/07/2020</div>
+                        <div class='col-4'>${prettierDate(transaction.start_date || transaction.start)}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày kết thúc theo dự tính :</label>
-                        <div class='col-4'>20/07/2020</div>
+                        <div class='col-4'>${prettierDate(transaction.deadline || transaction.end_date)}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày kết thúc thực tế :</label>
-                        <div class='col-4'>20/07/2020</div>
+                        <div class='col-4'>${prettierDate(transaction.end)}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Trang thái :</label>                        
+                        <label class='font-weight-bold col-5'>Trang thái :</label>     
+                        <div class='col-4'>${sttText}</div>                   
                     </div>
                 </div>`,
             showCloseButton: true,
@@ -171,22 +124,43 @@ class UserPaymentComponent extends Component {
         })
     }
 
-    renderPayment(payment) {
+    renderPayment(payment, total) {
         let content = [];
-        payment.forEach((e, index) => {
+        if(total === -1) {
             content.push(
-                <tr key={index}>
-                    <td style={{width:'50px'}}><input id={'select-input-'+index} type='checkbox' onChange={()=>{this.handleSelectRow(index)}}></input></td>
-                    <td>1</td>
-                    <td><div className='text-truncate' style={{ width: '120px' }}>The Cock</div></td>
-                    <td>{prettierDate(new Date())}</td>
-                    <td>{prettierDate(new Date())}</td>
-                    <td>{prettierNumber(2000000)} VNĐ</td>
-                    <td className='text-center'>
-                        <i className='icon-feather-eye cursor-pointer' onClick={()=>{this.handleDetail()}}></i>
-                    </td>
-                </tr>);
-        })
+                <tr key={0}>
+                    <td colSpan='6' className='p-5 text-center'>
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </td>                    
+                </tr>
+            )
+        }
+        else if(payment.length > 0) {
+            payment.forEach((e, index) => {
+                content.push(
+                    <tr key={index}>
+                        <td>{e.id_job}</td>
+                        <td><div className='text-truncate' style={{ width: '120px' }}>{e.employee}</div></td>
+                        <td>{prettierDate(e.start)}</td>
+                        <td>{(e.paid_date === null ? 'Chưa nhận' : prettierDate(e.paid_date))}</td>
+                        <td>{prettierNumber(e.amount)} VNĐ</td>
+                        <td className='text-center'>
+                            <i className='icon-feather-eye cursor-pointer' onClick={()=>{this.handleDetail(e)}}></i>
+                        </td>
+                    </tr>);
+            })
+        }
+        else {
+            content.push(
+                <tr key={0}>
+                    <td colSpan='6' className='p-5'>
+                        Danh sách tiền thánh toán rỗng !!
+                    </td>                    
+                </tr>
+            )
+        }
 
         return content;
     }
@@ -247,9 +221,9 @@ class UserPaymentComponent extends Component {
                                 <div className='btn btn-primary'
                                     onClick={() => {
                                         if (this.state.queryId.length > 0) {
-                                            document.getElementById('job-search-input').value = '';
+                                            document.getElementById('payment-input-search').value = '';
                                             this.setState({ queryId: '' }, () => {
-                                                //this.loadTransaction(1, this.state.queryName, this.state.queryType)
+                                                this.loadTransaction(1, this.state.queryType, this.state.queryId)
                                             })
                                         }
                                     }}>
@@ -257,7 +231,7 @@ class UserPaymentComponent extends Component {
                                 </div>
                             </div>
                             <div className="input-group mb-3">
-                                <input type="search" id="transaction" className="form-control" placeholder="Tìm kiếm theo mã công việc .." />
+                                <input type="search" id="payment-input-search" className="form-control" placeholder="Tìm kiếm theo mã công việc .." />
                                 <div className="input-group-append">
                                     <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchIdApplicant() }}>
                                         <i className="fa fa-search"></i>
@@ -272,7 +246,6 @@ class UserPaymentComponent extends Component {
                         <table className="col-12 table" id="dataTable" width="100%" cellSpacing={0} >
                             <thead className="thead-dark">
                                 <tr>
-                                    <th></th>
                                     <th>ID công việc</th>
                                     <th>Người làm</th>
                                     <th>Ngày bắt đầu</th>
@@ -328,7 +301,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        onLoadPaymentList: (page, id_user, id_status, id_job) => {
+            dispatch(loadPaymentList(page, 8, id_user, id_status, id_job));
+        }
     }
 }
 

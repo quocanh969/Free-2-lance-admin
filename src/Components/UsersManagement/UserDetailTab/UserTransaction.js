@@ -166,13 +166,21 @@ class UserTransactionComponent extends Component {
     }
 
     handleDetail(transaction) {
+        let {userInfo} = this.props.UserDetailReducer;
+
         let sttText = 'Chưa nhận';
         if(transaction.status === 1) {
             sttText = 'Đã nhận';
         }
+
         let refund = 0;
         if(transaction.refund !== null) {
             refund = transaction.refund;
+        }
+
+        let paid_dateText = 'Chưa nhận';
+        if(transaction.paid_date !== null) {
+            paid_dateText = prettierDate(transaction.paid_date);
         }
         Swal.fire({
             title: '<b>Chi tiết hóa đơn thu nhập</b>',
@@ -191,12 +199,16 @@ class UserTransactionComponent extends Component {
                         <div class='col-7'>${transaction.id_job}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
+                        <label class='font-weight-bold col-5'>Người làm :</label>
+                        <div class='col-7'>${userInfo.personal.fullname}</div>                    
+                    </div>
+                    <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Số tiền :</label>
                         <div class='col-7'>${prettierNumber(transaction.amount * (100 - refund)/100)}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày thanh toán :</label>
-                        <div class='col-4'>${prettierDate(transaction.paid_date)}</div>                    
+                        <div class='col-4'>${paid_dateText}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày bắt đầu công việc :</label>
@@ -241,7 +253,7 @@ class UserTransactionComponent extends Component {
                     refund = Number.parseInt(e.refund);
                 }
                 content.push(
-                    <tr key={e.id_transaction}>
+                    <tr key={index}>
                         {(
                             this.state.queryType === 0
                             ?

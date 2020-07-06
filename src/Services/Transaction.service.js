@@ -16,13 +16,13 @@ function payMoneyForEmployee(id_transaction) {
     });
 }
 
-function getPaymentList(page, take, queryName, status, isASC) {
-    return axios.post('/topics/getTopics', {
+function getPaymentList(page, take, id_user, id_status, id_job) {
+    return axios.post('/topics/getTransactionForEmpployer', {
         take,
         page,
-        queryName,
-        status,
-        isASC,
+        id: id_user, 
+        id_status,
+        id_job: id_job,
     });
 }
 
@@ -37,4 +37,4 @@ function getRefundForEmployer(id_applicant, id_transaction, amount, refundPercen
     });
 }
 
-export {getTransactionList, payMoneyForEmployee, getRefundForEmployer}
+export {getTransactionList, getPaymentList, payMoneyForEmployee, getRefundForEmployer}

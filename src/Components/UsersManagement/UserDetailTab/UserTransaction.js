@@ -3,6 +3,8 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Swal from 'sweetalert2';
 import { prettierDate, prettierNumber } from '../../../Ultis/Helper/HelperFunction';
+import { loadTransactionList } from '../../../Actions/Transaction.action';
+import { payMoneyForEmployee } from '../../../Services/Transaction.service';
 
 class UserTransactionComponent extends Component {
 
@@ -11,38 +13,41 @@ class UserTransactionComponent extends Component {
 
         this.state = {
             queryType: 0,
-            queryId: null,
+            queryId: '',
         }
     }
 
-    loadTransaction(page, queryId) {
-        // let { onLoadJobList } = this.props;
-        // let { userInfo } = this.props.UserDetailReducer;
-        // onLoadJobList(page, 8, queryName, status, userInfo.personal.id_user);
+    componentWillMount() {
+        this.loadTransaction(1, this.state.queryType, this.state.queryId);
+    }
+
+    loadTransaction(page, id_status, id_job) {
+        let { onLoadTransactionList } = this.props;
+        let { userInfo } = this.props.UserDetailReducer;
+        onLoadTransactionList(page, userInfo.personal.id_user, id_status, id_job );
     }
 
     handleFilter(newType) {
-        this.setState({queryType: newType},() => {
-            // this.loadJobListFunc(1, this.state.queryName, this.state.queryType);
+        this.setState({ queryType: newType }, () => {
+            this.loadTransaction(1, this.state.queryType, this.queryId);
         })
     }
 
     handlePagination(pageNum) {
-        // if (pageNum !== this.props.UserDetailReducer.currentJob) {
-        //     this.loadJobListFunc(pageNum, this.state.queryName, this.state.queryType);
-        // }
+        if (pageNum !== this.props.UserDetailReducer.currentTransactionPage) {
+            this.loadTransaction(pageNum, this.state.queryType, this.queryId);
+        }
     }
 
     handleSearchIdApplicant() {
-        let searchStr = document.getElementById('transaction-search-input').value;
+        let searchStr = Number.parseInt(document.getElementById('transaction-search-input').value);        
         if (searchStr === this.state.queryId) {
             return;
         }
-        else {
-            let id = Number.parseInt(searchStr);
-            if(!isNaN(id)) {
-                this.setState({ queryId: Number.parseInt(searchStr) }, () => {
-                    //this.loadTransaction(1, this.state.queryName, this.state.queryType);
+        else {            
+            if (isNaN(Number.parseInt(searchStr)) === false) {
+                this.setState({ queryId: searchStr}, () => {
+                    this.loadTransaction(1, this.state.queryType, this.state.queryId);
                 })
             }
             else {
@@ -51,16 +56,11 @@ class UserTransactionComponent extends Component {
                     icon: 'error',
                 })
             }
-            
+
         }
     }
 
-    handleSelectRow(id) {
-        let temp = {...this.state.selected};
-        
-    }
-
-    handlePayOne(id) {
+    handlePayOne(id_transaction) {
         Swal.fire({
             text: "Bạn có chắc là muốn thanh toán cho công việc này",
             icon: 'warning',
@@ -70,11 +70,27 @@ class UserTransactionComponent extends Component {
             reverseButtons: true,
         }).then((result) => {
             if (result.value) {
-                console.log('Thanh toán thành công');                
-                Swal.fire({
-                    text: 'Thanh toán thành công',
-                    icon: 'success',
-                })
+                payMoneyForEmployee(id_transaction).then(res => {
+                    if(res.data.code === '200') {
+                        this.loadTransaction(1, this.state.queryType, this.state.queryId);
+                        Swal.fire({
+                            text: 'Thanh toán thành công',
+                            icon: 'success',
+                        })
+                    }
+                    else {
+                        Swal.fire({
+                            text: 'Thanh toán thất bại',
+                            icon: 'error',
+                        })
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    Swal.fire({
+                        text: 'Server kết nối có vấn đề, vui lòng thử lại sau',
+                        icon: 'error',
+                    })
+                })      
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire({
                     text: 'Thanh toán không được thực hiện',
@@ -87,16 +103,14 @@ class UserTransactionComponent extends Component {
     }
 
     handlePaySelected() {
-        let {transaction} = this.props.UserDetailReducer;
+        let { transaction } = this.props.UserDetailReducer;
         let selectedArr = [];
         transaction.forEach((e, index) => {
-            let input = document.getElementById('select-input-'+index);
-            if(input.checked) {
+            let input = document.getElementById('select-input-' + index);
+            if (input.checked) {
                 selectedArr.push(index);
             }
         })
-
-        console.log(selectedArr);
 
         Swal.fire({
             text: "Bạn có chắc là muốn thanh toán cho các công việc được chọn này này",
@@ -107,11 +121,39 @@ class UserTransactionComponent extends Component {
             reverseButtons: true,
         }).then((result) => {
             if (result.value) {
-                console.log('Thanh toán thành công');                
-                Swal.fire({
-                    text: 'Thanh toán thành công',
-                    icon: 'success',
+                let isSuccess = 1;
+                selectedArr.forEach((e, index) => {
+                    payMoneyForEmployee(e.id_transaction).then(res => {
+                        if(res.data.code === '200') {
+                        }
+                        else {
+                            isSuccess = 0;
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                        Swal.fire({
+                            text: 'Server kết nối có vấn đề, vui lòng thử lại sau',
+                            icon: 'error',
+                        })
+                    })   
                 })
+
+                this.loadTransaction(1, this.state.queryType, this.state.queryId);
+                
+                if(isSuccess === 1) {
+                    Swal.fire({
+                        text: 'Thanh toán tất cả lựa chọn thành công',
+                        icon: 'success',
+                    })
+                }
+                else {
+                    Swal.fire({
+                        text: 'Thanh toán gặp lỗi trong quá trình thực hiện nên một số thanh toán không được thực hiện',
+                        icon: 'warning',
+                    })
+                }
+                
+
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire({
                     text: 'Thanh toán không được thực hiện',
@@ -123,42 +165,54 @@ class UserTransactionComponent extends Component {
         })
     }
 
-    handleDetail() {
-
+    handleDetail(transaction) {
+        let sttText = 'Chưa nhận';
+        if(transaction.status === 1) {
+            sttText = 'Đã nhận';
+        }
+        let refund = 0;
+        if(transaction.refund !== null) {
+            refund = transaction.refund;
+        }
         Swal.fire({
             title: '<b>Chi tiết hóa đơn thu nhập</b>',
             html:
                 `<div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Người thuê :</label>
-                        <div class='col-7'>JOhn CEna</div>                    
+                        <div class='col-7'>${transaction.employer}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Thông tin tài khoản :</label>
-                        <div class='col-7'>0958713698478526</div>                    
-                    </div>
-                    <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Người làm :</label>
-                        <div class='col-7'>ThE CoCk</div>                    
+                        <div class='col-7'>${transaction.orderIf}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Mã công việc :</label>
-                        <div class='col-7'>123</div>
+                        <div class='col-7'>${transaction.id_job}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Số tiền :</label>
-                        <div class='col-7'>2,000,000 VNĐ</div>
+                        <div class='col-7'>${prettierNumber(transaction.amount * (100 - refund)/100)}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Ngày thanh toán :</label>
-                        <div class='col-7'>09/07/2020</div>                    
+                        <label class='font-weight-bold col-8'>Ngày thanh toán :</label>
+                        <div class='col-4'>${prettierDate(transaction.paid_date)}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Ngày có thể nhận :</label>
-                        <div class='col-7'>20/07/2020</div>
+                        <label class='font-weight-bold col-8'>Ngày bắt đầu công việc :</label>
+                        <div class='col-4'>${prettierDate(transaction.start_date || transaction.start)}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Trang thái :</label>                        
+                        <label class='font-weight-bold col-8'>Ngày kết thúc theo dự tính :</label>
+                        <div class='col-4'>${prettierDate(transaction.deadline || transaction.end_date)}</div>
+                    </div>
+                    <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
+                        <label class='font-weight-bold col-8'>Ngày kết thúc thực tế :</label>
+                        <div class='col-4'>${prettierDate(transaction.end)}</div>
+                    </div>
+                    <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
+                        <label class='font-weight-bold col-5'>Trang thái :</label>
+                        <div class='col-4'>${sttText}</div>
                     </div>
                 </div>`,
             showCloseButton: true,
@@ -169,22 +223,45 @@ class UserTransactionComponent extends Component {
 
     renderTransaction(transactions) {
         let content = [];
-        transactions.forEach((e, index) => {
+        if(transactions.length > 0) {
+            transactions.forEach((e, index) => {
+                let refund = 0;
+                if(e.refund !== null) {
+                    refund = Number.parseInt(e.refund);
+                }
+                content.push(
+                    <tr key={e.id_transaction}>
+                        {(
+                            this.state.queryType === 0
+                            ?
+                            <td style={{ width: '30px' }}><input id={'select-input-' + e.id_transaction} type='checkbox' onChange={() => { this.handleSelectRow(e.id_transaction) }}></input></td>
+                            :
+                            ''
+                        )}                        
+                        <td style={{width: '120px'}}>{e.id_job}</td>
+                        <td><div className='text-truncate' style={{ width: '150px' }}>{e.employer}</div></td>
+                        <td>{prettierDate(e.start)}</td>
+                        <td>{prettierNumber(e.amount * (100 - refund)/100)} VNĐ</td>
+                        {(
+                            this.state.queryType === 0
+                            ?
+                            <td className='text-center' style={{ width: '120px' }}>
+                                <i className='icon-material-outline-gavel cursor-pointer' onClick={() => { this.handlePayOne(e.id_transaction) }}></i>
+                            </td>
+                            :
+                            ''
+                        )}                        
+                        <td className='text-center'>
+                            <i className='icon-feather-eye cursor-pointer' onClick={() => { this.handleDetail(e) }}></i>
+                        </td>
+                    </tr>);
+            })
+        }
+        else {
             content.push(
-                <tr key={index}>
-                    <td style={{width:'50px'}}><input id={'select-input-'+index} type='checkbox' onChange={()=>{this.handleSelectRow(index)}}></input></td>
-                    <td>1</td>
-                    <td><div className='text-truncate' style={{ width: '120px' }}>John Cena</div></td>
-                    <td>{prettierDate(new Date())}</td>
-                    <td>{prettierNumber(2000000)} VNĐ</td>
-                    <td className='text-center' style={{width: '120px'}}>
-                        <i className='icon-material-outline-gavel cursor-pointer' onClick={()=>{this.handlePayOne(index)}}></i>
-                    </td>
-                    <td className='text-center'>
-                        <i className='icon-feather-eye cursor-pointer' onClick={()=>{this.handleDetail()}}></i>
-                    </td>
-                </tr>);
-        })
+                <tr key={0}><td colSpan="7" className='p-5'>Bạn hiện không nhận được thu nhập nào...</td></tr>
+            )
+        }
 
         return content;
     }
@@ -236,18 +313,18 @@ class UserTransactionComponent extends Component {
                     <div className="row my-1">
                         <div className='col-8'>
                             <div className="btn-group btn-group-sm" role="group">
-                                <div onClick={() => { if(this.state.queryType !== 0) {this.handleFilter(0)} }} className={"btn " + (this.state.queryType === 0 ? 'btn-danger' : 'btn-outline-danger')}>Chưa thành toán</div>
-                                <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-success' : 'btn-outline-success')}>Đã thành toán</div>                                
+                                <div onClick={() => { if (this.state.queryType !== 0) { this.handleFilter(0) } }} className={"btn " + (this.state.queryType === 0 ? 'btn-danger' : 'btn-outline-danger')}>Chưa thành toán</div>
+                                <div onClick={() => { if (this.state.queryType !== 1) { this.handleFilter(1) } }} className={"btn " + (this.state.queryType === 1 ? 'btn-success' : 'btn-outline-success')}>Đã thành toán</div>
                             </div>
                         </div>
                         <div className="col-4 text-right d-flex">
                             <div className='mr-2'>
                                 <div className='btn btn-primary'
                                     onClick={() => {
-                                        if (this.state.queryId.length > 0) {
-                                            document.getElementById('job-search-input').value = '';
+                                        if (this.state.queryId !== '') {
+                                            document.getElementById('transaction-search-input').value = '';
                                             this.setState({ queryId: '' }, () => {
-                                                // this.loadJobListFunc(1, this.state.queryName, this.state.queryType)
+                                                this.loadTransaction(1, this.state.queryType, this.state.queryId)
                                             })
                                         }
                                     }}>
@@ -255,7 +332,7 @@ class UserTransactionComponent extends Component {
                                 </div>
                             </div>
                             <div className="input-group mb-3">
-                                <input type="search" id="transaction" className="form-control" placeholder="Tìm kiếm theo mã công việc .." />
+                                <input type="search" id="transaction-search-input" className="form-control" placeholder="Tìm kiếm theo mã công việc .." />
                                 <div className="input-group-append">
                                     <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchIdApplicant() }}>
                                         <i className="fa fa-search"></i>
@@ -270,12 +347,24 @@ class UserTransactionComponent extends Component {
                         <table className="col-12 table" id="dataTable" width="100%" cellSpacing={0} >
                             <thead className="thead-dark">
                                 <tr>
-                                    <th></th>
+                                    {(
+                                        this.state.queryType === 0
+                                        ?
+                                        <th></th>
+                                        :
+                                        ''
+                                    )} 
                                     <th>ID công việc</th>
                                     <th>Người thuê</th>
                                     <th>Ngày bắt đầu</th>
                                     <th>Số tiền</th>
-                                    <th>Thanh toán</th>
+                                    {(
+                                        this.state.queryType === 0
+                                        ?
+                                        <th>Thanh toán</th>
+                                        :
+                                        ''
+                                    )}                                    
                                     <th></th>
                                 </tr>
                             </thead>
@@ -311,9 +400,15 @@ class UserTransactionComponent extends Component {
                                     </nav>
                             )}
                         </div>
-                        <div className='col-6 text-right'>
-                            <div className='btn btn-danger' onClick={()=>{this.handlePaySelected()}}>Thanh toán mục đã chọn</div>
-                        </div>
+                        {(
+                            this.state.queryType === 0
+                            ?
+                            <div className='col-6 text-right'>
+                                <div className='btn btn-danger' onClick={() => { this.handlePaySelected() }}>Thanh toán mục đã chọn</div>
+                            </div>
+                            :
+                            ''
+                        )}                        
                     </div>
                 </div>
 
@@ -329,7 +424,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        onLoadTransactionList(page, id_user, id_status, id_job) {
+            dispatch(loadTransactionList(page, 8, id_user, id_status, id_job))
+        },
     }
 }
 

@@ -24,6 +24,7 @@ import UpdateInfo from './Components/Account/UpdateInfo';
 import AddTopic from './Components/JobsManagement/TopicDetailTab/AddTopic';
 import TagDetail from './Components/OtherManagement/TagDetailTab/TagDetail';
 import AddTag from './Components/OtherManagement/TagDetailTab/AddTag';
+import JobReports from './Components/ReviewsManagement/JobReport';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
         <SRoute path='/add-topic' exact component={AddTopic}></SRoute>
 
         <SRoute path='/report-management' exact component={Reports}></SRoute>
+        <SRoute path='/job-report-management' exact component={JobReports}></SRoute>
 
         <SRoute path='/user-profile' exact component={UpdateInfo}></SRoute>
 

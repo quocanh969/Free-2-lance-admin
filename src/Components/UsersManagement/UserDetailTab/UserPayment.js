@@ -151,7 +151,7 @@ class UserPaymentComponent extends Component {
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày bắt đầu công việc :</label>
-                        <div class='col-4'>09/07/2020</div>                    
+                        <div class='col-4'>09/07/2020</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày kết thúc theo dự tính :</label>
@@ -182,9 +182,6 @@ class UserPaymentComponent extends Component {
                     <td>{prettierDate(new Date())}</td>
                     <td>{prettierDate(new Date())}</td>
                     <td>{prettierNumber(2000000)} VNĐ</td>
-                    <td className='text-center' style={{width: '120px'}}>
-                        <i className='icon-line-awesome-mail-reply cursor-pointer' onClick={()=>{this.handleRefundOne(index)}}></i>
-                    </td>
                     <td className='text-center'>
                         <i className='icon-feather-eye cursor-pointer' onClick={()=>{this.handleDetail()}}></i>
                     </td>
@@ -240,7 +237,10 @@ class UserPaymentComponent extends Component {
                     {/* Headline */}
                     <div className="row my-1">
                         <div className='col-8'>
-                            
+                            <div className="btn-group btn-group-sm" role="group">
+                                <div onClick={() => { if (this.state.queryType !== 0) { this.handleFilter(0) } }} className={"btn " + (this.state.queryType === 0 ? 'btn-primary' : 'btn-outline-primary')}>Lịch sử bình thường</div>
+                                <div onClick={() => { if (this.state.queryType !== 1) { this.handleFilter(1) } }} className={"btn " + (this.state.queryType === 1 ? 'btn-success' : 'btn-outline-success')}>Lịch sử hoàn tiền</div>
+                            </div>
                         </div>
                         <div className="col-4 text-right d-flex">
                             <div className='mr-2'>
@@ -249,7 +249,7 @@ class UserPaymentComponent extends Component {
                                         if (this.state.queryId.length > 0) {
                                             document.getElementById('job-search-input').value = '';
                                             this.setState({ queryId: '' }, () => {
-                                                // this.loadJobListFunc(1, this.state.queryName, this.state.queryType)
+                                                //this.loadTransaction(1, this.state.queryName, this.state.queryType)
                                             })
                                         }
                                     }}>
@@ -278,7 +278,6 @@ class UserPaymentComponent extends Component {
                                     <th>Ngày bắt đầu</th>
                                     <th>Ngày thanh toán</th>
                                     <th>Số tiền</th>
-                                    <th>Hoàn tiền</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -313,10 +312,7 @@ class UserPaymentComponent extends Component {
                                         </ul>
                                     </nav>
                             )}
-                        </div>
-                        <div className='col-6 text-right'>
-                            <div className='btn btn-danger' onClick={()=>{this.handleRefundSelected()}}>Hoàn tiền mục đã chọn</div>
-                        </div>
+                        </div>                        
                     </div>
                 </div>
 

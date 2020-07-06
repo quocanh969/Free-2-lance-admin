@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 
 import Swal from 'sweetalert2';
 import { prettierDate } from '../../Ultis/Helper/HelperFunction';
-import { loadReportList } from '../../Actions/Report.action';
-import { setReportStatus } from '../../Services/Report.service';
+import { setJobReportStatus } from '../../Services/Report.service';
+import { loadJobReportList } from '../../Actions/Report.action';
+import { history } from '../../Ultis/history/history';
+import { getRefundForEmployer } from '../../Services/Transaction.service';
 
-class ReportsComponent extends Component {
+class JobReportsComponent extends Component {
 
     constructor(props) {
         super(props);
@@ -23,12 +25,12 @@ class ReportsComponent extends Component {
     }
 
     loadJobListFunc(page, status, queryName) {
-        let { onLoadReportList } = this.props;
-        onLoadReportList(page, 8, status, queryName);
+        let { onLoadJobReportList } = this.props;
+        onLoadJobReportList(page, 8, status, queryName);
     }
 
     handlePagination(pageNum) {
-        if (pageNum !== this.props.ReportsReducer.currentReportPage) {
+        if (pageNum !== this.props.ReportsReducer.currentJobReportsPage) {
             this.loadJobListFunc(pageNum, this.state.queryType, this.state.queryName);
         }
     }
@@ -51,15 +53,19 @@ class ReportsComponent extends Component {
         }
     }
 
-    handleChangeStatus(id_user, current_value) {
-        let val = Number.parseInt(document.getElementById('select-status-' + id_user).value);
+    handleChangeStatus(e) {
+        let val = Number.parseInt(document.getElementById('select-status-' + e.id_report).value);
 
-        if (current_value === val) return;
+        if (e.status === val) return;
 
         if (val === 1) {
-            const { value: solve } = Swal.fire({
+            Swal.fire({
                 text: "Bạn đã giải quyết xong khiếu nại này, vui lòng nhập phương thức của bạn",
-                input: 'text',
+                input: 'radio',
+                inputOptions: {
+                    'Hoàn tiền': 'Hoàn tiền',
+                    'Không hoàn tiền': 'Không hoàn tiền'
+                },
                 showCancelButton: true,
                 confirmButtonText: 'Ok, tôi đồng ý',
                 cancelButtonText: 'Không, tôi đã suy nghĩ lại',
@@ -71,37 +77,107 @@ class ReportsComponent extends Component {
                 }
             }).then((result) => {
                 if (result.value) {
-                    console.log(result.value);
-
-                    setReportStatus(id_user, 1, result.value).then(res=>{
-                        if(res.data.code === '106') {
+                    if(result.value === 'Hoàn tiền') {
+                        Swal.fire({
+                            text: "Vui lòng chọn mức % muốn hoàn tiền",
+                            input: 'select',
+                            inputOptions: {
+                                10: '10%',
+                                15: '15%',
+                                20: '20%',                             
+                                25: '25%',
+                                30: '30%',
+                                35: '35%',
+                                40: '40%',
+                                45: '45%',
+                                50: '50%',
+                                55: '55%',
+                                60: '60%',
+                                65: '65%',
+                                70: '70%',
+                                75: '75%',
+                                80: '80%',
+                                85: '85%',
+                                90: '90%'   
+                            },
+                            showCancelButton: true,
+                            confirmButtonText: 'Ok, tôi đồng ý',
+                            cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+                            reverseButtons: true,
+                            inputValidator: (value) => {
+                                if (!value) {
+                                    return 'Bạn vẫn chọn mức phần trăm !'
+                                }
+                            }
+                        }).then(result => {
+                            if (result.value) {
+                                let refundPercentage = result.value;
+                                let leftover = e.amount * (100 - refundPercentage) /100;
+                                console.log(leftover);
+                                getRefundForEmployer(e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content).then(res => {
+                                    if(res.data.code === '200') {
+                                        this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
+                                        Swal.fire({
+                                            text: 'Hoàn tiền thành công',
+                                            icon: 'success',
+                                        })
+                                    }
+                                    else {
+                                        Swal.fire({
+                                            text: 'Hoàn tiền thất bại',
+                                            icon: 'error',
+                                        })
+                                    }
+                                }).catch(err => {
+                                    console.log(err);
+                                    Swal.fire({
+                                        text: 'Server gặp sự cố',
+                                        icon: 'error',
+                                    })
+                                })
+                                //(e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content)
+                            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                Swal.fire({
+                                    text: 'Thay đổi không được thực hiện',
+                                    icon: 'error',
+                                })
+                                document.getElementById('select-status-' + e.id_report).value = e.status;
+                            }
+                            else {
+                                document.getElementById('select-status-' + e.id_report).value = e.status;
+                            }
+                        }) 
+                    }
+                    else {
+                        setJobReportStatus(e.id_report, 1, result.value).then(res=>{
+                            if(res.data.code === '106') {
+                                Swal.fire({
+                                    text: 'Khồng hoàn tiền cho giao dịch này',
+                                    icon: 'success',
+                                })
+                            }
+                            else {
+                                Swal.fire({
+                                    text: 'Thay đổi thất bại, vui lòng thử lại sau',
+                                    icon: 'error',
+                                })
+                            }
+                        }).catch(err=> {
                             Swal.fire({
-                                text: 'Thay đổi thành công',
-                                icon: 'success',
-                            })
-                        }
-                        else {
-                            Swal.fire({
-                                text: 'Thay đổi thất bại, vui lòng thử lại sau',
+                                text: 'Server có vấn đề, vui lòng thử lại sau',
                                 icon: 'error',
                             })
-                        }
-                    }).catch(err=> {
-                        Swal.fire({
-                            text: 'Server có vấn đề, vui lòng thử lại sau',
-                            icon: 'error',
-                        })
-                    })
-                    
+                        })   
+                    }                                     
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire({
                         text: 'Thay đổi không được thực hiện',
                         icon: 'error',
                     })
-                    document.getElementById('select-status-' + id_user).value = current_value;
+                    document.getElementById('select-status-' + e.id_report).value = e.status;
                 }
                 else {
-                    document.getElementById('select-status-' + id_user).value = current_value;
+                    document.getElementById('select-status-' + e.id_report).value = e.status;
                 }
             })
         }
@@ -113,10 +189,10 @@ class ReportsComponent extends Component {
                 cancelButtonText: 'Không, tôi đã suy nghĩ lại',
                 reverseButtons: true,
             }).then((result) => {
-                if (result.value) {
-                    setReportStatus(id_user, 0, null).then(res=>{
+                if (result.value) {                    
+                    setJobReportStatus(e.id_report, 0, null).then(res=>{
                         if(res.data.code === '106') {
-                            this.loadJobListFunc(this.props.ReportsReducer.currentReportPage, this.state.queryType,this.state.queryName);
+                            this.loadJobListFunc(this.props.ReportsReducer.currentJobReportsPage, this.state.queryType,this.state.queryName);
                             Swal.fire({
                                 text: 'Thay đổi thành công',
                                 icon: 'success',
@@ -139,10 +215,10 @@ class ReportsComponent extends Component {
                         text: 'Thay đổi không được thực hiện',
                         icon: 'error',
                     })
-                    document.getElementById('select-status-' + id_user).value = current_value;
+                    document.getElementById('select-status-' + e.id_report).value = e.status;
                 }
                 else {
-                    document.getElementById('select-status-' + id_user).value = current_value;
+                    document.getElementById('select-status-' + e.id_report).value = e.status;
                 }
             })
         }
@@ -150,16 +226,6 @@ class ReportsComponent extends Component {
     }
 
     handleDetail(report) {
-        let role1_text = 'Người làm thuê';
-        if(report.role1 === 1) {
-            role1_text = 'Người thuê';
-        }
-
-        let role2_text = 'Người làm thuê';
-        if(report.role2 === 1) {
-            role2_text = 'Người thuê';
-        }
-
         let statusText = `<div class='col-7 text-danger'>Chờ giải quyết</div>`;
         let solutionText = ``;
 
@@ -172,28 +238,20 @@ class ReportsComponent extends Component {
         }
 
         Swal.fire({
-            title: '<b>Chi tiết khiếu nại</b>',
+            title: '<b class="mt-5">Chi tiết yêu cầu dừng công việc đột xuất</b>',
             html:
                 `<div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Người khiếu nại :</label>
+                        <label class='font-weight-bold col-5'>Người yêu cầu :</label>
                         <div class='col-7'>${report.user1_name}</div>                    
-                    </div>
-                    <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Vai trò :</label>
-                        <div class='col-7'>${role1_text}</div>                    
-                    </div>
-                    <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Người bị khiếu nại :</label>
-                        <div class='col-7'>${report.user2_name}</div>
-                    </div>
-                    <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Vai trò :</label>
-                        <div class='col-7'>${role2_text}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Mã công việc :</label>
                         <div class='col-7'>${report.id_job}</div>                    
+                    </div>
+                    <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
+                        <label class='font-weight-bold col-5'>Người làm :</label>
+                        <div class='col-7'>${report.user2_name}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Ngày phản hồi :</label>
@@ -222,13 +280,14 @@ class ReportsComponent extends Component {
             content.push(
                 <tr key={index}>
                     <td><div style={{width: '90px'}}>{prettierDate(e.report_date)}</div></td>
-                    <td><div className='text-truncate' style={{ width: '120px' }}>{e.user1_name}</div></td>
+                    <td><div className='text-truncate' style={{ width: '150px' }}>{e.user1_name}</div></td>
+                    <td><div className='text-truncate' style={{ width: '70px' }}>{e.id_job}</div></td>
                     <td><div className='text-truncate' style={{ width: '120px' }}>{e.user2_name}</div></td>
                     <td>
                         {e.content}
                     </td>
                     <td>
-                        <select id={'select-status-' + e.id_report} value={e.status} onChange={() => { this.handleChangeStatus(e.id_report, e.status) }}>
+                        <select id={'select-status-' + e.id_report} value={e.status} onChange={() => { this.handleChangeStatus(e) }}>
                             <option value={0}>Chờ giải quyết</option>
                             <option value={1}>Đã giải quyết</option>
                         </select>
@@ -277,20 +336,20 @@ class ReportsComponent extends Component {
     }
 
     render() {
-        let { reports, totalReport, currentReportPage } = this.props.ReportsReducer;
-        let totalPage = Math.ceil(totalReport / 8);
+        let { jobReports, totalJobReports, currentJobReportsPage } = this.props.ReportsReducer;
+        let totalPage = Math.ceil(totalJobReports / 8);
 
         return (
             <div className="container-fluid">
                 {/* Page Heading */}
-                <h1 className="h3 mb-2 text-gray-800">Quản lý khiếu nại của người dùng</h1>
+                <h1 className="h3 mb-2 text-gray-800">Quản lý yêu cầu ngưng công việc đột ngột của người dùng</h1>
                 <p className="mb-4">
-                    Danh sách các khiếu nại gửi lên
+                    Danh sách các công việc bị ngừng
                 </p>
                 {/* Userlist DataTales Example */}
                 <div className="card shadow mb-4">
                     <div className="card-header py-3">
-                        <h6 className="m-0 font-weight-bold text-primary"><i className="icon-material-outline-rate-review" />&nbsp;&nbsp;Khiếu nại</h6>
+                        <h6 className="m-0 font-weight-bold text-primary"><i className="icon-feather-list" />&nbsp;&nbsp;Các công việc bị yêu cầu ngưng</h6>
                     </div>
                     <div className="card-body">
                         {/* Headline */}
@@ -298,7 +357,7 @@ class ReportsComponent extends Component {
                             <div className='col-7'>
                                 <div className="btn-group btn-group-sm" role="group">
                                     <div onClick={() => { if(this.state.queryType !== 0) {this.handleFilter(0)} }} className={"btn " + (this.state.queryType === 0 ? 'btn-danger' : 'btn-outline-danger')}>Chưa giải quyết</div>
-                                    <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-secondary' : 'btn-outline-success')}>Đã giải quyết</div>
+                                    <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-success' : 'btn-outline-success')}>Đã giải quyết</div>
                                 </div>
                             </div>
                             <div className="col-5 text-right d-flex">
@@ -316,7 +375,7 @@ class ReportsComponent extends Component {
                                     </div>
                                 </div>
                                 <div className="input-group mb-3">
-                                    <input type="search" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo người khiếu nại .." />
+                                    <input type="search" id="user-search-input" className="form-control" placeholder="Tìm kiếm theo người yêu cầu .." />
                                     <div className="input-group-append">
                                         <div className="btn btn-outline-secondary" type="button" onClick={() => { this.handleSearchUser() }}>
                                             <i className="fa fa-search"></i>
@@ -332,15 +391,16 @@ class ReportsComponent extends Component {
                                 <thead className="thead-dark">
                                     <tr>
                                         <th>Ngày đăng</th>
-                                        <th>Người khiếu nại</th>
-                                        <th>Người bi khiếu nại</th>
-                                        <th>Nội dung</th>
+                                        <th>Người yêu cầu</th>
+                                        <th>Mã công việc</th>
+                                        <th>Người làm</th>
+                                        <th>Nguyên nhân</th>
                                         <th>Trạng thái</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.renderReportsList(reports)}
+                                    {this.renderReportsList(jobReports)}
                                 </tbody>
                             </table>
 
@@ -348,20 +408,20 @@ class ReportsComponent extends Component {
 
                         {/* Pagination */}
                         {(
-                            totalReport === 0
+                            totalJobReports === 0
                                 ?
                                 ''
                                 :
                                 <nav aria-label="...">
                                     <ul className="pagination">
-                                        <li className={"pagination-item " + ((currentReportPage === 1 || totalPage - currentReportPage < 3) && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentReportPage - 1); }}>
+                                        <li className={"pagination-item " + ((currentJobReportsPage === 1 || totalPage - currentJobReportsPage < 3) && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentJobReportsPage - 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-left" />
                                             </div>
                                         </li>
-                                        {this.renderPagination(currentReportPage, totalPage)}
-                                        <li className={"pagination-item " + (totalPage - currentReportPage < 3 && "d-none")}>
-                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentReportPage + 1); }}>
+                                        {this.renderPagination(currentJobReportsPage, totalPage)}
+                                        <li className={"pagination-item " + (totalPage - currentJobReportsPage < 3 && "d-none")}>
+                                            <div className="cursor-pointer page-link" onClick={() => { this.handlePagination(currentJobReportsPage + 1); }}>
                                                 <i className="icon-material-outline-keyboard-arrow-right" />
                                             </div>
                                         </li>
@@ -387,11 +447,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onLoadReportList: (page, take, status, queryName) => {
-            dispatch(loadReportList(page, take, status, queryName));
+        onLoadJobReportList: (page, take, status, queryName) => {
+            dispatch(loadJobReportList(page, take, status, queryName));
         }
     }
 }
 
-const Reports = withRouter(connect(mapStateToProps, mapDispatchToProps)(ReportsComponent));
-export default Reports;
+const JobReports = withRouter(connect(mapStateToProps, mapDispatchToProps)(JobReportsComponent));
+export default JobReports;

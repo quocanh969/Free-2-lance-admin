@@ -60,10 +60,15 @@ class SideBarComponent extends Component {
                     <hr className="sidebar-divider" />
                     <div className="sidebar-heading">
                         Quản lý phản hồi/khiếu nại
-                        </div>
+                    </div>
                     <li className="nav-item">
                         <NavLink className="nav-link font-weight-bold pb-2 pt-3" to="/report-management">
                             <i className="icon-material-outline-rate-review" /><span>&nbsp;Khiếu nại</span>
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink className="nav-link font-weight-bold py-2" to="/job-report-management">
+                            <i className="icon-line-awesome-warning" /><span>&nbsp;Báo cáo dừng công việc</span>
                         </NavLink>
                     </li>
     

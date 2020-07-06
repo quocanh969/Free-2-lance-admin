@@ -9,13 +9,13 @@ const initState = {
     totalTask: 0,
     currentTask: 0,
 
-    payment: ["", ""],
-    totalPayment: 2,
-    currentPaymentPage: 1,
+    payment: [],
+    totalPayment: 0,
+    currentPaymentPage: 0,
 
-    transaction: ["", ""],
-    totalTransaction: 2,
-    currentTransactionPage: 1,
+    transaction: [],
+    totalTransaction: 0,
+    currentTransactionPage: 0,
 }
 
 const UserDetailReducer = (state = initState, action) => {
@@ -46,6 +46,20 @@ const UserDetailReducer = (state = initState, action) => {
                 taskList: action.list,
                 totalTask: action.total,
                 currentTask: action.page,
+            };
+        case 'USER_TRANSACTION_LIST_UDPATE':
+            return {
+                ...state,
+                transaction: action.list,
+                totalTransaction: action.total,
+                currentTransactionPage: action.page,
+            };
+        case 'USER_PAYMENT_LIST_UDPATE':
+            return {
+                ...state,
+                payment: action.list,
+                totalPayment: action.total,
+                currentPaymentPage: action.page,
             };
         default: return state;
     }

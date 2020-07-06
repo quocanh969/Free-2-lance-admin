@@ -18,11 +18,12 @@ class UserDetailComponent extends Component {
         super(props);
 
         this.state = {
-            tab: 5,
+            tab: 1,
         }
     }
 
     componentWillMount() {
+
         let {id_user} = this.props.match.params;
         let {onLoadUserDetail, onLoadJobList, onLoadTaskList} = this.props;
         onLoadUserDetail(id_user);
@@ -94,7 +95,7 @@ class UserDetailComponent extends Component {
                                 :
                                 <span onClick={()=>{if(this.state.tab !== 4){this.setState({tab: 4})}}}
                                 className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 4 ? 'tab-active' : '')}>
-                                    Thu nhập             
+                                    Thu nhập           
                                 </span>
                                 )}
                             

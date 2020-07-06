@@ -17,4 +17,21 @@ function setReportStatus(id_report, status, solution) {
         })
 }
 
-export {getReportList, setReportStatus}
+function getJobReportsList(page, take, status, queryName) {
+    return axios.post('reports/getJobReportsList',{
+            take,
+            page,
+            status,
+            queryName,
+        })
+}
+
+function setJobReportStatus(id_report, status, solution) {
+    return axios.post('reports/setJobReportStatus',{
+            id_report, 
+            status, 
+            solution,
+        })
+}
+
+export {getReportList, setReportStatus, getJobReportsList, setJobReportStatus}

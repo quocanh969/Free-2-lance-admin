@@ -34,7 +34,7 @@ axios.interceptors.response.use(
       localStorage.clear();
 
       // history.push("/login");
-      history.push('/sign-in');
+      history.push('/login');
       MyStore.dispatch({
         type: "USER_LOG_OUT",
       });

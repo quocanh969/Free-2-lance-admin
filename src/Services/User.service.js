@@ -42,6 +42,12 @@ function setUserStatus(id_user, account_status) {
     })
 }
 
+function deleteUserIdentity(id_user) {
+    return axios.put('users/rejectVerificationProposal',{
+        id_user,
+    })
+}
+
 function getUserDetail(id_user) {
     return axios.get('users/getClientUserDetails/' + id_user)
 }
@@ -66,4 +72,4 @@ function getJobsByApplicantId(page, take, queryName, status, employer) {
     })
 }
 
-export {signIn, getUserInfo, changeUserInfo, changeUserPassword, getUserList, setUserStatus, getUserDetail, getJobsByEmployerId, getJobsByApplicantId}
+export {signIn, getUserInfo, changeUserInfo, changeUserPassword, getUserList, setUserStatus, getUserDetail, getJobsByEmployerId, getJobsByApplicantId, deleteUserIdentity}

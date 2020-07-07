@@ -14,6 +14,7 @@ class UpdateInfoComponent extends Component {
         this.state = {
             message: '',
             error: false,
+            tab: 1,
         }
 
         this.handleChangePassword = this.handleChangePassword.bind(this);
@@ -109,13 +110,25 @@ class UpdateInfoComponent extends Component {
                     <br></br>
                     {/* Userlist DataTales Example */}
                     <div className="card shadow mb-4">
-                        <div className="card-header py-3">
-                            <h6 className="m-0 font-weight-bold text-primary"><i className="icon-feather-user" />&nbsp;&nbsp;Thông tin tài khoản người dùng</h6>
+                        <div className='card-header px-0'>
+                            <span className="p-3 h6 m-0 font-weight-bold text-primary icon-header">
+                                <i className="icon-feather-user"/>
+                            </span>
+                            <span onClick={()=>{if(this.state.tab !== 1){this.setState({tab: 1})}}}
+                                className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 1 ? 'tab-active' : '')}>
+                                Cập nhật thông tin
+                            </span>
+                            <span onClick={()=>{if(this.state.tab !== 2){this.setState({tab: 2})}}}
+                                className={"p-3 h6 m-0 font-weight-bold text-primary cursor-pointer " + (this.state.tab === 2 ? 'tab-active' : '')}>
+                                Đổi mật khẩu
+                            </span>
                         </div>
     
-                        <div className="card-body">
-                            <div className="row mt-2">
-                                <div className='col-6 border-right border-dark'>
+                        {(
+                            this.state.tab === 1
+                            ?
+                            <div className='card-body'>
+                                <div>
                                     <div className="row mt-2">
                                         <div className="col-4">
                                             <label>Mã người dùng</label>
@@ -145,7 +158,7 @@ class UpdateInfoComponent extends Component {
                                             <label>Số điện thoại</label>
                                         </div>
                                         <div className="col-8 input-group">
-                                            <input id='tel-input' className="form-control" defaultValue={user.tel}></input>
+                                            <input id='tel-input' pattern="[0-9+]{10,11}" className="form-control" defaultValue={user.tel}></input>
                                         </div>
                                     </div>
                                     <hr></hr>
@@ -153,31 +166,31 @@ class UpdateInfoComponent extends Component {
                                         <div onClick={()=>{this.handleChangeUserInfo()}} className='btn btn-primary'>Cập nhật thông tin</div>
                                     </div>                             
                                 </div>
-    
-                                <form onSubmit={this.handleChangePassword} className='col-6 border-left border-dark'>
-                                    <br></br>
-                                    <br></br>
+                            </div>
+                            :
+                            <div className="card-body">
+                                <form onSubmit={this.handleChangePassword}>
                                     <div className="row mt-2">
-                                        <div className="col-5">
+                                        <div className="col-4">
                                             <label>Nhập mật khâu cũ</label>
                                         </div>
-                                        <div className="col-7 input-group">
+                                        <div className="col-8 input-group">
                                             <input id='old-password-input' required type='password' className="form-control"></input>
                                         </div>
                                     </div>
                                     <div className="row mt-2">
-                                        <div className="col-5">
+                                        <div className="col-4">
                                             <label>Nhập mật khâu mới</label>
                                         </div>
-                                        <div className="col-7 input-group">
+                                        <div className="col-8 input-group">
                                             <input id='new-password-input' required type='password' className="form-control"></input>
                                         </div>
                                     </div>
                                     <div className="row mt-2">
-                                        <div className="col-5">
+                                        <div className="col-4">
                                             <label>Nhập lại mật khâu mới</label>
                                         </div>
-                                        <div className="col-7 input-group">
+                                        <div className="col-8 input-group">
                                             <input id='confirm-password-input' required type='password' className="form-control"></input>
                                         </div>
                                     </div>
@@ -196,10 +209,9 @@ class UpdateInfoComponent extends Component {
                                     <div className='text-center'>
                                         <button type='submit' className='btn btn-primary'>Đổi mật khẩu</button>
                                     </div>
-                                </form>
+                                </form>                            
                             </div>
-                        </div>
-    
+                        )}
                     </div>
                 </div>
             )

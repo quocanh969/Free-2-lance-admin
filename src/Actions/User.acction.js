@@ -1,5 +1,6 @@
-import {signIn, getUserInfo, getUserList, getUserDetail, getJobsByEmployerId, getJobsByApplicantId, setUserStatus} from '../Services/User.service';
+import {signIn, getUserInfo, getUserList, getUserDetail, getJobsByEmployerId, getJobsByApplicantId, setUserStatus, deleteUserIdentity} from '../Services/User.service';
 import { history } from '../Ultis/history/history';
+import Swal from 'sweetalert2';
 
 export const sendLogIn = (username, password) => {
     return (dispatch) => {
@@ -200,9 +201,22 @@ export const udpateUserStatus = (id_user, newStatus) => {
         setUserStatus(id_user, newStatus).then((res) => {
             if(res.data.code === '106') {
                 dispatch(udpateUserStatus(newStatus));
-            }            
+                Swal.fire({
+                    text: 'Cập nhật trạng thái thành công',
+                    icon: 'success',
+                });
+            }     
+            else {
+                Swal.fire({
+                    text: 'Xóa tài liệu thất bại',
+                    icon: 'error',
+                });
+            }       
         }).catch(err=> {
-            alert('Server gặp vấn đề');
+            Swal.fire({
+                text: 'Server gặp sự cố',
+                icon: 'error',
+            });
         })
     }
     
@@ -210,6 +224,37 @@ export const udpateUserStatus = (id_user, newStatus) => {
         return {
             type: "USER_DETAIL_STATUS_UDPATE",
             newStatus,
+        };
+    }
+}
+
+export const rejectUserIdentity = (id_user) => {
+    return (dispatch) => {
+        deleteUserIdentity(id_user).then((res) => {
+            if(res.data.code === '106') {
+                dispatch(rejectIdentity());
+                Swal.fire({
+                    text: 'Xóa tài liệu thành công',
+                    icon: 'success',
+                });
+            }            
+            else {
+                Swal.fire({
+                    text: 'Xóa tài liệu thất bại',
+                    icon: 'error',
+                });
+            }
+        }).catch(err=> {
+            Swal.fire({
+                text: 'Server gặp sự cố',
+                icon: 'error',
+            });
+        })
+    }
+    
+    function rejectIdentity() {
+        return {
+            type: "USER_DETAIL_IDENTITY_REJECT",
         };
     }
 }

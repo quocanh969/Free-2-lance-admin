@@ -49,11 +49,7 @@ class JobInfoComponent extends Component {
             }).then((result) => {
                 if (result.value) {
                     let{onUpdateJobStatus} = this.props;
-                    onUpdateJobStatus(job.id_job, newStatus);
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
-                    });                    
+                    onUpdateJobStatus(job.id_job, newStatus);                  
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire({
                         text: 'Thay đổi không được thực hiện',
@@ -101,6 +97,7 @@ class JobInfoComponent extends Component {
                             <h5>
                                 {job.title.toUpperCase()}
                             </h5>
+                            <p>Mã công việc : {job.id_job}</p>
                             {(
                                 job.id_status === 0
                                 ?

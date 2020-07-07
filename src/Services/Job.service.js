@@ -14,7 +14,7 @@ function getJobDetail(id_job) {
 }
 
 function setJobStatus(id_job, id_status) {
-    return axios.put('jobs/setJobStatus', {
+    return axios.put('jobs/setJobStatusById', {
         id_job,
         id_status,
     })

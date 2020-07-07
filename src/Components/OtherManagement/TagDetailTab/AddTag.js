@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import '../../../Assets/css/detail.css';
 import Swal from 'sweetalert2'
 import { addNewTag } from '../../../Actions/Tag.action';
+import { history } from '../../../Ultis/history/history';
 
 class AddTagComponent extends Component {
 
@@ -47,7 +48,7 @@ class AddTagComponent extends Component {
                     <div className="card-header py-3">
                         <div className='d-flex justify-content-between'>
                             <h6 className="m-0 pt-1 font-weight-bold text-primary"><i className="icon-material-outline-bookmarks" />&nbsp;&nbsp;Nhãn công việc</h6>
-                            <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { window.location.replace('/tags-management') }}>
+                            <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { history.push('/tags-management') }}>
                                 <i className={"icon-feather-arrow-left-circle"} />
                             &nbsp;&nbsp;{"Quay lại"}
                             </span>

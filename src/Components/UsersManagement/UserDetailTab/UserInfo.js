@@ -7,8 +7,7 @@ import avatarPlaceholder from '../../../Assets/images/avatar_placeholder.png';
 import imagePlaceholder from '../../../Assets/images/image-placeholder.jpg';
 
 import Swal from 'sweetalert2';
-import { setUserStatus } from '../../../Services/User.service';
-import { udpateUserStatus } from '../../../Actions/User.acction';
+import { udpateUserStatus, rejectUserIdentity } from '../../../Actions/User.acction';
 
 class UserInfoComponent extends Component {
     constructor(props) {
@@ -38,19 +37,14 @@ class UserInfoComponent extends Component {
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ok, tôi đồng ý',
-                cancelButtonText: 'Không, tài khoản này không đầy đủ',
+                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
-                    onUpdateUserStatus(userInfo.personal.id_user, 2);
-                    Swal.fire({
-                        text: 'Tài khoản được xác thực',
-                        icon: 'success',
-                    });                    
+                    onUpdateUserStatus(userInfo.personal.id_user, 2);  
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    onUpdateUserStatus(userInfo.personal.id_user, 1);
                     Swal.fire({
-                        text: 'Tài khoản này không đủ điều kiện xác thực',
+                        text: 'Quá trình xác thực không được thực hiện',
                         icon: 'error',
                     })
                 }
@@ -65,7 +59,7 @@ class UserInfoComponent extends Component {
                 text = 'cấm';
             }
             else {
-                text = 'khôi phục';
+                text = 'chuyển sang trạng thái "Chờ xác thực"';
             }
 
             Swal.fire({
@@ -78,10 +72,6 @@ class UserInfoComponent extends Component {
             }).then((result) => {
                 if (result.value) {
                     onUpdateUserStatus(userInfo.personal.id_user, newStatus);
-                    Swal.fire({
-                        text: 'Thay đổi thành công',
-                        icon: 'success',
-                    });
                     // this.setState({ account_status: newStatus });
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire({
@@ -95,6 +85,29 @@ class UserInfoComponent extends Component {
         }
     }
 
+    handleRejectIdentity(id_user) {
+        Swal.fire({
+            text: "Tài khoản này không đủ điều kiện, bạn muốn xóa hết các tài liệu này",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ok, tôi đồng ý',
+            cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.value) {
+                let {onRejectUserIdentity} = this.props;
+                onRejectUserIdentity(id_user);                                    
+            } else if (result.dismiss === Swal.DismissReason.cancel) {                
+                Swal.fire({
+                    text: 'Từ chối xác thực không được thực hiện',
+                    icon: 'error',
+                })
+            }
+            else {
+            }
+        })
+    }
+    
     render() {
         let {userInfo} = this.props.UserDetailReducer;
         if(userInfo === null) return '';
@@ -299,6 +312,18 @@ class UserInfoComponent extends Component {
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                    {(
+                                        userInfo.personal.account_status === 1
+                                        ?
+                                        <div className='text-center mt-3'>
+                                            <div className='btn btn-secondary' onClick={()=>{this.handleRejectIdentity(userInfo.personal.id_user)}}>
+                                                Từ chối điều khiện xác thực
+                                            </div>
+                                        </div>                                        
+                                        :
+                                        ''
+                                    )}                                    
                                 </div>
 
                             </div>
@@ -319,6 +344,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onUpdateUserStatus: (id_user, newStatus) => {
             dispatch(udpateUserStatus(id_user, newStatus))
+        },
+        onRejectUserIdentity: (id_user) => {
+            dispatch(rejectUserIdentity(id_user));
         }
     }
 }

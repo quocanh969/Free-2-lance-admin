@@ -10,6 +10,7 @@ import { getDetails, sendUpdateInfo } from '../../../Actions/Topic.action';
 import '../../../Assets/css/detail.css';
 
 import Swal from 'sweetalert2'
+import { history } from '../../../Ultis/history/history';
 
 class TopicDetailComponent extends Component {
 
@@ -88,7 +89,7 @@ class TopicDetailComponent extends Component {
             <div className="container-fluid">
                 {/* Page Heading */}
                 <h1 className="h3 mb-2 text-gray-800">Chi tiết cụ thể của chủ đề</h1>
-                <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { window.location.replace('/topic-management') }}>
+                <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { history.push('/topic-management') }}>
                     <i className={"icon-feather-arrow-left-circle"} />
                             &nbsp;&nbsp;{"Quay lại"}
                 </span>

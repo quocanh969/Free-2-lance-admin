@@ -33,6 +33,15 @@ const UserDetailReducer = (state = initState, action) => {
                 ...state,
                 userInfo: temp,
             };
+        case 'USER_DETAIL_IDENTITY_REJECT':
+            let t = state.userInfo;
+            t.personal.portrait = null;
+            t.personal.frontIdPaper = null;
+            t.personal.backIdPaper = null;
+            return {
+                ...state,
+                userInfo: t,
+            };
         case 'USER_DETAIL_JOB_LIST_REQUEST':
             return {
                 ...state,

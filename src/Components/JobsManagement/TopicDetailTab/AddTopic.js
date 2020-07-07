@@ -10,6 +10,7 @@ import { addNewTopic } from '../../../Actions/Topic.action';
 import '../../../Assets/css/detail.css';
 
 import Swal from 'sweetalert2'
+import { history } from '../../../Ultis/history/history';
 
 class AddTopicComponent extends Component {
 
@@ -70,7 +71,7 @@ class AddTopicComponent extends Component {
                     <div className="card-header py-3">
                         <div className='d-flex justify-content-between'>
                             <h6 className="m-0 pt-1 font-weight-bold text-primary"><i className="icon-material-outline-bookmarks" />&nbsp;&nbsp;Chủ đề công việc</h6>
-                            <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { window.location.replace('/topic-management') }}>
+                            <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { history.push('/topic-management') }}>
                                 <i className={"icon-feather-arrow-left-circle"} />
                             &nbsp;&nbsp;{"Quay lại"}
                             </span>

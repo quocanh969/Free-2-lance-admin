@@ -1,4 +1,5 @@
 import { getJobList, getJobDetail, getApplicantsByJobId, setJobStatus } from "../Services/Job.service";
+import Swal from "sweetalert2";
 
 export const loadJobList = (page, take, query) => {
     return (dispatch) => {
@@ -50,11 +51,24 @@ export const loadJobDetail = (id_job) => {
 export const udpateJobStatus = (id_job, id_status) => {
     return (dispatch) => {
         setJobStatus(id_job, id_status).then((res) => {
-            if(res.data.code === '106') {
-                dispatch(udpateJobStatus(id_status));
+            if(res.data.code === '202') {
+                dispatch(udpateJobStatus(id_status));                
+                Swal.fire({
+                    text: 'Thay đổi thành công',
+                    icon: 'success',
+                });  
             }            
+            else {                
+                Swal.fire({
+                    text: 'Thay đổi thất bại',
+                    icon: 'error',
+                });  
+            }
         }).catch(err=> {
-            alert('Server gặp vấn đề');
+            Swal.fire({
+                text: 'Server gặp vấn đề',
+                icon: 'success',
+            });  
         })
     }
     

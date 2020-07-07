@@ -9,6 +9,7 @@ import '../../../Assets/css/detail.css';
 
 import Swal from 'sweetalert2'
 import { getDetails, sendUpdateInfo } from '../../../Actions/Tag.action';
+import { history } from '../../../Ultis/history/history';
 
 class TagDetailComponent extends Component {
 
@@ -82,7 +83,7 @@ class TagDetailComponent extends Component {
             <div className="container-fluid">
                 {/* Page Heading */}
                 <h1 className="h3 mb-2 text-gray-800">Chi tiết cụ thể của nhãn</h1>
-                <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { window.location.replace('/tags-management') }}>
+                <span className={"m-0 font-weight-bold btn btn-danger"} onClick={() => { history.push('/tags-management') }}>
                     <i className={"icon-feather-arrow-left-circle"} />
                             &nbsp;&nbsp;{"Quay lại"}
                 </span>

@@ -19,6 +19,11 @@ export class SRoute extends Component {
                 <Redirect to='/login'></Redirect>
             )
         }
+        else if(window.location.href.endsWith('/login') && token) {
+            return (
+                <Redirect to='/'></Redirect>
+            )
+        }
         else {
             const { component: Component, ...rest } = this.props;
             return (

@@ -1,5 +1,5 @@
 const initState = {
-    topicInfo: '',
+    topicInfo: null,
 
     newTopicName: '',
     newTopicImg: '',

@@ -13,7 +13,7 @@ export class SRoute extends Component {
     }
 
     render() {
-        let token = JSON.parse(localStorage.getItem('token'));
+        let token = JSON.parse(localStorage.getItem('admin_token'));
         if (!token) {
             return (
                 <Redirect to='/login'></Redirect>

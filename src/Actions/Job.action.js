@@ -34,6 +34,12 @@ export const loadJobDetail = (id_job) => {
         getJobDetail(id_job).then((res) => {
             if(res.data.code === '200') {
                 dispatch(updateJobDetail(res.data.data));
+                if(res.data.data.id_status === 1) { // đang tuyển
+                    dispatch(loadApplicantsByJobId(1, 8, id_job, 0));
+                }
+                else { // đang thực hiện hoặc đã hoàn thành
+                    dispatch(loadApplicantsByJobId(1, 8, id_job, 1));
+                }
             }
         }).catch(err=> {
             alert('Server gặp sự cố');

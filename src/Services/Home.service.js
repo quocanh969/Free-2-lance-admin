@@ -20,4 +20,8 @@ function getPendingReportsAPI() {
     return axios.get('/stats/getPendingReports');
 }
 
-export { getFigureDataAPI, getPercentageDataAPI, getAnnualJobsChartDataAPI, getAnnualUsersChartDataAPI, getPendingReportsAPI };
+function getPendingJobReportsAPI() {
+    return axios.get('/stats/getPendingJobReports');
+}
+
+export { getFigureDataAPI, getPercentageDataAPI, getAnnualJobsChartDataAPI, getAnnualUsersChartDataAPI, getPendingReportsAPI,getPendingJobReportsAPI };

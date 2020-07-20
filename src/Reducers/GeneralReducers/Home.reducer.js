@@ -6,6 +6,7 @@ const initState = {
     annualJobsChartData: null,
     annualUsersChartData: null,
     pendingReports: 0,
+    pendingJobReports: 0,
 }
 
 const HomeReducer = (state = initState, action) => {
@@ -38,6 +39,12 @@ const HomeReducer = (state = initState, action) => {
             return {
                 ...state,
                 pendingReports: action.pendingReports,
+            }
+        }
+        case 'UPDATE_PENDING_JOB_REPORTS_DATA': {
+            return {
+                ...state,
+                pendingJobReports: action.pendingJobReports,
             }
         }
         default: return state;

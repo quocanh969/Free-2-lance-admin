@@ -10,7 +10,7 @@ export const sendLogIn = (username, password) => {
             {// thành công
                 dispatch(finished(1, res.data.message));
                 dispatch(udpateUser(res.data.data.user));
-                localStorage.setItem('token', JSON.stringify(res.data.data.token));
+                localStorage.setItem('admin_token', JSON.stringify(res.data.data.token));
                 history.push('/');
             }
             else
@@ -49,10 +49,11 @@ export const sendUpdateInfo = (username, password) => {
                 dispatch(udpateUser(res.data.data[0]));
             }
         }).catch(err=> {
+            console.log(err);
             alert("Server gặp sự cố");
             localStorage.clear();
             // dispatch(udpateUser(null, ''));
-            history.push('/login');
+            // history.push('/login');
         })
     }
 

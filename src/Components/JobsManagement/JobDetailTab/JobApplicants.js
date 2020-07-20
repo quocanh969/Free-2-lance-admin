@@ -15,17 +15,6 @@ class JobApplicantsComponent extends Component {
         }
     }
 
-    componentWillMount() {
-        let {job} = this.props.JobDetailReducer;
-        if(job.id_status === 1 || job.id_status === 0)
-        {
-            this.loadJobListFunc(1, 8, 0);
-        }
-        else {
-            this.loadJobListFunc(1, 8, 1);
-        }        
-    }
-
     loadJobListFunc(page, take, status) {
         let { job } = this.props.JobDetailReducer;
         let { onLoadApplicantByJobId } = this.props;

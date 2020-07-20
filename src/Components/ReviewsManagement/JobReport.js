@@ -54,147 +54,106 @@ class JobReportsComponent extends Component {
     }
 
     handleChangeStatus(e) {
-        let val = Number.parseInt(document.getElementById('select-status-' + e.id_report).value);
-
-        if (e.status === val) return;
-
-        if (val === 1) {
-            Swal.fire({
-                text: "Bạn đã giải quyết xong khiếu nại này, vui lòng nhập phương thức của bạn",
-                input: 'radio',
-                inputOptions: {
-                    'Hoàn tiền': 'Hoàn tiền',
-                    'Không hoàn tiền': 'Không hoàn tiền'
-                },
-                showCancelButton: true,
-                confirmButtonText: 'Ok, tôi đồng ý',
-                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
-                reverseButtons: true,
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'Bạn vẫn chưa điền phương thức giải quyết !'
-                    }
+        Swal.fire({
+            text: "Bạn đã giải quyết xong khiếu nại này, vui lòng nhập phương thức của bạn",
+            input: 'radio',
+            inputOptions: {
+                'Hoàn tiền': 'Hoàn tiền',
+                'Không hoàn tiền': 'Không hoàn tiền'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Ok, tôi đồng ý',
+            cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+            reverseButtons: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'Bạn vẫn chưa điền phương thức giải quyết !'
                 }
-            }).then((result) => {
-                if (result.value) {
-                    if(result.value === 'Hoàn tiền') {
-                        Swal.fire({
-                            text: "Vui lòng chọn mức % muốn hoàn tiền",
-                            input: 'select',
-                            inputOptions: {
-                                10: '10%',
-                                15: '15%',
-                                20: '20%',                             
-                                25: '25%',
-                                30: '30%',
-                                35: '35%',
-                                40: '40%',
-                                45: '45%',
-                                50: '50%',
-                                55: '55%',
-                                60: '60%',
-                                65: '65%',
-                                70: '70%',
-                                75: '75%',
-                                80: '80%',
-                                85: '85%',
-                                90: '90%'   
-                            },
-                            showCancelButton: true,
-                            confirmButtonText: 'Ok, tôi đồng ý',
-                            cancelButtonText: 'Không, tôi đã suy nghĩ lại',
-                            reverseButtons: true,
-                            inputValidator: (value) => {
-                                if (!value) {
-                                    return 'Bạn vẫn chọn mức phần trăm !'
-                                }
+            }
+        }).then((result) => {
+            if (result.value) {
+                if (result.value === 'Hoàn tiền') {
+                    Swal.fire({
+                        text: "Vui lòng chọn mức % muốn hoàn tiền",
+                        input: 'select',
+                        inputOptions: {
+                            10: '10%',
+                            15: '15%',
+                            20: '20%',
+                            25: '25%',
+                            30: '30%',
+                            35: '35%',
+                            40: '40%',
+                            45: '45%',
+                            50: '50%',
+                            55: '55%',
+                            60: '60%',
+                            65: '65%',
+                            70: '70%',
+                            75: '75%',
+                            80: '80%',
+                            85: '85%',
+                            90: '90%'
+                        },
+                        showCancelButton: true,
+                        confirmButtonText: 'Ok, tôi đồng ý',
+                        cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+                        reverseButtons: true,
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'Bạn vẫn chọn mức phần trăm !'
                             }
-                        }).then(result => {
-                            if (result.value) {
-                                let refundPercentage = result.value;
-                                let leftover = e.amount * (100 - refundPercentage) /100;
-                                console.log(leftover);
-                                getRefundForEmployer(e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content).then(res => {
-                                    if(res.data.code === '200') {
+                        }
+                    }).then(result => {
+                        if (result.value) {
+                            let refundPercentage = result.value;
+                            let leftover = e.amount * (100 - refundPercentage) / 100;
+                            console.log(leftover);
+                            getRefundForEmployer(e.id_report, e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content).then(res => {
+                                if (res.data.code === '200') {
+                                    if(res.data.data.code === 1) {
                                         this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
                                         Swal.fire({
                                             text: 'Hoàn tiền thành công',
                                             icon: 'success',
-                                        })
-                                    }
+                                        })   
+                                    }                                    
                                     else {
                                         Swal.fire({
-                                            text: 'Hoàn tiền thất bại',
+                                            text: 'Có lỗi trong quá trình liên kết với server của ví Momo',
                                             icon: 'error',
                                         })
                                     }
-                                }).catch(err => {
-                                    console.log(err);
+                                }
+                                else {
                                     Swal.fire({
-                                        text: 'Server gặp sự cố',
+                                        text: 'Hoàn tiền thất bại',
                                         icon: 'error',
                                     })
-                                })
-                                //(e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content)
-                            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                }
+                            }).catch(err => {
+                                console.log(err);
                                 Swal.fire({
-                                    text: 'Thay đổi không được thực hiện',
+                                    text: 'Server gặp sự cố',
                                     icon: 'error',
                                 })
-                                document.getElementById('select-status-' + e.id_report).value = e.status;
-                            }
-                            else {
-                                document.getElementById('select-status-' + e.id_report).value = e.status;
-                            }
-                        }) 
-                    }
-                    else {
-                        setJobReportStatus(e.id_report, 1, result.value).then(res=>{
-                            if(res.data.code === '106') {
-                                Swal.fire({
-                                    text: 'Khồng hoàn tiền cho giao dịch này',
-                                    icon: 'success',
-                                })
-                            }
-                            else {
-                                Swal.fire({
-                                    text: 'Thay đổi thất bại, vui lòng thử lại sau',
-                                    icon: 'error',
-                                })
-                            }
-                        }).catch(err=> {
+                            })
+                            //(e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content)
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
                             Swal.fire({
-                                text: 'Server có vấn đề, vui lòng thử lại sau',
+                                text: 'Thay đổi không được thực hiện',
                                 icon: 'error',
                             })
-                        })   
-                    }                                     
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire({
-                        text: 'Thay đổi không được thực hiện',
-                        icon: 'error',
+                        }
+                        else {
+                        }
                     })
-                    document.getElementById('select-status-' + e.id_report).value = e.status;
                 }
                 else {
-                    document.getElementById('select-status-' + e.id_report).value = e.status;
-                }
-            })
-        }
-        else {
-            Swal.fire({
-                text: "Bạn muốn thay đổi thành trang thái chưa giải quyết cho khiếu nại này",
-                showCancelButton: true,
-                confirmButtonText: 'Ok, tôi đồng ý',
-                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
-                reverseButtons: true,
-            }).then((result) => {
-                if (result.value) {                    
-                    setJobReportStatus(e.id_report, 0, null).then(res=>{
-                        if(res.data.code === '106') {
-                            this.loadJobListFunc(this.props.ReportsReducer.currentJobReportsPage, this.state.queryType,this.state.queryName);
+                    setJobReportStatus(e.id_report, 1, result.value).then(res => {
+                        if (res.data.code === '106') {
                             Swal.fire({
-                                text: 'Thay đổi thành công',
+                                text: 'Khồng hoàn tiền cho giao dịch này',
                                 icon: 'success',
                             })
                         }
@@ -204,36 +163,33 @@ class JobReportsComponent extends Component {
                                 icon: 'error',
                             })
                         }
-                    }).catch(err=> {
+                    }).catch(err => {
                         Swal.fire({
                             text: 'Server có vấn đề, vui lòng thử lại sau',
                             icon: 'error',
                         })
                     })
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire({
-                        text: 'Thay đổi không được thực hiện',
-                        icon: 'error',
-                    })
-                    document.getElementById('select-status-' + e.id_report).value = e.status;
                 }
-                else {
-                    document.getElementById('select-status-' + e.id_report).value = e.status;
-                }
-            })
-        }
-
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    text: 'Thay đổi không được thực hiện',
+                    icon: 'error',
+                })
+            }
+            else {
+            }
+        })
     }
 
     handleDetail(report) {
         let statusText = `<div class='col-7 text-danger'>Chờ giải quyết</div>`;
         let solutionText = ``;
 
-        if(report.status === 1) {
+        if (report.status === 1) {
             statusText = `<div class='col-7 text-success'>Đã giải quyết</div>`
             solutionText = `<div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                                <label class='font-weight-bold col-5'>Tình trạng :</label>
-                                ${report.solution}
+                                <label class='font-weight-bold col-5'>Xử lý :</label>
+                                <div class='col-7'>${report.solution}</div>
                             </div>`;
         }
 
@@ -275,34 +231,37 @@ class JobReportsComponent extends Component {
 
     renderReportsList(reports, total) {
         let content = [];
-        if(total === - 1) {
+        if (total === - 1) {
             content.push(
                 <tr key={0}>
                     <td colSpan='7' className='p-5 text-center'>
                         <div className="spinner-border text-primary" role="status">
                             <span className="sr-only">Loading...</span>
                         </div>
-                    </td>                    
+                    </td>
                 </tr>
             )
         }
-        else if(reports.length > 0) {
+        else if (reports.length > 0) {
             reports.forEach((e, index) => {
                 content.push(
                     <tr key={index}>
-                        <td><div style={{width: '90px'}}>{prettierDate(e.report_date)}</div></td>
-                        <td><div className='text-truncate' style={{ width: '150px' }}>{e.user1_name}</div></td>
-                        <td><div className='text-truncate' style={{ width: '70px' }}>{e.id_job}</div></td>
+                        <td><div style={{ width: '90px' }}>{prettierDate(e.report_date)}</div></td>
+                        <td><div className='text-truncate' style={{ width: '120px' }}>{e.user1_name}</div></td>
+                        <td><div className='text-truncate' style={{ width: '50px' }}>{e.id_job}</div></td>
                         <td><div className='text-truncate' style={{ width: '120px' }}>{e.user2_name}</div></td>
                         <td>
                             {e.content}
                         </td>
-                        <td>
-                            <select id={'select-status-' + e.id_report} value={e.status} onChange={() => { this.handleChangeStatus(e) }}>
-                                <option value={0}>Chờ giải quyết</option>
-                                <option value={1}>Đã giải quyết</option>
-                            </select>
-                        </td>
+                        {(
+                            this.state.queryType === 0
+                                ?
+                                <td>
+                                    <i className='icon-feather-user-check cursor-pointer text-primary' onClick={() => { this.handleChangeStatus(e) }}></i>
+                                </td>
+                                :
+                                ''
+                        )}                        
                         <td className='text-center'>
                             <i className='icon-feather-eye cursor-pointer text-primary' onClick={() => { this.handleDetail(e) }}></i>
                         </td>
@@ -315,7 +274,7 @@ class JobReportsComponent extends Component {
                 <tr key={0}>
                     <td colSpan='7' className='p-5'>
                         Danh sách yêu cầu ngưng việc rỗng !!
-                    </td>                    
+                    </td>
                 </tr>
             )
         }
@@ -377,21 +336,21 @@ class JobReportsComponent extends Component {
                         <div className="row my-1">
                             <div className='col-7'>
                                 <div className="btn-group btn-group-sm" role="group">
-                                    <div onClick={() => { if(this.state.queryType !== 0) {this.handleFilter(0)} }} className={"btn " + (this.state.queryType === 0 ? 'btn-danger' : 'btn-outline-danger')}>Chưa giải quyết</div>
-                                    <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-success' : 'btn-outline-success')}>Đã giải quyết</div>
+                                    <div onClick={() => { if (this.state.queryType !== 0) { this.handleFilter(0) } }} className={"btn " + (this.state.queryType === 0 ? 'btn-danger' : 'btn-outline-danger')}>Chưa giải quyết</div>
+                                    <div onClick={() => { if (this.state.queryType !== 1) { this.handleFilter(1) } }} className={"btn " + (this.state.queryType === 1 ? 'btn-success' : 'btn-outline-success')}>Đã giải quyết</div>
                                 </div>
                             </div>
                             <div className="col-5 text-right d-flex">
                                 <div className='mr-2'>
-                                    <div className='btn btn-primary' 
-                                        onClick={()=>{
-                                            if(this.state.queryName.length > 0) {
-                                                document.getElementById('user-search-input').value='';
-                                                this.setState({queryName: ''}, ()=>{
+                                    <div className='btn btn-primary'
+                                        onClick={() => {
+                                            if (this.state.queryName.length > 0) {
+                                                document.getElementById('user-search-input').value = '';
+                                                this.setState({ queryName: '' }, () => {
                                                     this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
-                                                    }) 
-                                                }
-                                            }}>
+                                                })
+                                            }
+                                        }}>
                                         <i className='icon-feather-rotate-ccw'></i>
                                     </div>
                                 </div>
@@ -413,10 +372,16 @@ class JobReportsComponent extends Component {
                                     <tr>
                                         <th>Ngày đăng</th>
                                         <th>Người yêu cầu</th>
-                                        <th>Mã công việc</th>
+                                        <th>Mã CV</th>
                                         <th>Người làm</th>
                                         <th>Nguyên nhân</th>
-                                        <th>Trạng thái</th>
+                                        {(
+                                            this.state.queryType === 0
+                                                ?
+                                                <th>Xử lý</th>
+                                                :
+                                                ''
+                                        )}
                                         <th></th>
                                     </tr>
                                 </thead>

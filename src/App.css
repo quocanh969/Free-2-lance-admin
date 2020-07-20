@@ -3,7 +3,8 @@
 }
 
 #background-login {
-  background-image: linear-gradient( black, #4e73df, white);
+  /* background-image: linear-gradient( black, #4e73df, white); */
+  background-image: url('./Assets/images/background_dashboard.jpg')
 }
 
 .cursor-pointer {

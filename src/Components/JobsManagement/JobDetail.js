@@ -25,7 +25,15 @@ class JobDetailComponent extends Component {
 
     render() {
         let {job} = this.props.JobDetailReducer;
-        if(job === null) return '';
+        if(job === null) {
+            return (
+                <div className='w-100 text-center py-4'>
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            )
+        }
         else {
             return (
                 <div className="container-fluid">

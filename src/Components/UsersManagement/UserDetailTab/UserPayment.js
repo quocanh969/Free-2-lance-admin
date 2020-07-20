@@ -16,6 +16,10 @@ class UserPaymentComponent extends Component {
         }
     }
 
+    componentWillMount() {
+        this.loadTransaction(1, this.state.queryType, this.state.queryId);
+    }
+
     loadTransaction(page, id_status, id_job) {
         let { onLoadPaymentList } = this.props;
         let { userInfo } = this.props.UserDetailReducer;        
@@ -59,7 +63,7 @@ class UserPaymentComponent extends Component {
         let {userInfo} = this.props.UserDetailReducer;
 
         let sttText = 'Chưa nhận';
-        if(transaction.status === 1) {
+        if(transaction.status === 1 || transaction.status === 3) {
             sttText = 'Đã nhận';
         }
 
@@ -80,10 +84,6 @@ class UserPaymentComponent extends Component {
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Người thuê :</label>
                         <div class='col-7'>${userInfo.personal.fullname}</div>                    
-                    </div>
-                    <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
-                        <label class='font-weight-bold col-5'>Thông tin tài khoản :</label>
-                        <div class='col-7'>${transaction.orderIf}</div>                    
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Người làm :</label>
@@ -255,7 +255,7 @@ class UserPaymentComponent extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.renderPayment(payment)}
+                                {this.renderPayment(payment, totalPayment)}
                             </tbody>
                         </table>
 

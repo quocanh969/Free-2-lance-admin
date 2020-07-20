@@ -1,5 +1,5 @@
 import { history } from '../Ultis/history/history';
-import { getFigureDataAPI, getPercentageDataAPI, getAnnualJobsChartDataAPI, getAnnualUsersChartDataAPI, getPendingReportsAPI } from '../Services/Home.service';
+import { getFigureDataAPI, getPercentageDataAPI, getAnnualJobsChartDataAPI, getAnnualUsersChartDataAPI, getPendingReportsAPI, getPendingJobReportsAPI } from '../Services/Home.service';
 
 export const getFigureData = () => {
     return (dispatch) => {
@@ -97,6 +97,26 @@ export const getPendingReports = () => {
         return {
             type: 'UPDATE_PENDING_REPORTS_DATA',
             pendingReports,
+        }
+    }
+}
+
+export const getPendingJobReports = () => {
+    return (dispatch) => {
+        getPendingJobReportsAPI().then(res => {
+            if (res.data.code === '200') {
+                dispatch(updateState(res.data.data.value));
+            } else {
+                console.log(res.data);
+            }
+        }).catch(err => {
+            alert(`Lỗi hệ thống\n` + err);
+        })
+    }
+    function updateState(pendingJobReports) {
+        return {
+            type: 'UPDATE_PENDING_JOB_REPORTS_DATA',
+            pendingJobReports,
         }
     }
 }

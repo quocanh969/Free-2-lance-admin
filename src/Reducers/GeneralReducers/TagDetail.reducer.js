@@ -1,5 +1,5 @@
 const initState = {
-    tagInfo: '',
+    tagInfo: null,
 
     newTagName: '',
 

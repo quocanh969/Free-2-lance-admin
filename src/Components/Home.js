@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 import { history } from '../Ultis/history/history';
 
-import { getFigureData, getPercentageData, getAnnualJobsChartData, getAnnualUsersChartData, getPendingReports } from '../Actions/Home.action';
+import { getFigureData, getPercentageData, getAnnualJobsChartData, getAnnualUsersChartData, getPendingReports, getPendingJobReports} from '../Actions/Home.action';
 
 import '../../node_modules/react-vis/dist/style.css';
 import { XYPlot, LineSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, ArcSeries } from 'react-vis';
@@ -19,12 +19,13 @@ class HomeComponent extends Component {
   }
 
   loadDataFunc() {
-    let { onGetFigureData, onGetPercentageData, onGetAnnualJobsChartData, onGetAnnualUsersChartData, onGetPendingReports } = this.props;
+    let { onGetFigureData, onGetPercentageData, onGetAnnualJobsChartData, onGetAnnualUsersChartData, onGetPendingReports, onGetPendingJobReports } = this.props;
     onGetFigureData();
     onGetPercentageData();
     onGetAnnualJobsChartData();
     onGetAnnualUsersChartData();
     onGetPendingReports();
+    onGetPendingJobReports();
   }
 
   calculatePercentage(total, extract) {
@@ -33,7 +34,7 @@ class HomeComponent extends Component {
 
   render() {
     // console.log(this.props.HomeReducer.percentageData);
-    let { percentageData, figureData, annualJobsChartData, annualUsersChartData, pendingReports } = this.props.HomeReducer;
+    let { percentageData, figureData, annualJobsChartData, annualUsersChartData, pendingReports, pendingJobReports } = this.props.HomeReducer;
     let p1 = this.calculatePercentage(percentageData.total1, percentageData.extract1);
     let p2 = this.calculatePercentage(percentageData.total2, percentageData.extract2);
     let p3 = this.calculatePercentage(percentageData.total3, percentageData.extract3);
@@ -65,12 +66,12 @@ class HomeComponent extends Component {
     return (
       <div className="container-fluid">
         {/* Page Heading */}
-        <div className="d-sm-flex align-items-center justify-content-between mb-4">
+        {/* <div className="d-sm-flex align-items-center justify-content-between mb-4">
           <h1 className="h3 mb-0 text-gray-800">Dashboard</h1>
           <NavLink to='/login' className="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
             <i className="fas fa-download fa-sm text-white-50" /> Xuất báo cáo
           </NavLink>
-        </div>
+        </div> */}
         {/* Content Row */}
         <div className="row">
           {/* Earnings (Monthly) Card Example */}
@@ -81,9 +82,6 @@ class HomeComponent extends Component {
                   <div className="col mr-2">
                     <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">Số ứng viên trung bình/ công việc</div>
                     <div className="h5 mb-0 font-weight-bold text-gray-800">{f1} ứng viên</div>
-                  </div>
-                  <div className="col-auto">
-                    <i className="fas fa-calendar fa-2x text-gray-300" />
                   </div>
                 </div>
               </div>
@@ -97,9 +95,6 @@ class HomeComponent extends Component {
                   <div className="col mr-2">
                     <div className="text-xs font-weight-bold text-success text-uppercase mb-1">Số công việc mới mỗi ngày</div>
                     <div className="h5 mb-0 font-weight-bold text-gray-800">{f2} công việc</div>
-                  </div>
-                  <div className="col-auto">
-                    <i className="fas fa-dollar-sign fa-2x text-gray-300" />
                   </div>
                 </div>
               </div>
@@ -123,9 +118,6 @@ class HomeComponent extends Component {
                       </div> */}
                     </div>
                   </div>
-                  <div className="col-auto">
-                    <i className="fas fa-clipboard-list fa-2x text-gray-300" />
-                  </div>
                 </div>
               </div>
             </div>
@@ -138,9 +130,6 @@ class HomeComponent extends Component {
                   <div className="col mr-2">
                     <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">Số người dùng doanh nghiệp</div>
                     <div className="h5 mb-0 font-weight-bold text-gray-800">{f4} tài khoản</div>
-                  </div>
-                  <div className="col-auto">
-                    <i className="fas fa-comments fa-2x text-gray-300" />
                   </div>
                 </div>
               </div>
@@ -327,6 +316,19 @@ class HomeComponent extends Component {
                 <a target="_blank" rel="nofollow" href="/report-management">Xem thêm →</a>
               </div>
             </div>
+
+            <div className="card shadow mb-4">
+              <div className="card-header py-3">
+                <h6 className="m-0 font-weight-bold text-primary">Yêu cầu dừng việc đang chờ xem xét</h6>
+              </div>
+              <div className="card-body">
+                <div className="text-center">
+                  <img className="img-fluid px-3 px-sm-4 mt-3 mb-4" style={{ width: '25rem' }} src="img/undraw_posting_photo.svg" alt="" />
+                </div>
+                <p>Hiện đang có {pendingJobReports} yêu cầu đang đợi xử lý</p>
+                <a target="_blank" rel="nofollow" href="/job-report-management">Xem thêm →</a>
+              </div>
+            </div>
             {/* Approach */}
             {/* <div className="card shadow mb-4">
               <div className="card-header py-3">
@@ -365,6 +367,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     onGetPendingReports: () => {
       dispatch(getPendingReports());
+    },
+    onGetPendingJobReports: () => {
+      dispatch(getPendingJobReports());
     }
   };
 };

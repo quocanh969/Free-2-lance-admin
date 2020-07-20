@@ -53,13 +53,20 @@ class UserDetailComponent extends Component {
         let {userInfo} = this.props.UserDetailReducer;
 
         if(userInfo === null) {
-            return '';
+            return (
+                <div className='w-100 text-center py-4'>
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            )
         }
         else {
             return (
                 <div className="container-fluid">
                     {/* Page Heading */}
-                    <h1 className="h3 mb-5 text-gray-800">Thông tin chi tiết người dùng</h1>
+                    <h1 className="h3 mb-1 text-gray-800">Thông tin chi tiết người dùng</h1>
+                    <h5 className='mb-4'>{`${userInfo.personal.fullname} - ${userInfo.personal.email}`}</h5>
                     {/* Userlist DataTales Example */}
                     <div className="card shadow mb-4">
                         <div className='card-header px-0'>

@@ -15,8 +15,8 @@ class SideBarComponent extends Component {
     componentWillMount() {
         let{user} = this.props.AccountReducer;
         let {onSendUpdateInfo} = this.props;
-
-        if(user === null) {
+        let token = JSON.parse(localStorage.getItem('admin_token'));
+        if(user === null && token) {
             onSendUpdateInfo();
         }
     }

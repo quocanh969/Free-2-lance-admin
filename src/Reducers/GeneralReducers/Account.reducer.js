@@ -11,7 +11,10 @@ const AccountReducer = (state = initState, action) => {
                 user: action.user,
             }
         case 'USER_LOG_OUT':
-            return initState;
+            return {
+                ...state,
+                user: null,
+            }
         default: return state;
     }
 }

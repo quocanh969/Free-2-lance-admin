@@ -19,11 +19,6 @@ export class SRoute extends Component {
                 <Redirect to='/login'></Redirect>
             )
         }
-        else if(window.location.href.endsWith('/login') && token) {
-            return (
-                <Redirect to='/'></Redirect>
-            )
-        }
         else {
             const { component: Component, ...rest } = this.props;
             return (
@@ -40,6 +35,34 @@ export class SRoute extends Component {
                                     </div>
                                 </div>
                             </div>
+                        )
+                    }
+                }
+                ></Route >
+            )
+        }
+    }
+}
+
+export class LoginRoute extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        let token = JSON.parse(localStorage.getItem('admin_token'));
+        if (token) {
+            return (
+                <Redirect to='/'></Redirect>
+            )
+        }
+        else {
+            const { component: Component, ...rest } = this.props;
+            return (
+                <Route {...rest} render={
+                    (props) => {
+                        return (
+                            <Component {...props}></Component>
                         )
                     }
                 }

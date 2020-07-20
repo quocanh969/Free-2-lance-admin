@@ -4,7 +4,7 @@ import './Assets/css/style.css';
 import './Assets/css/icons.css';
 
 import { BrowserRouter, Switch, Redirect, Router, Route } from 'react-router-dom';
-import { SRoute } from './Ultis/CustomRoutes/CustomRoute';
+import { SRoute, LoginRoute } from './Ultis/CustomRoutes/CustomRoute';
 
 import { history } from './Ultis/history/history';
 
@@ -53,7 +53,7 @@ function App() {
 
         <SRoute path='/user-profile' exact component={UpdateInfo}></SRoute>
 
-        <Route path='/login' exact component={Login}></Route>
+        <LoginRoute path='/login' exact component={Login}></LoginRoute>
         {/* <Redirect to='/not-found'></Redirect> */}
       </Switch>
     </Router>

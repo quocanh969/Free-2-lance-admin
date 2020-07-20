@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter, NavLink } from 'react-router-dom';
 import { history } from '../Ultis/history/history';
 
-import { getFigureData, getPercentageData, getAnnualJobsChartData, getAnnualUsersChartData, getPendingReports, getPendingJobReports} from '../Actions/Home.action';
+import { getFigureData, getPercentageData, getAnnualJobsChartData, getAnnualUsersChartData, getPendingReports, getPendingJobReports } from '../Actions/Home.action';
 
 import '../../node_modules/react-vis/dist/style.css';
 import { XYPlot, LineSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, ArcSeries } from 'react-vis';
@@ -81,7 +81,19 @@ class HomeComponent extends Component {
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
                     <div className="text-xs font-weight-bold text-primary text-uppercase mb-1">Số ứng viên trung bình/ công việc</div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f1} ứng viên</div>
+                    {(
+                      figureData.length === 0
+                        ?
+                        <div className='w-100 text-center my-1'>
+                          <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        </div>
+                        :
+                        <div className="h5 mb-0 font-weight-bold text-gray-800">{f1} ứng viên</div>
+                    )}
+
+
                   </div>
                 </div>
               </div>
@@ -94,7 +106,18 @@ class HomeComponent extends Component {
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
                     <div className="text-xs font-weight-bold text-success text-uppercase mb-1">Số công việc mới mỗi ngày</div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f2} công việc</div>
+                    {(
+                      figureData.length === 0
+                        ?
+                        <div className='w-100 text-center my-1'>
+                          <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        </div>
+                        :
+                        <div className="h5 mb-0 font-weight-bold text-gray-800">{f2} công việc</div>
+                    )}
+
                   </div>
                 </div>
               </div>
@@ -109,7 +132,18 @@ class HomeComponent extends Component {
                     <div className="text-xs font-weight-bold text-info text-uppercase mb-1">Số người dùng cá nhân</div>
                     <div className="row no-gutters align-items-center">
                       <div className="col-auto">
-                        <div className="h5 mb-0 mr-3 font-weight-bold text-gray-800">{f3} tài khoản</div>
+                        {(
+                          figureData.length === 0
+                            ?
+                            <div className='w-100 text-center my-1'>
+                              <div className="spinner-border text-primary" role="status">
+                                <span className="sr-only">Loading...</span>
+                              </div>
+                            </div>
+                            :
+                            <div className="h5 mb-0 mr-3 font-weight-bold text-gray-800">{f3} tài khoản</div>
+                        )}
+
                       </div>
                       {/* <div className="col">
                         <div className="progress progress-sm mr-2">
@@ -129,7 +163,18 @@ class HomeComponent extends Component {
                 <div className="row no-gutters align-items-center">
                   <div className="col mr-2">
                     <div className="text-xs font-weight-bold text-warning text-uppercase mb-1">Số người dùng doanh nghiệp</div>
-                    <div className="h5 mb-0 font-weight-bold text-gray-800">{f4} tài khoản</div>
+                    {(
+                      figureData.length === 0
+                        ?
+                        <div className='w-100 text-center my-1'>
+                          <div className="spinner-border text-primary" role="status">
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        </div>
+                        :
+                        <div className="h5 mb-0 font-weight-bold text-gray-800">{f4} tài khoản</div>
+                    )}
+
                   </div>
                 </div>
               </div>
@@ -159,16 +204,29 @@ class HomeComponent extends Component {
               </div>
               {/* Card Body */}
               <div className="card-body">
-                <div className="chart-area">
-                  {/* <canvas id="myAreaChart" /> */}
-                  <XYPlot height={300} width={500}>
-                    <LineSeries data={annualJobsChart} />
-                    <VerticalGridLines />
-                    <HorizontalGridLines />
-                    <XAxis title="Tháng" titlePosition="middle-under" style={{ title: { fontSize: '16px' } }} />
-                    <YAxis title="Số lượng công việc được đăng" />
-                  </XYPlot>
-                </div>
+                {(
+                  annualJobsChartData === null
+                    ?
+                    <div className='w-100 text-center my-1'>
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    </div>
+                    :
+                    <div className="chart-area">
+                      {/* <canvas id="myAreaChart" /> */}
+                      <XYPlot height={300} width={500}>
+                        <LineSeries data={annualJobsChart} />
+                        <VerticalGridLines />
+                        <HorizontalGridLines />
+                        <XAxis title="Tháng" titlePosition="middle-under" style={{ title: { fontSize: '16px' } }} />
+                        <YAxis title="Số lượng công việc được đăng" />
+                      </XYPlot>
+                    </div>
+
+                )}
+
+
               </div>
             </div>
           </div>
@@ -193,16 +251,28 @@ class HomeComponent extends Component {
               </div>
               {/* Card Body */}
               <div className="card-body">
-                <div className="chart-area">
-                  {/* <canvas id="myPieChart" /> */}
-                  <XYPlot height={300} width={500}>
-                    <LineSeries data={annualUsersChart} />
-                    <VerticalGridLines />
-                    <HorizontalGridLines />
-                    <XAxis title="Tháng" titlePosition="middle-under" style={{ title: { fontSize: '16px' } }} />
-                    <YAxis title="Số lượng tài khoản mới" />
-                  </XYPlot>
-                </div>
+              {(
+                  annualUsersChartData === null
+                    ?
+                    <div className='w-100 text-center my-1'>
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="sr-only">Loading...</span>
+                      </div>
+                    </div>
+                    :
+                    <div className="chart-area">
+                    {/* <canvas id="myPieChart" /> */}
+                    <XYPlot height={300} width={500}>
+                      <LineSeries data={annualUsersChart} />
+                      <VerticalGridLines />
+                      <HorizontalGridLines />
+                      <XAxis title="Tháng" titlePosition="middle-under" style={{ title: { fontSize: '16px' } }} />
+                      <YAxis title="Số lượng tài khoản mới" />
+                    </XYPlot>
+                  </div>
+
+                )}
+                
                 {/* <div className="mt-4 text-center small">
                   <span className="mr-2">
                     <i className="fas fa-circle text-primary" /> Direct

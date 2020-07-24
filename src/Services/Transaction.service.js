@@ -26,7 +26,7 @@ function getPaymentList(page, take, id_user, id_status, id_job) {
     });
 }
 
-function getRefundForEmployer(id_report, id_applicant, id_transaction, amount, refundPercentage, leftover, reason) {
+function getRefundForEmployer(id_report, id_applicant, id_transaction, amount, refundPercentage, leftover, reason, solution) {
     return axios.post('/users/getRefundForEmployer', {
         id_report,
         id_applicant, 
@@ -35,6 +35,7 @@ function getRefundForEmployer(id_report, id_applicant, id_transaction, amount, r
         refundPercentage, 
         leftover, 
         reason,
+        solution,
     });
 }
 

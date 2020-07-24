@@ -108,34 +108,63 @@ class JobReportsComponent extends Component {
                         if (result.value) {
                             let refundPercentage = result.value;
                             let leftover = e.amount * (100 - refundPercentage) / 100;
-                            getRefundForEmployer(e.id_report, e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content).then(res => {
-                                if (res.data.code === '200') {
-                                    if(res.data.data.code === 1) {
-                                        this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
-                                        Swal.fire({
-                                            text: 'Hoàn tiền thành công',
-                                            icon: 'success',
-                                        })   
-                                    }                                    
-                                    else {
-                                        Swal.fire({
-                                            text: 'Có lỗi trong quá trình liên kết với server của ví Momo',
-                                            icon: 'error',
-                                        })
+                            Swal.fire({
+                                text: "Vui lòng nhập nguyên nhân hoàn tiền",
+                                input: 'textarea',
+                                showCancelButton: true,
+                                confirmButtonText: 'Ok, tôi đồng ý',
+                                cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+                                reverseButtons: true,
+                                inputValidator: (value) => {
+                                    if (!value) {
+                                        return 'Bạn vẫn chưa điền cách thức giải quyết !'
                                     }
                                 }
-                                else {
+                            }).then((res) => {
+                                if (res.value) {                            
+                                    getRefundForEmployer(e.id_report, e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content, res.value).then(res => {
+                                        if (res.data.code === '200') {
+                                            if(res.data.data.code === 1) {
+                                                this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
+                                                Swal.fire({
+                                                    text: 'Hoàn tiền thành công',
+                                                    icon: 'success',
+                                                })   
+                                            }    
+                                            else if(res.data.data.code === 0) {
+                                                Swal.fire({
+                                                    text: 'Thanh toán đã được rút',
+                                                    icon: 'error',
+                                                })
+                                            }                                
+                                            else {
+                                                Swal.fire({
+                                                    text: 'Có lỗi trong quá trình liên kết với server của ví Momo',
+                                                    icon: 'error',
+                                                })
+                                            }
+                                        }
+                                        else {
+                                            Swal.fire({
+                                                text: 'Hoàn tiền thất bại',
+                                                icon: 'error',
+                                            })
+                                        }
+                                    }).catch(err => {
+                                        console.log(err);
+                                        Swal.fire({
+                                            text: 'Server gặp sự cố',
+                                            icon: 'error',
+                                        })
+                                    })
+                                } else if (res.dismiss === Swal.DismissReason.cancel) {
                                     Swal.fire({
-                                        text: 'Hoàn tiền thất bại',
+                                        text: 'Thay đổi không được thực hiện',
                                         icon: 'error',
                                     })
                                 }
-                            }).catch(err => {
-                                console.log(err);
-                                Swal.fire({
-                                    text: 'Server gặp sự cố',
-                                    icon: 'error',
-                                })
+                                else {
+                                }
                             })
                             //(e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content)
                         } else if (result.dismiss === Swal.DismissReason.cancel) {
@@ -151,7 +180,7 @@ class JobReportsComponent extends Component {
                 else {
                     Swal.fire({
                         text: "Vui lòng nhập nguyên nhân không hoàn tiền",
-                        input: 'text',
+                        input: 'textarea',
                         showCancelButton: true,
                         confirmButtonText: 'Ok, tôi đồng ý',
                         cancelButtonText: 'Không, tôi đã suy nghĩ lại',
@@ -165,6 +194,7 @@ class JobReportsComponent extends Component {
                         if (res.value) {                            
                             setJobReportStatus(e.id_report, 1, `${result.value}. Nguyên nhân: ${res.value}`).then(res => {
                                 if (res.data.code === '106') {
+                                    this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
                                     Swal.fire({
                                         text: 'Khồng hoàn tiền cho giao dịch này',
                                         icon: 'success',
@@ -191,7 +221,6 @@ class JobReportsComponent extends Component {
                         else {
                         }
                     })
-                    
                 }
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire({

@@ -59,7 +59,7 @@ class ReportsComponent extends Component {
         if (val === 1) {
             const { value: solve } = Swal.fire({
                 text: "Bạn đã giải quyết xong khiếu nại này, vui lòng nhập cách thức giải quyết của bạn",
-                input: 'text',
+                input: 'textarea',
                 showCancelButton: true,
                 confirmButtonText: 'Ok, tôi đồng ý',
                 cancelButtonText: 'Không, tôi đã suy nghĩ lại',

@@ -49,6 +49,23 @@ class PendingJobsComponent extends Component {
 
     handleChangeStatus(id_job, current_value) {
         let val = Number.parseInt(document.getElementById('select-status-' + id_job).value);
+        if (current_value === -1 || current_value === 4) {
+            Swal.fire({
+                text: 'Bạn không thể thay đổi trạng thái này của công việc',
+                icon: 'warning',
+            });
+            document.getElementById('select-status-' + id_job).value = current_value;
+            return;
+        }
+
+        if (val === -1 || val === 4) {
+            Swal.fire({
+                text: 'Bạn không thể thay đổi trạng thái công việc thành trạng thái này',
+                icon: 'warning',
+            });
+            document.getElementById('select-status-' + id_job).value = current_value;
+            return;
+        }
 
         if (current_value === val) return;
 
@@ -148,11 +165,13 @@ class PendingJobsComponent extends Component {
                     <td>{prettierDate(e.post_date)}</td>
                     <td>{prettierDate(e.expire_date)}</td>
                     <td>
-                        <select id={'select-status-' + 1} value={e.id_status} onChange={()=>{this.handleChangeStatus(e.id_job, e.id_status)}}>
+                        <select id={'select-status-' + e.id_job} value={e.id_status} onChange={()=>{this.handleChangeStatus(e.id_job, e.id_status)}}>
+                            <option value={-1}>Quá hạn</option>
                             <option value={0}>Bị gở</option>
                             <option value={1}>Đang tuyển</option>
                             <option value={2}>Đang thực hiện</option>
                             <option value={3}>Hoàn thành</option>
+                            <option value={4}>Tạm hoãn</option>
                         </select>
                     </td>
                     <td className='text-center'>
@@ -229,9 +248,11 @@ class PendingJobsComponent extends Component {
                             <div className="col-8">
                                 <div className="btn-group btn-group-sm" role="group">
                                     <div onClick={() => { if(this.state.queryType !== 5) {this.handleFilter(5)} }} className={"btn " + (this.state.queryType === 5 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                                    <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-danger' : 'btn-outline-danger')}>Đang tuyển</div>
+                                    <div onClick={() => { if(this.state.queryType !== -1) {this.handleFilter(-1)} }} className={"btn " + (this.state.queryType === -1 ? 'btn-danger' : 'btn-outline-danger')}>Quá hạn</div>
+                                    <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-warning' : 'btn-outline-warning')}>Đang tuyển</div>
                                     <div onClick={() => { if(this.state.queryType !== 2) {this.handleFilter(2)} }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}>Đang thực hiện</div>
                                     <div onClick={() => { if(this.state.queryType !== 3) {this.handleFilter(3)} }} className={"btn " + (this.state.queryType === 3 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
+                                    <div onClick={() => { if(this.state.queryType !== 4) {this.handleFilter(4)} }} className={"btn " + (this.state.queryType === 4 ? 'btn-info' : 'btn-outline-info')}>Tạm khóa</div>
                                 </div>
                             </div>
                             <div className="col-4 d-flex text-right">

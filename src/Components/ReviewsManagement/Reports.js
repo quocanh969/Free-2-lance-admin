@@ -58,7 +58,7 @@ class ReportsComponent extends Component {
 
         if (val === 1) {
             const { value: solve } = Swal.fire({
-                text: "Bạn đã giải quyết xong khiếu nại này, vui lòng nhập phương thức của bạn",
+                text: "Bạn đã giải quyết xong khiếu nại này, vui lòng nhập cách thức giải quyết của bạn",
                 input: 'text',
                 showCancelButton: true,
                 confirmButtonText: 'Ok, tôi đồng ý',
@@ -66,13 +66,11 @@ class ReportsComponent extends Component {
                 reverseButtons: true,
                 inputValidator: (value) => {
                     if (!value) {
-                        return 'Bạn vẫn chưa điền phương thức giải quyết !'
+                        return 'Bạn vẫn chưa điền cách thức giải quyết !'
                     }
                 }
             }).then((result) => {
                 if (result.value) {
-                    console.log(result.value);
-
                     setReportStatus(id_user, 1, result.value).then(res=>{
                         if(res.data.code === '106') {
                             Swal.fire({

@@ -51,10 +51,22 @@ class UserTaskListComponent extends Component {
     renderTaskStatus(status) {
         switch(status)
         {
+            case 4:
+                {
+                    return(
+                        <span className='text-info'>Tạm khóa</span>
+                    )
+                }
             case 0:
                 {
                     return(
                         <span className='text-danger'>Bị gỡ</span>
+                    )
+                }
+            case -1:
+                {
+                    return(
+                        <span className='text-danger'>Quá hạn</span>
                     )
                 }
             case 1:
@@ -173,10 +185,12 @@ class UserTaskListComponent extends Component {
                     <div className="row my-1">
                         <div className='col-7'>
                             <div className="btn-group btn-group-sm" role="group">
-                                <div onClick={() => { if(this.state.queryType !== 5) {this.handleFilter(5)} }} className={"btn " + (this.state.queryType === 5 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
-                                <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-danger' : 'btn-outline-danger')}>Đang ứng tuyển</div>
+                            <div onClick={() => { if(this.state.queryType !== 5) {this.handleFilter(5)} }} className={"btn " + (this.state.queryType === 5 ? 'btn-primary' : 'btn-outline-primary')}>Tất cả</div>
+                                <div onClick={() => { if(this.state.queryType !== -1) {this.handleFilter(-1)} }} className={"btn " + (this.state.queryType === 1 ? 'btn-danger' : 'btn-outline-danger')}>Quá hạn</div>                                
+                                <div onClick={() => { if(this.state.queryType !== 1) {this.handleFilter(1)} }} className={"btn " + (this.state.queryType === -1 ? 'btn-warning' : 'btn-outline-warning')}>Đang tuyển</div>
                                 <div onClick={() => { if(this.state.queryType !== 2) {this.handleFilter(2)} }} className={"btn " + (this.state.queryType === 2 ? 'btn-secondary' : 'btn-outline-secondary')}>Đang thực hiện</div>
                                 <div onClick={() => { if(this.state.queryType !== 3) {this.handleFilter(3)} }} className={"btn " + (this.state.queryType === 3 ? 'btn-success' : 'btn-outline-success')}>Đã hoàn thành</div>
+                                <div onClick={() => { if(this.state.queryType !== 4) {this.handleFilter(4)} }} className={"btn " + (this.state.queryType === 4 ? 'btn-info' : 'btn-outline-info')}>Tạm khóa</div>
                             </div>
                         </div>
                         <div className="col-5 text-right d-flex">

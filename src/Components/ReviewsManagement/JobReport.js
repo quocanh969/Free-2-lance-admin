@@ -108,7 +108,6 @@ class JobReportsComponent extends Component {
                         if (result.value) {
                             let refundPercentage = result.value;
                             let leftover = e.amount * (100 - refundPercentage) / 100;
-                            console.log(leftover);
                             getRefundForEmployer(e.id_report, e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content).then(res => {
                                 if (res.data.code === '200') {
                                     if(res.data.data.code === 1) {
@@ -150,25 +149,49 @@ class JobReportsComponent extends Component {
                     })
                 }
                 else {
-                    setJobReportStatus(e.id_report, 1, result.value).then(res => {
-                        if (res.data.code === '106') {
-                            Swal.fire({
-                                text: 'Khồng hoàn tiền cho giao dịch này',
-                                icon: 'success',
-                            })
+                    Swal.fire({
+                        text: "Vui lòng nhập nguyên nhân không hoàn tiền",
+                        input: 'text',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ok, tôi đồng ý',
+                        cancelButtonText: 'Không, tôi đã suy nghĩ lại',
+                        reverseButtons: true,
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'Bạn vẫn chưa điền cách thức giải quyết !'
+                            }
                         }
-                        else {
+                    }).then((res) => {
+                        if (res.value) {                            
+                            setJobReportStatus(e.id_report, 1, `${result.value}. Nguyên nhân: ${res.value}`).then(res => {
+                                if (res.data.code === '106') {
+                                    Swal.fire({
+                                        text: 'Khồng hoàn tiền cho giao dịch này',
+                                        icon: 'success',
+                                    })
+                                }
+                                else {
+                                    Swal.fire({
+                                        text: 'Thay đổi thất bại, vui lòng thử lại sau',
+                                        icon: 'error',
+                                    })
+                                }
+                            }).catch(err => {
+                                Swal.fire({
+                                    text: 'Server có vấn đề, vui lòng thử lại sau',
+                                    icon: 'error',
+                                })
+                            })
+                        } else if (res.dismiss === Swal.DismissReason.cancel) {
                             Swal.fire({
-                                text: 'Thay đổi thất bại, vui lòng thử lại sau',
+                                text: 'Thay đổi không được thực hiện',
                                 icon: 'error',
                             })
                         }
-                    }).catch(err => {
-                        Swal.fire({
-                            text: 'Server có vấn đề, vui lòng thử lại sau',
-                            icon: 'error',
-                        })
+                        else {
+                        }
                     })
+                    
                 }
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire({
@@ -322,14 +345,14 @@ class JobReportsComponent extends Component {
         return (
             <div className="container-fluid">
                 {/* Page Heading */}
-                <h1 className="h3 mb-2 text-gray-800">Quản lý yêu cầu ngưng công việc đột ngột của người dùng</h1>
+                <h1 className="h3 mb-2 text-gray-800">Quản lý yêu cầu sa thải của người dùng</h1>
                 <p className="mb-4">
-                    Danh sách các công việc bị ngừng
+                    Danh sách các yêu cầu sa thải
                 </p>
                 {/* Userlist DataTales Example */}
                 <div className="card shadow mb-4">
                     <div className="card-header py-3">
-                        <h6 className="m-0 font-weight-bold text-primary"><i className="icon-feather-list" />&nbsp;&nbsp;Các công việc bị yêu cầu ngưng</h6>
+                        <h6 className="m-0 font-weight-bold text-primary"><i className="icon-feather-list" />&nbsp;&nbsp;Các yêu cầu sa thải</h6>
                     </div>
                     <div className="card-body">
                         {/* Headline */}

@@ -68,7 +68,7 @@ class SideBarComponent extends Component {
                     </li>
                     <li className="nav-item">
                         <NavLink className="nav-link font-weight-bold py-2" to="/job-report-management">
-                            <i className="icon-line-awesome-warning" /><span>&nbsp;Báo cáo dừng công việc</span>
+                            <i className="icon-line-awesome-warning" /><span>&nbsp;Yêu cầu sa thải</span>
                         </NavLink>
                     </li>
     

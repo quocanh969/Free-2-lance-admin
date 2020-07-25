@@ -54,6 +54,7 @@ export const getDetails = (id) => {
 
 export const sendUpdateInfo = (id, updates) => {
     return (dispatch) => {
+        dispatch(submitForm());
         updateTagAPI(id, updates).then(res => {
             if (res.data.code === '202') {
                 getTagDetailsAPI(id).then(updated => {
@@ -86,13 +87,19 @@ export const sendUpdateInfo = (id, updates) => {
             tag,
         };
     }
+    
+    function submitForm() {
+        return {
+            type: "SUBMIT_FORM",
+        }
+    }
 }
 
 export const addNewTag = (name) => {
-    return (dispatch) => {
+    return (dispatch) => {        
+        dispatch(submitForm());
         addNewTagAPI(name).then(res => {
             if (res.data.code = '201') {
-                dispatch(submitForm());
                 Swal.fire({
                     title: "Thêm nhãn mới thành công",
                     text: "Ấn OK để đóng cửa sổ",

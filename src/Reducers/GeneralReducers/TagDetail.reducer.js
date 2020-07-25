@@ -12,6 +12,7 @@ const TagDetailReducer = (state = initState, action) => {
             return {
                 ...state,
                 tagInfo: action.tag,
+                isSubmitted: false,
             };
         case 'ADD_FORM_RESET':
             return initState;

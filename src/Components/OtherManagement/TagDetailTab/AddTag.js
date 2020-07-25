@@ -13,9 +13,6 @@ class AddTagComponent extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillMount() {
-    }
-
     componentDidUpdate() {
         let { newTagName } = this.props.TagDetailReducer;
         document.getElementById('topic-name-input').value = newTagName;
@@ -38,6 +35,7 @@ class AddTagComponent extends Component {
     }
 
     render() {
+        let {isSubmitted} = this.props.TagDetailReducer;
         return (
             <div className="container-fluid">
                 {/* Page Heading */}
@@ -101,9 +99,20 @@ class AddTagComponent extends Component {
                         </div>
 
                         <hr></hr>
-                        <div className='text-center mt-3'>
-                            <button className='btn btn-primary' onClick={this.handleSubmit}>Thêm chủ đề</button>
-                        </div>
+                        {(
+                            isSubmitted
+                            ?
+                            <div className='w-100 text-center'>
+                                <div className="spinner-border text-primary" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            :
+                            <div className='text-center mt-3'>
+                                <button className='btn btn-primary' onClick={this.handleSubmit}>Thêm dán nhãn</button>
+                            </div>
+                        )}
+                        
                     </div>
 
                 </div>

@@ -25,10 +25,6 @@ class TagDetailComponent extends Component {
         onLoadTagDetails(id_tag);
     }
 
-    componentDidUpdate() {
-        console.log(this.props.TagDetailReducer.tagInfo.status);
-    }
-
     handleImageChange(e) {
         let imgView = document.getElementById('image-topic-img');
 
@@ -79,7 +75,7 @@ class TagDetailComponent extends Component {
     }
 
     render() {
-        let {tagInfo} = this.props.TagDetailReducer;
+        let {tagInfo, isSubmitted} = this.props.TagDetailReducer;
 
         if(tagInfo === null) {
             return (
@@ -156,9 +152,20 @@ class TagDetailComponent extends Component {
                             </div>
     
                             <hr></hr>
-                            <div className='text-center mt-3'>
-                                <button className='btn btn-primary' onClick={this.handleUpdate}>Cập nhật thông nhãn</button>
-                            </div>
+                            {(
+                                isSubmitted
+                                ?
+                                <div className='w-100 text-center'>
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                                :
+                                <div className='text-center mt-3'>
+                                    <button className='btn btn-primary' onClick={this.handleUpdate}>Cập nhật thông tin nhãn</button>
+                                </div>
+                            )}
+                            
                         </div>
     
                     </div>

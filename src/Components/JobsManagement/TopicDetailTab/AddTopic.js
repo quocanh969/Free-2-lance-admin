@@ -61,6 +61,7 @@ class AddTopicComponent extends Component {
     }
 
     render() {
+        let {isSubmitted} = this.props.TopicDetailReducer;
         return (
             <div className="container-fluid">
                 {/* Page Heading */}
@@ -124,9 +125,20 @@ class AddTopicComponent extends Component {
                         </div>
 
                         <hr></hr>
-                        <div className='text-center mt-3'>
-                            <button className='btn btn-primary' onClick={this.handleSubmit}>Thêm chủ đề</button>
-                        </div>
+                        {(
+                            isSubmitted
+                            ?
+                            <div className='w-100 text-center'>
+                                <div className="spinner-border text-primary" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            :
+                            <div className='text-center mt-3'>
+                                <button className='btn btn-primary' onClick={this.handleSubmit}>Thêm chủ đề</button>
+                            </div>
+                        )}
+                        
                     </div>
 
                 </div>

@@ -34,7 +34,8 @@ export const getTopics = (page, take, queryName, status, isAsc) => {
 }
 
 export const sendUpdateInfo = (id, updates) => {
-    return (dispatch) => {
+    return (dispatch) => {           
+        dispatch(submitForm());
         updateTopic(id, updates).then(res => {
             if (res.data.code === '202') {
                 getTopicDetails(id).then(updated => {
@@ -68,6 +69,11 @@ export const sendUpdateInfo = (id, updates) => {
             topic,
         };
     }
+    function submitForm() {
+        return {
+            type: "SUBMIT_FORM",
+        }
+    }
 }
 
 export const getDetails = (id) => {
@@ -92,10 +98,10 @@ export const getDetails = (id) => {
 }
 
 export const addNewTopic = (name, img) => {
-    return (dispatch) => {
+    return (dispatch) => {        
+        dispatch(submitForm());
         addTopic(name, img).then(res => {
             if (res.data.code = '201') {
-                dispatch(submitForm());
                 Swal.fire({
                     title: "Thêm chủ đề mới thành công",
                     text: "Ấn OK để đóng cửa sổ",

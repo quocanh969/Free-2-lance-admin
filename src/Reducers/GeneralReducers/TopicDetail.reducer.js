@@ -13,6 +13,7 @@ const TopicDetailReducer = (state = initState, action) => {
             return {
                 ...state,
                 topicInfo: action.topic,
+                isSubmitted: false,
             };
         case 'ADD_FORM_RESET':
             return initState;

@@ -13,6 +13,8 @@ class UpdateInfoComponent extends Component {
 
         this.state = {
             message: '',
+            isSendingUpdateUserInfo: false,
+            isSendingChangePassword: false,
             error: false,
             tab: 1,
         }
@@ -38,20 +40,31 @@ class UpdateInfoComponent extends Component {
             tel = newTel.value;
         }
 
-        changeUserInfo(fullname, tel).then(res=>{
-            if(res.data.code === '202') {
-                let {onSendUpdateInfo} = this.props;
-                onSendUpdateInfo();
-                Swal.fire({
-                    title: 'Cập nhật thông tin thành công',
-                    icon: 'success',
+        this.setState({isSendingUpdateUserInfo: true}, () => {
+            changeUserInfo(fullname, tel).then(res=>{
+                this.setState({isSendingUpdateUserInfo: false}, () => {
+                    if(res.data.code === '202') {
+                        let {onSendUpdateInfo} = this.props;
+                        onSendUpdateInfo();
+                        Swal.fire({
+                            title: 'Cập nhật thông tin thành công',
+                            icon: 'success',
+                        })
+                    }
+                    else {
+                        Swal.fire({
+                            title: 'Cập nhật thông tin thất bại',
+                            icon: 'error',
+                        })
+                    }
                 })
-            }
-        }).catch(err=>{
-            newFullname.value = user.fullname;
-            newTel.value = user.tel;
-            alert('Server gặp sự cố, thử lại sau');
+            }).catch(err=>{
+                newFullname.value = user.fullname;
+                newTel.value = user.tel;
+                alert('Server gặp sự cố, thử lại sau');
+            })
         })
+        
     }
 
     handleChangePassword(e) {
@@ -70,31 +83,37 @@ class UpdateInfoComponent extends Component {
             })
         }
         else {
-            changeUserPassword(oldPW.value, newPW.value).then(res=>{
-                if(res.data.code === '105') {
+            this.setState({isSendingChangePassword: true}, () => {
+                changeUserPassword(oldPW.value, newPW.value).then(res=>{
+                    this.setState({isSendingChangePassword: false}, () => {
+                        if(res.data.code === '105') {
+                            Swal.fire({
+                                title: 'Đổi mật khẩu thành công, vui lòng đăng nhập lại',
+                                icon: 'success',
+                            })
+                            let {onSignOut} = this.props;
+                            onSignOut();
+                            localStorage.clear();
+                            history.push('/login');
+                        }
+                        else {
+                            this.setState({message: 'Mật khẩu cũ không đúng', error: true}, () => {
+                                Swal.fire({
+                                    title: 'Đổi mật khẩu thất bại',
+                                    icon: 'error',
+                                })
+                            })
+                        }
+                    })
+                    
+                }).catch(err=>{                
                     Swal.fire({
-                        title: 'Đổi mật khẩu thành công, vui lòng đăng nhập lại',
-                        icon: 'success',
-                    })
-                    let {onSignOut} = this.props;
-                    onSignOut();
-                    localStorage.clear();
-                    history.push('/login');
-                }
-                else {
-                    this.setState({message: 'Mật khẩu cũ không đúng', error: true}, () => {
-                        Swal.fire({
-                            title: 'Đổi mật khẩu thất bại',
-                            icon: 'error',
-                        })
-                    })
-                }
-            }).catch(err=>{                
-                Swal.fire({
-                    title: 'Server gặp sự cố',
-                    icon: 'error',
-                });
+                        title: 'Server gặp sự cố',
+                        icon: 'error',
+                    });
+                })
             })
+            
         }
         
     }
@@ -162,9 +181,20 @@ class UpdateInfoComponent extends Component {
                                         </div>
                                     </div>
                                     <hr></hr>
-                                    <div className='text-center'>
-                                        <div onClick={()=>{this.handleChangeUserInfo()}} className='btn btn-primary'>Cập nhật thông tin</div>
-                                    </div>                             
+                                    {(
+                                        this.state.isSendingUpdateUserInfo
+                                        ?
+                                        <div className='w-100 text-center'>
+                                            <div className="spinner-border text-primary" role="status">
+                                                <span className="sr-only">Loading...</span>
+                                            </div>
+                                        </div>
+                                        :
+                                        <div className='text-center'>
+                                            <div onClick={()=>{this.handleChangeUserInfo()}} className='btn btn-primary'>Cập nhật thông tin</div>
+                                        </div>
+                                    )}
+                                                                 
                                 </div>
                             </div>
                             :
@@ -206,9 +236,20 @@ class UpdateInfoComponent extends Component {
                                     )}                                    
 
                                     <hr></hr>
-                                    <div className='text-center'>
-                                        <button type='submit' className='btn btn-primary'>Đổi mật khẩu</button>
-                                    </div>
+                                    {(
+                                        this.state.isSendingChangePassword
+                                        ?
+                                        <div className='w-100 text-center'>
+                                            <div className="spinner-border text-primary" role="status">
+                                                <span className="sr-only">Loading...</span>
+                                            </div>
+                                        </div>
+                                        :
+                                        <div className='text-center'>
+                                            <button type='submit' className='btn btn-primary'>Đổi mật khẩu</button>
+                                        </div>
+                                    )}
+                                    
                                 </form>                            
                             </div>
                         )}

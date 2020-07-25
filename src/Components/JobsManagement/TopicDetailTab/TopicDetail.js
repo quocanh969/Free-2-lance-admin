@@ -81,7 +81,7 @@ class TopicDetailComponent extends Component {
     }
 
     render() {
-        let {topicInfo} = this.props.TopicDetailReducer;
+        let {topicInfo, isSubmitted} = this.props.TopicDetailReducer;
         if(topicInfo === null) {
             return (
                 <div className='w-100 text-center py-4'>
@@ -157,9 +157,20 @@ class TopicDetailComponent extends Component {
                             </div>
     
                             <hr></hr>
-                            <div className='text-center mt-3'>
-                                <button className='btn btn-primary' onClick={this.handleUpdate}>Cập nhật thông tin chủ đề</button>
-                            </div>
+                            {(
+                                isSubmitted
+                                ?
+                                <div className='w-100 text-center'>
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                                :
+                                <div className='text-center mt-3'>
+                                    <button className='btn btn-primary' onClick={this.handleUpdate}>Cập nhật thông tin chủ đề</button>
+                                </div>
+                            )}
+                            
                         </div>
     
                     </div>

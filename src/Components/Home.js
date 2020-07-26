@@ -298,23 +298,23 @@ class HomeComponent extends Component {
                 <h6 className="m-0 font-weight-bold text-primary">Thống kê báo cáo tỉ lệ</h6>
               </div>
               <div className="card-body">
-                <h4 className="small font-weight-bold">Tỉ lệ được ứng viên được nhận <span className="float-right">{p1}%</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ được ứng viên được nhận <span className="float-right">{Number.isNaN(p1) ? 0 : p1}%</span></h4>
                 <div className="progress mb-4">
                   <div className="progress-bar bg-danger" role="progressbar" style={{ width: `${p1}%` }} aria-valuenow={p1} aria-valuemin={0} aria-valuemax={100} />
                 </div>
-                <h4 className="small font-weight-bold">Tỉ lệ công việc thời vụ <span className="float-right">{p2}%</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ công việc thời vụ <span className="float-right">{Number.isNaN(p2) ? 0 : p2}%</span></h4>
                 <div className="progress mb-4">
                   <div className="progress-bar bg-warning" role="progressbar" style={{ width: `${p2}%` }} aria-valuenow={p2} aria-valuemin={0} aria-valuemax={100} />
                 </div>
-                <h4 className="small font-weight-bold">Tỉ lệ ứng viên làm thỏa mãn nhà tuyển dụng <span className="float-right">{p3}%</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ ứng viên làm thỏa mãn nhà tuyển dụng <span className="float-right">{Number.isNaN(p3) ? 0 : p3}%</span></h4>
                 <div className="progress mb-4">
                   <div className="progress-bar" role="progressbar" style={{ width: `${p3}%` }} aria-valuenow={p3} aria-valuemin={0} aria-valuemax={100} />
                 </div>
-                <h4 className="small font-weight-bold">Tỉ lệ nhà tuyển dụng thỏa mãn ứng viên <span className="float-right">{p4}%</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ nhà tuyển dụng thỏa mãn ứng viên <span className="float-right">{Number.isNaN(p4) ? 0 : p4}%</span></h4>
                 <div className="progress mb-4">
                   <div className="progress-bar bg-info" role="progressbar" style={{ width: `${p4}%` }} aria-valuenow={p4} aria-valuemin={0} aria-valuemax={100} />
                 </div>
-                <h4 className="small font-weight-bold">Tỉ lệ công việc hoàn thành <span className="float-right">{p5}%</span></h4>
+                <h4 className="small font-weight-bold">Tỉ lệ công việc hoàn thành <span className="float-right">{Number.isNaN(p5) ? 0 : p5}%</span></h4>
                 <div className="progress">
                   <div className="progress-bar bg-success" role="progressbar" style={{ width: `${p5}%` }} aria-valuenow={p5} aria-valuemin={0} aria-valuemax={100} />
                 </div>

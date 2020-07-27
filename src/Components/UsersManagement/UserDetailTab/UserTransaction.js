@@ -205,6 +205,16 @@ class UserTransactionComponent extends Component {
         if (transaction.paid_date !== null) {
             paid_dateText = prettierDate(transaction.paid_date);
         }
+
+        let start_dateText = 'Chưa bắt đầu';
+        if(transaction.start_date !== null || transaction.start !== null) {
+            start_dateText = prettierDate(transaction.start_date || transaction.start);
+        }
+
+        let end_dateText = 'Chưa kết thúc';
+        if(transaction.end !== null) {
+            end_dateText = prettierDate(transaction.end);
+        }
         Swal.fire({
             title: '<b>Chi tiết hóa đơn thu nhập</b>',
             html:
@@ -231,7 +241,7 @@ class UserTransactionComponent extends Component {
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày bắt đầu dự tính :</label>
-                        <div class='col-4'>${prettierDate(transaction.start_date || transaction.start)}</div>
+                        <div class='col-4'>${start_dateText}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày kết thúc theo dự tính :</label>
@@ -239,7 +249,7 @@ class UserTransactionComponent extends Component {
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-8'>Ngày kết thúc thực tế :</label>
-                        <div class='col-4'>${prettierDate(transaction.end)}</div>
+                        <div class='col-4'>${end_dateText}</div>
                     </div>
                     <div class='my-1 py-2 row text-left rounded bg-f0eee3'>
                         <label class='font-weight-bold col-5'>Loại hóa đơn :</label>

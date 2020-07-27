@@ -79,6 +79,8 @@ class BusinessUsersComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
+                    let {onRequestChangingStt} = this.props;
+                    onRequestChangingStt();
                     setUserStatus(id_user, val).then(res=>{
                         if(res.data.code === '106') {                            
                             this.loadJobListFunc(this.props.UserListReducer.businessCurrentPage, this.state.queryName, this.queryType);
@@ -318,6 +320,11 @@ const mapDispatchToProps = dispatch => {
     return {
         onGetBusinessList: (page, queryName, account_status) => {
             dispatch(getBusinessList(8, page, queryName, account_status));
+        },
+        onRequestChangingStt: () => {
+            dispatch({
+                type: 'BUSINESS_LIST_REQUEST',
+            })
         },
     }
 }

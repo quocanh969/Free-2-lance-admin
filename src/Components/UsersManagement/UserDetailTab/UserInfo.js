@@ -109,7 +109,7 @@ class UserInfoComponent extends Component {
     }
     
     render() {
-        let {userInfo} = this.props.UserDetailReducer;
+        let {userInfo, isChangingUserStatus, isRejectingUserIdentity} = this.props.UserDetailReducer;
         if(userInfo === null) return '';
         else {
             return (
@@ -130,11 +130,22 @@ class UserInfoComponent extends Component {
                                     <h6>(Ngày tạo tài khoản: {prettierDate(userInfo.personal.createDate)})</h6>
                                 </div>
                                 <div className='col-6'>
-                                    <div className="btn-group btn-group-sm" role="group">
-                                        <div onClick={() => { if(userInfo.personal.account_status !== -1 ) {this.handleChangeStatus(-1)} }} className={"btn " + (userInfo.personal.account_status === -1 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
-                                        <div onClick={() => { if(userInfo.personal.account_status !== 1 ) {this.handleChangeStatus(1)} }} className={"btn " + (userInfo.personal.account_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Chờ xác thực</div>
-                                        <div onClick={() => { if(userInfo.personal.account_status !== 2 ) {this.handleChangeStatus(2)} }} className={"btn " + (userInfo.personal.account_status === 2 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
-                                    </div>
+                                    {(
+                                        isChangingUserStatus
+                                        ?
+                                        <div className='w-100 text-center'>
+                                            <div className="spinner-border text-primary" role="status">
+                                                <span className="sr-only">Loading...</span>
+                                            </div>
+                                        </div>
+                                        :
+                                        <div className="btn-group btn-group-sm" role="group">
+                                            <div onClick={() => { if(userInfo.personal.account_status !== -1 ) {this.handleChangeStatus(-1)} }} className={"btn " + (userInfo.personal.account_status === -1 ? 'btn-danger' : 'btn-outline-danger')}>Bị cấm</div>
+                                            <div onClick={() => { if(userInfo.personal.account_status !== 1 ) {this.handleChangeStatus(1)} }} className={"btn " + (userInfo.personal.account_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Chờ xác thực</div>
+                                            <div onClick={() => { if(userInfo.personal.account_status !== 2 ) {this.handleChangeStatus(2)} }} className={"btn " + (userInfo.personal.account_status === 2 ? 'btn-success' : 'btn-outline-success')}>Đã xác thực</div>
+                                        </div>
+                                    )}
+                                    
                                 </div>
                             </div>
                             <div className='row'>
@@ -316,11 +327,21 @@ class UserInfoComponent extends Component {
                                     {(
                                         userInfo.personal.account_status === 1
                                         ?
-                                        <div className='text-center mt-3'>
-                                            <div className='btn btn-secondary' onClick={()=>{this.handleRejectIdentity(userInfo.personal.id_user)}}>
-                                                Từ chối điều khiện xác thực
+                                        (
+                                            isRejectingUserIdentity
+                                            ?
+                                            <div className='w-100 text-center'>
+                                                <div className="spinner-border text-primary" role="status">
+                                                    <span className="sr-only">Loading...</span>
+                                                </div>
                                             </div>
-                                        </div>                                        
+                                            :
+                                            <div className='text-center mt-3'>
+                                                <div className='btn btn-secondary' onClick={()=>{this.handleRejectIdentity(userInfo.personal.id_user)}}>
+                                                    Từ chối điều khiện xác thực
+                                                </div>
+                                            </div>   
+                                        )                                 
                                         :
                                         ''
                                     )}                                    

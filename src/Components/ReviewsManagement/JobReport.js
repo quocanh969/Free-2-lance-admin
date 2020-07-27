@@ -121,7 +121,9 @@ class JobReportsComponent extends Component {
                                     }
                                 }
                             }).then((res) => {
-                                if (res.value) {                            
+                                if (res.value) {    
+                                    let {onRequestChangeStt} = this.props;
+                                    onRequestChangeStt();                        
                                     getRefundForEmployer(e.id_report, e.id_applicant, e.id_transaction, e.amount, refundPercentage, leftover, e.content, res.value).then(res => {
                                         if (res.data.code === '200') {
                                             if(res.data.data.code === 1) {
@@ -191,7 +193,9 @@ class JobReportsComponent extends Component {
                             }
                         }
                     }).then((res) => {
-                        if (res.value) {                            
+                        if (res.value) {                     
+                            let {onRequestChangeStt} = this.props;
+                            onRequestChangeStt();       
                             setJobReportStatus(e.id_report, 1, `${result.value}. Nguyên nhân: ${res.value}`).then(res => {
                                 if (res.data.code === '106') {
                                     this.loadJobListFunc(1, this.state.queryType, this.state.queryName);
@@ -487,7 +491,12 @@ const mapDispatchToProps = dispatch => {
     return {
         onLoadJobReportList: (page, take, status, queryName) => {
             dispatch(loadJobReportList(page, take, status, queryName));
-        }
+        },
+        onRequestChangeStt: () => {
+            dispatch({
+                type: 'JOB_REPORT_LIST_REQUEST',
+            })
+        },
     }
 }
 

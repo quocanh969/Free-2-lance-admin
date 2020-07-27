@@ -73,6 +73,8 @@ class TopicsComponent extends Component {
             reverseButtons: true,
         }).then((result) => {
             if (result.value) {
+                let {onRequestChangStt} = this.props;
+                onRequestChangStt();
                 setTopicStatus(id_jobtopic, val).then(res => {
                     if (res.data.code === '202') {
                         this.loadListFunc(this.props.TopicListReducer.currentPage, '', 2);
@@ -288,6 +290,11 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onGetTopicsList: (page, take, queryName, status, isAsc) => {
             dispatch(getTopics(page, take, queryName, status, isAsc));
+        },
+        onRequestChangStt: () => {
+            dispatch({
+                type: 'TOPIC_LIST_REQUEST',
+            })
         },
     }
 }

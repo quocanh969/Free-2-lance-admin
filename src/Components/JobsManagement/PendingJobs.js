@@ -82,6 +82,8 @@ class PendingJobsComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
+                    let {onRequestChangingStt} = this.props;
+                    onRequestChangingStt();
                     setJobStatus(id_job, val).then(res=>{
                         if(res.data.code === '106') {
                             this.loadJobListFunc(this.props.JobsListReducer.currentJobPage);
@@ -346,6 +348,11 @@ const mapStateToProps = (state) => {
         },
         onLoadApplicantsByJobId: (page, take, id_job, id_status) => {
             dispatch(loadApplicantsByJobId(page, take, id_job, id_status));
+        },
+        onRequestChangingStt: () => {
+            dispatch({
+                type: 'JOBS_LIST_REQUEST',
+            })
         },
     };
   };

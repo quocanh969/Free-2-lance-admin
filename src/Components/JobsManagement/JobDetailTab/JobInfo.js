@@ -88,7 +88,7 @@ class JobInfoComponent extends Component {
     }
 
     render() {
-        let {job} = this.props.JobDetailReducer;
+        let {job, isChangingStt} = this.props.JobDetailReducer;
         return (
             <div>
                 <div className="profile-head">
@@ -119,14 +119,24 @@ class JobInfoComponent extends Component {
                             )}                            
                         </div>
                         <div className='col-6'>
-                            <div className="btn-group btn-group-sm" role="group">
-                                <div className={"btn " + (job.id_status === -1 ? 'btn-secondary' : 'btn-outline-secondary')}>Quá hạn</div>
-                                <div onClick={() => { this.handleChangeStatus(0) }} className={"btn " + (job.id_status === 0 ? 'btn-danger' : 'btn-outline-danger')}>Bị gỡ</div>
-                                <div onClick={() => { this.handleChangeStatus(1) }}className={"btn " + (job.id_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Đang tuyển</div>
-                                <div className={"btn " + (job.id_status === 2 ? 'btn-warning' : 'btn-outline-warning')}>Đang thực hiện</div>
-                                <div className={"btn " + (job.id_status === 3 ? 'btn-success' : 'btn-outline-success')}>Hoàn thành</div>
-                                <div className={"btn " + (job.id_status === 4 ? 'btn-info' : 'btn-outline-info')}>Tạm hoãn</div>
-                            </div>
+                            {(
+                                isChangingStt
+                                ?
+                                <div className='w-100 text-center'>
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                </div>
+                                :
+                                <div className="btn-group btn-group-sm" role="group">
+                                    <div className={"btn " + (job.id_status === -1 ? 'btn-secondary' : 'btn-outline-secondary')}>Quá hạn</div>
+                                    <div onClick={() => { this.handleChangeStatus(0) }} className={"btn " + (job.id_status === 0 ? 'btn-danger' : 'btn-outline-danger')}>Bị gỡ</div>
+                                    <div onClick={() => { this.handleChangeStatus(1) }}className={"btn " + (job.id_status === 1 ? 'btn-primary' : 'btn-outline-primary')}>Đang tuyển</div>
+                                    <div className={"btn " + (job.id_status === 2 ? 'btn-warning' : 'btn-outline-warning')}>Đang thực hiện</div>
+                                    <div className={"btn " + (job.id_status === 3 ? 'btn-success' : 'btn-outline-success')}>Hoàn thành</div>
+                                    <div className={"btn " + (job.id_status === 4 ? 'btn-info' : 'btn-outline-info')}>Tạm hoãn</div>
+                                </div>
+                            )}                            
                         </div>
                     </div>
 

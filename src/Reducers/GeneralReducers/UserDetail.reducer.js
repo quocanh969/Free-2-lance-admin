@@ -1,5 +1,7 @@
 const initState = {
     userInfo: null,
+    isChangingUserStatus: false,
+    isRejectingUserIdentity: false,
 
     jobList: [],
     totalJob: 0,
@@ -21,6 +23,11 @@ const initState = {
 const UserDetailReducer = (state = initState, action) => {
     switch(action.type)
     {
+        case 'USER_DETAIL_UDPATE_REQUEST':
+            return {
+                ...state,
+                isChangingUserStatus: true,
+            };
         case 'USER_DETAIL_UDPATE':
             return {
                 ...state,
@@ -32,6 +39,12 @@ const UserDetailReducer = (state = initState, action) => {
             return {
                 ...state,
                 userInfo: temp,
+                isChangingUserStatus: false,
+            };
+        case 'USER_DETAIL_IDENTITY_REJECT_REQUEST':
+            return {
+                ...state,
+                isRejectingUserIdentity: true,
             };
         case 'USER_DETAIL_IDENTITY_REJECT':
             let t = state.userInfo;
@@ -41,6 +54,7 @@ const UserDetailReducer = (state = initState, action) => {
             return {
                 ...state,
                 userInfo: t,
+                isRejectingUserIdentity: false,
             };
         case 'USER_DETAIL_JOB_LIST_REQUEST':
             return {

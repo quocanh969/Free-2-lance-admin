@@ -51,6 +51,8 @@ class EmployeeUsersComponent extends Component {
     }
 
     handleResetPW(id_user) {
+        let {onRequest} = this.props;
+        onRequest();
         resetEmployeePW(id_user).then(res=>{
             if(res.data.code === '105') {
                 Swal.fire({
@@ -74,6 +76,8 @@ class EmployeeUsersComponent extends Component {
     }
 
     handleRemove(id_user) {
+        let {onRequest} = this.props;
+        onRequest();
         removeEmployee(id_user).then(res=>{
             if(res.data.code === '200') {
                 this.loadJobListFunc(1,this.state.queryName);
@@ -176,7 +180,7 @@ class EmployeeUsersComponent extends Component {
                         <div><i className='icon-material-outline-autorenew cursor-pointer' onClick={()=>{this.handleResetPW(e.id_user)}}></i></div>
                     </td>
                     <td className='text-center'>
-                        <div><i className='icon-feather-trash-2 cursor-pointer'></i></div>
+                        <div><i className='icon-feather-trash-2 cursor-pointer' onClick={()=>{this.handleRemove(e.id_user)}}></i></div>
                     </td>
                 </tr>); 
             })
@@ -333,7 +337,12 @@ const mapDispatchToProps = dispatch => {
     return {
         onLoadEmployeeList: (page, take, queryName) => {
             dispatch(loadEmployeeList(page, take, queryName));
-        }
+        },
+        onRequest: () => {
+            dispatch({
+                type: 'EMPLOYEE_LIST_REQUEST',
+            })
+        },
     }
 }
 

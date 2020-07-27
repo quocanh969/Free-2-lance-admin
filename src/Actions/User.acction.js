@@ -227,6 +227,12 @@ export const udpateUserStatus = (id_user, newStatus) => {
             newStatus,
         };
     }
+
+    function request() {
+        return {
+            type: "USER_DETAIL_UDPATE_REQUEST",
+        };
+    }
 }
 
 export const rejectUserIdentity = (id_user) => {

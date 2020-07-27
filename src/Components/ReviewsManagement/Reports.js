@@ -71,6 +71,8 @@ class ReportsComponent extends Component {
                 }
             }).then((result) => {
                 if (result.value) {
+                    let {onRequestChangeStt} = this.props;
+                    onRequestChangeStt();
                     setReportStatus(id_user, 1, result.value).then(res=>{
                         if(res.data.code === '106') {
                             Swal.fire({
@@ -112,6 +114,8 @@ class ReportsComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
+                    let {onRequestChangeStt} = this.props;
+                    onRequestChangeStt();
                     setReportStatus(id_user, 0, null).then(res=>{
                         if(res.data.code === '106') {
                             this.loadJobListFunc(this.props.ReportsReducer.currentReportPage, this.state.queryType,this.state.queryName);
@@ -409,7 +413,12 @@ const mapDispatchToProps = dispatch => {
     return {
         onLoadReportList: (page, take, status, queryName) => {
             dispatch(loadReportList(page, take, status, queryName));
-        }
+        },
+        onRequestChangeStt: () => {
+            dispatch({
+                type: 'REPORT_LIST_REQUEST',
+            })
+        },
     }
 }
 

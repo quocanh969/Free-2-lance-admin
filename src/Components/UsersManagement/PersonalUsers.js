@@ -74,7 +74,8 @@ class PersonalUsersComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
-
+                    let {onRequestChangingStt} = this.props;
+                    onRequestChangingStt();
                     setUserStatus(id_user, val).then(res=>{
                         if(res.data.code === '106') {                            
                             this.loadJobListFunc(this.props.UserListReducer.personalCurrentPage, this.state.queryName, this.queryType);
@@ -315,6 +316,11 @@ const mapDispatchToProps = dispatch => {
     return {
         onGetPersonalList: (page, queryName, account_status) => {
             dispatch(getPersonalList(8, page, queryName, account_status));
+        },
+        onRequestChangingStt: () => {
+            dispatch({
+                type: 'PERSONAL_LIST_REQUEST',
+            })
         },
     }
 }

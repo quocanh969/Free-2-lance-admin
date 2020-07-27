@@ -76,6 +76,8 @@ class UserTransactionComponent extends Component {
                 reverseButtons: true,
             }).then((result) => {
                 if (result.value) {
+                    let {onRequestPayment} = this.props;
+                    onRequestPayment();
                     payMoneyForEmployee(id_transaction).then(res => {
                         if (res.data.code === '200') {
                             this.loadTransaction(1, this.state.queryType, this.state.queryId);
@@ -136,6 +138,8 @@ class UserTransactionComponent extends Component {
         }).then((result) => {
             if (result.value) {
                 let isSuccess = 1;
+                let {onRequestPayment} = this.props;
+                onRequestPayment();
                 selectedArr.forEach((e, index) => {
                     payMoneyForEmployee(e.id_transaction).then(res => {
                         if (res.data.code === '200') {
@@ -170,7 +174,7 @@ class UserTransactionComponent extends Component {
 
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 Swal.fire({
-                    text: 'Thanh toán không được thực hiện',
+                    text: 'Các thanh toán không được thực hiện',
                     icon: 'error',
                 })
             }
@@ -468,6 +472,11 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onLoadTransactionList(page, id_user, id_status, id_job) {
             dispatch(loadTransactionList(page, 8, id_user, id_status, id_job))
+        },
+        onRequestPayment() {
+            dispatch({
+                type: 'USER_TRANSACTION_LIST_REQUEST',
+            })
         },
     }
 }

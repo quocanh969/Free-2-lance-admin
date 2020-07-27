@@ -56,6 +56,7 @@ export const loadJobDetail = (id_job) => {
 
 export const udpateJobStatus = (id_job, id_status) => {
     return (dispatch) => {
+        dispatch(request());
         setJobStatus(id_job, id_status).then((res) => {
             if(res.data.code === '202') {
                 dispatch(udpateJobStatus(id_status));                
@@ -83,6 +84,12 @@ export const udpateJobStatus = (id_job, id_status) => {
             type: "JOB_DETAIL_STATUS_UDPATE",
             id_status,
         };
+    }
+
+    function request() {
+        return {
+            type: 'JOBS_DETAIL_STATUS_REQUEST',
+        }
     }
 }
 

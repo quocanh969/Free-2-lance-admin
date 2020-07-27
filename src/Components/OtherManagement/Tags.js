@@ -45,6 +45,8 @@ class TagsComponent extends Component {
             reverseButtons: true,
         }).then((result) => {
             if (result.value) {
+                let {onRequestChangStt} = this.props;
+                onRequestChangStt();
                 setTagStatusAPI(id_tag, val).then(res => {
                     if (res.data.code === '202') {
                         this.loadListFunc(this.props.TagListReducer.currentPage, 10, this.state.queryType, this.state.queryName);
@@ -285,6 +287,11 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onLoadList: (page, take, isASC, queryName) => {
             dispatch(getTags(page, take, isASC, queryName));
+        },
+        onRequestChangStt: () => {
+            dispatch({
+                type: 'TAG_LIST_REQUEST',
+            })
         },
     }
 }

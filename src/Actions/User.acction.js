@@ -199,6 +199,7 @@ export const loadJobsByApplicant = (page, take, queryName, status, id_user) => {
 
 export const udpateUserStatus = (id_user, newStatus) => {
     return (dispatch) => {
+        dispatch(request());
         setUserStatus(id_user, newStatus).then((res) => {
             if(res.data.code === '106') {
                 dispatch(udpateUserStatus(newStatus));
@@ -237,6 +238,7 @@ export const udpateUserStatus = (id_user, newStatus) => {
 
 export const rejectUserIdentity = (id_user) => {
     return (dispatch) => {
+        dispatch(request());
         deleteUserIdentity(id_user).then((res) => {
             if(res.data.code === '106') {
                 dispatch(rejectIdentity());
@@ -262,6 +264,12 @@ export const rejectUserIdentity = (id_user) => {
     function rejectIdentity() {
         return {
             type: "USER_DETAIL_IDENTITY_REJECT",
+        };
+    }
+
+    function request() {
+        return {
+            type: 'USER_DETAIL_IDENTITY_REJECT_REQUEST',
         };
     }
 }
